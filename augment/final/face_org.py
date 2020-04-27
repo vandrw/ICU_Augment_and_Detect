@@ -1,8 +1,21 @@
 '''
+Script that calculates:
+ * a circle enclosing each eye, along with its corresponding eyebrow,
+ * a circle enclosing the lips,
+ * the skin pixels, without eyebrows, eyes or mouth.
+ 
+The right-eye regions are flipped horizontally, as there is a single
+generator for the entire eye region.
+
+Building upon Shuvrajit9904's work:
+https://github.com/Shuvrajit9904/PairedCycleGAN-tf/blob/master/parse_face.py
+
+
 Augment:
 * reduce brightness
 * reverse images
 * saturation
+* interpolation
 '''
 
 #%%
