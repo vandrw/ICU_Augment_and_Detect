@@ -43,7 +43,7 @@ FACIAL_LANDMARKS_IDXS = OrderedDict ([
 ])
 
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('augment/parsing/shape_predictor_68_face_landmarks.dat')
+predictor = dlib.shape_predictor('augment/final/shape_predictor_68_face_landmarks.dat')
 
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
@@ -91,12 +91,15 @@ def readAndResize(image_path, target_size=512):
         
     return img
 
-img = readAndResize("augment/style_sick1.png")
-img2 = readAndResize("augment/style_normal.jpg")
-img3 = readAndResize("augment/as3.jpg")
-img4 = readAndResize("augment/a4.jpg")
+def exportImage(name, img):
+    fig= plt.figure(frameon=False)
+    
+    plt.axis("off")
+    
+    imgplot = plt.imshow(img)
+    plt.savefig("data/parsed/" + name, bbox_inches='tight',transparent=True, pad_inches=0)
+    plt.close(fig)
 
-# %%
 
 def extractFeatures(img, detector, predictor, dominant_color):
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -127,18 +130,13 @@ def extractFeatures(img, detector, predictor, dominant_color):
             result_array[np.where((result_array==[0,0,0]).all(axis=2))] = dominant_color
 
             if name == 'left_eye_region':
-                plt.imshow(cv2.cvtColor(cv2.flip(result_array, 1), cv2.COLOR_BGR2RGB))
+                exportImage(name, cv2.cvtColor(cv2.flip(result_array, 1), cv2.COLOR_BGR2RGB))
 
             else:
-                plt.imshow(cv2.cvtColor(result_array, cv2.COLOR_BGR2RGB))
-            
-            plt.figure()
+                exportImage(name, cv2.cvtColor(result_array, cv2.COLOR_BGR2RGB))
             
     return shape
             
-
-# ab = extractFeatures(img2, detector, predictor, [124,124,124])      
-# %%
 def extractFace(img, faceCascade, detector, predictor):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
    
@@ -151,15 +149,11 @@ def extractFace(img, faceCascade, detector, predictor):
     
     print("[INFO] Found {0} Faces.".format(len(faces)))
     
-    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-    plt.figure()
-    
     (x, y, w, h) = faces[0]
     
     copy = img.copy()
     
     face = copy[y:y + h, x:x + w]
-    # cv2.rectangle(copy, (x, y), (x + w, y + h), (0, 255, 0), 2)
     
     dominant_color = getDominantColor(face)
     
@@ -186,7 +180,6 @@ def extractFace(img, faceCascade, detector, predictor):
     dilation = cv2.dilate(erosion,kernel,iterations = 1)
     
     face_copy[dilation == 0] = dominant_color
-    # plt.imshow(thresh)
     
     for (name, id_arr) in FACIAL_LANDMARKS_IDXS.items():
         if (name != "jaw"):
@@ -204,13 +197,9 @@ def extractFace(img, faceCascade, detector, predictor):
                           
             cv2.fillPoly(face_copy, pts=[outside_pixels], color=dominant_color)
 
-    plt.imshow(cv2.cvtColor(face_copy, cv2.COLOR_BGR2RGB))
-    plt.figure()
-    
-    # print(outside_pixels)
+    exportImage("face", cv2.cvtColor(face_copy, cv2.COLOR_BGR2RGB))
 
-# %%
-extractFace(img4, faceCascade, detector, predictor)
 
-# %%
-     
+if __name__ == "__main__":
+    img4 = readAndResize("augment/a4.jpg")
+    extractFace(img4, faceCascade, detector, predictor)
