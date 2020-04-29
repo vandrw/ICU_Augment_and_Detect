@@ -18,8 +18,8 @@ import numpy as np
 import argparse
 import imutils
 import dlib
-import cv2
-from collections import OrderedDict
+import cv2 
+import OrderedDict
 import matplotlib.pyplot as plt
 
 mouth_ids = np.array([48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59])

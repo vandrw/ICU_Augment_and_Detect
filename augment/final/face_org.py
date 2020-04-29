@@ -43,7 +43,7 @@ FACIAL_LANDMARKS_IDXS = OrderedDict ([
 ])
 
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('augment/parsing/shape_predictor_68_face_landmarks.dat')
+predictor = dlib.shape_predictor('augment/final/shape_predictor_68_face_landmarks.dat')
 
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
@@ -91,10 +91,10 @@ def readAndResize(image_path, target_size=512):
         
     return img
 
-img = readAndResize("augment/style_sick1.png")
-img2 = readAndResize("augment/style_normal.jpg")
-img3 = readAndResize("augment/as3.jpg")
-img4 = readAndResize("augment/a4.jpg")
+# img = readAndResize("augment/style_sick1.png")
+# img2 = readAndResize("augment/style_normal.jpg")
+# img3 = readAndResize("augment/as3.jpg")
+# img4 = readAndResize("augment/a4.jpg")
 
 # %%
 
