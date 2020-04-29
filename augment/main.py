@@ -15,8 +15,8 @@ import random
 import sys
 
 
-from augment.final.layers import *
-from augment.final.model import *
+from augment.layers import *
+from augment.model import *
 
 img_height = 256
 img_width = 256

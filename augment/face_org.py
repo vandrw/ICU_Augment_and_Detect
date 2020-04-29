@@ -43,7 +43,7 @@ FACIAL_LANDMARKS_IDXS = OrderedDict ([
 ])
 
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('augment/final/shape_predictor_68_face_landmarks.dat')
+predictor = dlib.shape_predictor('augment/shape_predictor_68_face_landmarks.dat')
 
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
