@@ -1,6 +1,18 @@
 data/*
 !data/.gitkeep
 
+!data/parsed
+data/parsed/healthy/*
+!data/parsed/healthy/.gitkeep
+data/parsed/sick/*
+!data/parsed/sick/.gitkeep
+
+!data/unparsed
+data/unparsed/healthy/*
+!data/unparsed/healthy/.gitkeep
+data/unparsed/sick/*
+!data/unparsed/sick/.gitkeep
+
 .vscode
 
 *.jpg

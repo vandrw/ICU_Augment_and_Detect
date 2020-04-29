@@ -37,8 +37,8 @@ jaw_ids = np.arange(0, 17)
 
 FACIAL_LANDMARKS_IDXS = OrderedDict ([
 	("mouth", mouth_ids),
-    ("right_eye_region", right_eye_region),
-    ("left_eye_region", left_eye_region),
+    ("right", right_eye_region),
+    ("left", left_eye_region),
     ("jaw", jaw_ids)
 ])
 
@@ -91,17 +91,19 @@ def readAndResize(image_path, target_size=512):
         
     return img
 
-def exportImage(name, img):
+def exportImage(status, file_name, part_name, img):
+    path_to_exp = "data/parsed/" + status + "/" + file_name + "_" + part_name
+    
     fig= plt.figure(frameon=False)
     
     plt.axis("off")
     
     imgplot = plt.imshow(img)
-    plt.savefig("data/parsed/" + name, bbox_inches='tight',transparent=True, pad_inches=0)
+    plt.savefig(path_to_exp, bbox_inches='tight',transparent=True, pad_inches=0)
     plt.close(fig)
 
 
-def extractFeatures(img, detector, predictor, dominant_color):
+def extractFeatures(img, detector, predictor, dominant_color, status, file_name):
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
     rectangles = detector(gray_img, 1)
@@ -129,15 +131,17 @@ def extractFeatures(img, detector, predictor, dominant_color):
             
             result_array[np.where((result_array==[0,0,0]).all(axis=2))] = dominant_color
 
-            if name == 'left_eye_region':
-                exportImage(name, cv2.cvtColor(cv2.flip(result_array, 1), cv2.COLOR_BGR2RGB))
+            if name == 'left':
+                exportImage(status, file_name, name, cv2.cvtColor(cv2.flip(result_array, 1), cv2.COLOR_BGR2RGB))
 
             else:
-                exportImage(name, cv2.cvtColor(result_array, cv2.COLOR_BGR2RGB))
+                exportImage(status, file_name, name, cv2.cvtColor(result_array, cv2.COLOR_BGR2RGB))
             
     return shape
             
-def extractFace(img, faceCascade, detector, predictor):
+def extractFace(path_to_img, status, file_name, faceCascade, detector, predictor):
+    img = readAndResize(path_to_img)
+    
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
    
     faces = faceCascade.detectMultiScale(
@@ -155,11 +159,11 @@ def extractFace(img, faceCascade, detector, predictor):
     
     face = copy[y:y + h, x:x + w]
     
-    exportImage("face", face)
+    exportImage(status, file_name, "face", cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
     
     dominant_color = getDominantColor(face)
     
-    shapeFeatures = extractFeatures(face, detector, predictor, dominant_color)
+    shapeFeatures = extractFeatures(face, detector, predictor, dominant_color, status, file_name)
 
     blur = cv2.blur(face,(10,10))
     
@@ -199,9 +203,13 @@ def extractFace(img, faceCascade, detector, predictor):
                           
             cv2.fillPoly(face_copy, pts=[outside_pixels], color=dominant_color)
 
-    exportImage("face", cv2.cvtColor(face_copy, cv2.COLOR_BGR2RGB))
+    exportImage(status, file_name, "skin", cv2.cvtColor(face_copy, cv2.COLOR_BGR2RGB))
 
-
+# %%
 if __name__ == "__main__":
-    img4 = readAndResize("augment/a4.jpg")
-    extractFace(img4, faceCascade, detector, predictor)
+    path_to_img = "data/unparsed/healthy/a4.jpg"
+    split = path_to_img.split("/")
+    status = split[-2]
+    file_name = split[-1].split(".")[0]
+
+    extractFace(path_to_img, status, file_name, faceCascade, detector, predictor)
