@@ -155,6 +155,8 @@ def extractFace(img, faceCascade, detector, predictor):
     
     face = copy[y:y + h, x:x + w]
     
+    exportImage("face", face)
+    
     dominant_color = getDominantColor(face)
     
     shapeFeatures = extractFeatures(face, detector, predictor, dominant_color)
