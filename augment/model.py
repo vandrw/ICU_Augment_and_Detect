@@ -11,7 +11,7 @@ Created on Wed Jul 25 19:35:17 2018
 import tensorflow as tf
 import numpy as np
 
-from augment.final.layers import *
+from augment.layers import *
 
 img_height = 256
 img_width = 256

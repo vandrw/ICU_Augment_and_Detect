@@ -16,6 +16,9 @@ Augment:
 * reverse images
 * saturation
 * interpolation
+
+Final paper:
+* heatmap based on confidence (eyes, mouth, skin, face - all together; pinpoint in a single image)
 '''
 
 #%%
@@ -27,6 +30,7 @@ import dlib
 import cv2
 from collections import OrderedDict
 import matplotlib.pyplot as plt
+import os
 
 mouth_ids = np.array([48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59])
 
@@ -207,9 +211,22 @@ def extractFace(path_to_img, status, file_name, faceCascade, detector, predictor
 
 # %%
 if __name__ == "__main__":
-    path_to_img = "data/unparsed/healthy/a4.jpg"
-    split = path_to_img.split("/")
-    status = split[-2]
-    file_name = split[-1].split(".")[0]
+    
+    for s in ["healthy", "sick"]:
+        print("Scanning ", s, " patiens...")
+        for path in os.listdir("data/unparsed/" + s):
+            
+            # Skip .gitkeep
+            if path.startswith('.'):
+                continue
+            
+            full_path = os.path.join("data/unparsed/" + s, path)
+            if os.path.isfile(full_path):
+                split = full_path.split("/")
+                status = split[-2]
+                file_name = split[-1].split(".")[0]
 
-    extractFace(path_to_img, status, file_name, faceCascade, detector, predictor)
+                extractFace(full_path, status, file_name, faceCascade, detector, predictor)
+        print("Finished!\n")
+
+# %%
