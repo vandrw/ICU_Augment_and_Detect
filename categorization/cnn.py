@@ -4,10 +4,14 @@ from tensorflow.keras import datasets, layers, models
 import matplotlib.pyplot as plt
 import cv2
 import os
+import sys
 import numpy as np
 from keras.layers.normalization import BatchNormalization
-from augment.face_org import * 
 import random
+
+sys.path.append(os.getcwd())
+
+from augment.face_org import *
 
 def load_data(folder_sick, folder_healthy, image_size, type):
     files_healthy = os.listdir(folder_healthy)
