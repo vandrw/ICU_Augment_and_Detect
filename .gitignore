@@ -13,6 +13,12 @@ data/unparsed/healthy/*
 data/unparsed/sick/*
 !data/unparsed/sick/.gitkeep
 
+data/extracted
+
+!data/convertppm.py
+!data/delete.py
+!data/extract.py
+
 .vscode
 
 *.jpg

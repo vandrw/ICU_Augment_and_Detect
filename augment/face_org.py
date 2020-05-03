@@ -32,6 +32,8 @@ from collections import OrderedDict
 import matplotlib.pyplot as plt
 import os
 
+resizeImages = True
+
 mouth_ids = np.array([48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59])
 
 right_eye_region = np.array([17, 18, 19, 20, 21, 39, 40, 41, 36])
@@ -112,6 +114,10 @@ def extractFeatures(img, detector, predictor, dominant_color, status, file_name)
     
     rectangles = detector(gray_img, 1)
     
+    if len(rectangles) < 1:
+        print("Could not find any faces!")
+        return None
+    
     shape = predictor(gray_img, rectangles[0])
     shape = futil.shape_to_np(shape)
 
@@ -144,7 +150,13 @@ def extractFeatures(img, detector, predictor, dominant_color, status, file_name)
     return shape
             
 def extractFace(path_to_img, status, file_name, faceCascade, detector, predictor):
-    img = readAndResize(path_to_img)
+    if resizeImages == True:
+        img = readAndResize(path_to_img)
+    else:
+        img = cv2.imread(path_to_img)
+        if (img.size == 0):
+            print("The image could not be loaded!")
+            return None
     
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
    
@@ -155,7 +167,9 @@ def extractFace(path_to_img, status, file_name, faceCascade, detector, predictor
         minSize=(200, 200)
     )
     
-    print("[INFO] Found {0} Faces.".format(len(faces)))
+    if len(faces) < 1:
+        print("Could not find a face!")
+        return None
     
     (x, y, w, h) = faces[0]
     
@@ -168,6 +182,9 @@ def extractFace(path_to_img, status, file_name, faceCascade, detector, predictor
     dominant_color = getDominantColor(face)
     
     shapeFeatures = extractFeatures(face, detector, predictor, dominant_color, status, file_name)
+    
+    if shapeFeatures is None:
+        return None
 
     blur = cv2.blur(face,(10,10))
     
@@ -213,7 +230,7 @@ def extractFace(path_to_img, status, file_name, faceCascade, detector, predictor
 if __name__ == "__main__":
     
     for s in ["healthy", "sick"]:
-        print("Scanning ", s, " patiens...")
+        print("Scanning ", s, " patients...")
         for path in os.listdir("data/unparsed/" + s):
             
             # Skip .gitkeep
@@ -222,9 +239,11 @@ if __name__ == "__main__":
             
             full_path = os.path.join("data/unparsed/" + s, path)
             if os.path.isfile(full_path):
-                split = full_path.split("/")
+                split = full_path.split(os.sep)
                 status = split[-2]
                 file_name = split[-1].split(".")[0]
+                
+                print("[INFO] Scanning ", file_name)
 
                 extractFace(full_path, status, file_name, faceCascade, detector, predictor)
         print("Finished!\n")
