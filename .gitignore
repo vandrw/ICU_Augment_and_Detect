@@ -15,6 +15,10 @@ data/unparsed/sick/*
 
 data/extracted
 
+!data/plots
+data/plots/*
+!data/plots/.gitkeep
+
 !data/convertppm.py
 !data/delete.py
 !data/extract.py
