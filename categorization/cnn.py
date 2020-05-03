@@ -85,10 +85,11 @@ def make_model(image_size):
     return model
 
 if __name__ == "__main__":
-    image_folder_sick = '/mnt/c/Users/malin/Documents/Facultate/honours/UMCG/ICU_Augment_and_Detect/data/parsed/sick'
-    image_folder_healthy = '/mnt/c/Users/malin/Documents/Facultate/honours/UMCG/ICU_Augment_and_Detect/data/parsed/healthy'
-    image_folder_altered = '/mnt/c/Users/malin/Documents/Facultate/honours/UMCG/ICU_Augment_and_Detect/data/parsed/altered'
-    image_folder_cfd = '/mnt/c/Users/malin/Documents/Facultate/honours/UMCG/ICU_Augment_and_Detect/data/parsed/cfd'
+    image_folder_sick = 'data/parsed/sick'
+    image_folder_healthy = 'data/parsed/healthy'
+    image_folder_altered = 'data/parsed/altered'
+    image_folder_cfd = 'data/parsed/cfd'
+    checkpoint_path = 'categorization/model_saves/mouth.ckpt'
     image_size = 217
     key = "mouth"
 
@@ -100,8 +101,28 @@ if __name__ == "__main__":
               loss="binary_crossentropy",
               metrics=['accuracy'])
 
-    history = model.fit(train_images_mouth, train_labels_mouth, epochs=10, 
-                    validation_data=(test_images_mouth, test_labels_mouth))
+    cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path,
+                                                 save_weights_only=True,
+                                                 verbose=1)
+
+    history = model.fit(train_images_mouth, train_labels_mouth, epochs=100, 
+                    validation_data=(test_images_mouth, test_labels_mouth), callbacks=[cp_callback])
+
+    plt.plot(history.history['accuracy'], label='accuracy')
+    plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.ylim([0.5, 1])
+    plt.legend(loc='lower right')
+    plt.savefig('data/plots/accuracy_mouth.png')
+
+    plt.title('Learning Curves')
+    plt.xlabel('Epoch')
+    plt.ylabel('Cross Entropy')
+    plt.plot(history.history['loss'], label='train')
+    plt.plot(history.history['val_loss'], label='val')
+    plt.legend()
+    plt.savefig('data/plots/learning_curve_mouth.png')
 
 
 
