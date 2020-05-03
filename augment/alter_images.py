@@ -81,7 +81,7 @@ def plot_all(img):
         blurred = bilateral_filtering(img, size)
         plotimage(blurred, "bilateral" + str(size), r,c,i)
     plt.tight_layout()
-    plt.savefig("altered_images_plot.png")
+    plt.savefig("data/plots/altered_images_plot.png")
     plt.show()
     
 def alter_and_save(img, filename):
