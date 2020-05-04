@@ -5,11 +5,10 @@ import cv2
 import os
 import sys
 import numpy as np
-from keras.layers.normalization import BatchNormalization
+# from keras.layers.normalization import BatchNormalization
 import random
 
 sys.path.append(os.getcwd())
-
 from augment.face_org import *
 
 def load_data(folder_sick, folder_healthy, image_size, type):
@@ -81,6 +80,10 @@ def make_model(image_size):
     model.add(layers.Dropout(0.5))
     model.add(layers.Dense(1, activation='softmax'))
 
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+                loss="binary_crossentropy",
+                metrics=['accuracy'])
+
     return model
 
 
@@ -98,7 +101,26 @@ def load_data_eyes(image_folder_sick, image_folder_healthy, image_size):
     return images(permutation), labels(permutation)
 
 
-    
+def make_plots(history):
+    plt.plot(history.history['accuracy'], label='accuracy')
+    plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.ylim([0.5, 1])
+    plt.legend(loc='lower right')
+    fig_path = "data/plots/accuracy_" + str(feature) + ".png"
+    plt.savefig(fig_path)
+
+    plt.title('Learning Curves')
+    plt.xlabel('Epoch')
+    plt.ylabel('Cross Entropy')
+    plt.plot(history.history['loss'], label='train')
+    plt.plot(history.history['val_loss'], label='val')
+    plt.legend()
+    fig_path = "data/plots/learning_curve_" + str(feature) + ".png"
+    plt.savefig(fig_path)
+
+
 
 if __name__ == "__main__":
     
@@ -122,36 +144,17 @@ if __name__ == "__main__":
             train_images, train_labels = load_data(image_folder_altered, image_folder_cfd, image_size, feature)
 
         model = make_model(image_size)
-        model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-                loss="binary_crossentropy",
-                metrics=['accuracy'])
 
-        cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path + str(feature + "/"),
-                                                 save_weights_only=True,
-                                                 verbose=1)
+        cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path + str(feature) + "/cp.ckpt",
+                                                save_weights_only=True,
+                                                verbose=1)
 
         history = model.fit(train_images, train_labels, epochs=10, 
                         validation_data=(test_images, test_labels), callbacks=[cp_callback])
 
-        neural_nets.apend(history)
+        neural_nets.append(history)
+        make_plots(history)
 
-        plt.plot(history.history['accuracy'], label='accuracy')
-        plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
-        plt.xlabel('Epoch')
-        plt.ylabel('Accuracy')
-        plt.ylim([0.5, 1])
-        plt.legend(loc='lower right')
-        fig_path = "data/plots/accuracy_" + str(feature) + ".png"
-        plt.savefig(fig_path)
-
-        plt.title('Learning Curves')
-        plt.xlabel('Epoch')
-        plt.ylabel('Cross Entropy')
-        plt.plot(history.history['loss'], label='train')
-        plt.plot(history.history['val_loss'], label='val')
-        plt.legend()
-        fig_path = "data/plots/learning_curve_" + str(feature) + ".png"
-        plt.savefig(fig_path)
 
 
 
