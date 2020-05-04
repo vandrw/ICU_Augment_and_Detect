@@ -26,8 +26,8 @@ img_size = img_height * img_width
 to_train = True
 to_test = False
 to_restore = False
-output_path = "./output"
-check_dir = "./output/checkpoints/"
+output_path = "./augment/output"
+check_dir = "./augment/output/checkpoints/"
 
 
 temp_check = 0
@@ -60,9 +60,9 @@ class CycleGAN():
         self.image_A/self.image_B -> Input image with each values ranging from [-1,1]
         '''
 
-        filenames_n = tf.train.match_filenames_once("./data/YMU/images/makeup_n/*.jpg")    
+        filenames_n = tf.train.match_filenames_once("./data/parsed/healthy/*.png")    
         self.queue_length_n = tf.size(filenames_n)
-        filenames_y = tf.train.match_filenames_once("./data/YMU/images/makeup_y/*.jpg")    
+        filenames_y = tf.train.match_filenames_once("./data/parsed/sick/*.png")    
         self.queue_length_y = tf.size(filenames_y)
         
         filename_queue_n = tf.train.string_input_producer(filenames_n)
@@ -215,12 +215,12 @@ class CycleGAN():
 
         for i in range(0,10):
             fake_A_temp, fake_B_temp, cyc_A_temp, cyc_B_temp = sess.run([self.fake_A, self.fake_B, self.cyc_A, self.cyc_B],feed_dict={self.input_A:self.A_input[i], self.input_B:self.B_input[i]})
-            imsave("./output/imgs/fakeB_"+ str(epoch) + "_" + str(i)+".jpg",((fake_A_temp[0]+1)*127.5).astype(np.uint8))
-            imsave("./output/imgs/fakeA_"+ str(epoch) + "_" + str(i)+".jpg",((fake_B_temp[0]+1)*127.5).astype(np.uint8))
-            imsave("./output/imgs/cycA_"+ str(epoch) + "_" + str(i)+".jpg",((cyc_A_temp[0]+1)*127.5).astype(np.uint8))
-            imsave("./output/imgs/cycB_"+ str(epoch) + "_" + str(i)+".jpg",((cyc_B_temp[0]+1)*127.5).astype(np.uint8))
-            imsave("./output/imgs/inputA_"+ str(epoch) + "_" + str(i)+".jpg",((self.A_input[i][0]+1)*127.5).astype(np.uint8))
-            imsave("./output/imgs/inputB_"+ str(epoch) + "_" + str(i)+".jpg",((self.B_input[i][0]+1)*127.5).astype(np.uint8))
+            imsave("./augment/output/imgs/fakeB_"+ str(epoch) + "_" + str(i)+".jpg",((fake_A_temp[0]+1)*127.5).astype(np.uint8))
+            imsave("./augment/output/imgs/fakeA_"+ str(epoch) + "_" + str(i)+".jpg",((fake_B_temp[0]+1)*127.5).astype(np.uint8))
+            imsave("./augment/output/imgs/cycA_"+ str(epoch) + "_" + str(i)+".jpg",((cyc_A_temp[0]+1)*127.5).astype(np.uint8))
+            imsave("./augment/output/imgs/cycB_"+ str(epoch) + "_" + str(i)+".jpg",((cyc_B_temp[0]+1)*127.5).astype(np.uint8))
+            imsave("./augment/output/imgs/inputA_"+ str(epoch) + "_" + str(i)+".jpg",((self.A_input[i][0]+1)*127.5).astype(np.uint8))
+            imsave("./augment/output/imgs/inputB_"+ str(epoch) + "_" + str(i)+".jpg",((self.B_input[i][0]+1)*127.5).astype(np.uint8))
 
     def fake_image_pool(self, num_fakes, fake, fake_pool):
         ''' This function saves the generated image to corresponding pool of images.
@@ -351,15 +351,15 @@ class CycleGAN():
             chkpt_fname = tf.train.latest_checkpoint(check_dir)
             saver.restore(sess, chkpt_fname)
 
-            if not os.path.exists("./output/imgs/test/"):
-                os.makedirs("./output/imgs/test/")            
+            if not os.path.exists("./augment/output/imgs/test/"):
+                os.makedirs("./augment/output/imgs/test/")            
 
             for i in range(0,100):
                 fake_A_temp, fake_B_temp = sess.run([self.fake_A, self.fake_B],feed_dict={self.input_A:self.A_input[i], self.input_B:self.B_input[i]})
-                imsave("./output/imgs/test/fakeB_"+str(i)+".jpg",((fake_A_temp[0]+1)*127.5).astype(np.uint8))
-                imsave("./output/imgs/test/fakeA_"+str(i)+".jpg",((fake_B_temp[0]+1)*127.5).astype(np.uint8))
-                imsave("./output/imgs/test/inputA_"+str(i)+".jpg",((self.A_input[i][0]+1)*127.5).astype(np.uint8))
-                imsave("./output/imgs/test/inputB_"+str(i)+".jpg",((self.B_input[i][0]+1)*127.5).astype(np.uint8))
+                imsave("./augment/output/imgs/test/fakeB_"+str(i)+".jpg",((fake_A_temp[0]+1)*127.5).astype(np.uint8))
+                imsave("./augment/output/imgs/test/fakeA_"+str(i)+".jpg",((fake_B_temp[0]+1)*127.5).astype(np.uint8))
+                imsave("./augment/output/imgs/test/inputA_"+str(i)+".jpg",((self.A_input[i][0]+1)*127.5).astype(np.uint8))
+                imsave("./augment/output/imgs/test/inputB_"+str(i)+".jpg",((self.B_input[i][0]+1)*127.5).astype(np.uint8))
 
 
 def main():
