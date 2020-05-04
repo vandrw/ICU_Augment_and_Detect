@@ -80,7 +80,7 @@ def make_model(image_size):
     model.add(layers.Dropout(0.5))
     model.add(layers.Dense(1, activation='sigmoid'))
 
-    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0008),
                 loss="binary_crossentropy",
                 metrics=['accuracy'])
 
