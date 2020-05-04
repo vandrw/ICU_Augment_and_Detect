@@ -128,7 +128,7 @@ if __name__ == "__main__":
     image_folder_healthy = 'data/parsed/healthy'
     image_folder_altered = 'data/parsed/altered'
     image_folder_cfd = 'data/parsed/cfd'
-    checkpoint_path = 'categorization/model_saves/'
+    save_path = 'categorization/model_saves/'
     image_size = 217
     face_features = ["mouth", "face", "skin", "eyes"]
     neural_nets = []
@@ -145,12 +145,10 @@ if __name__ == "__main__":
 
         model = make_model(image_size)
 
-        cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path + str(feature) + "/cp.ckpt",
-                                                save_weights_only=True,
-                                                verbose=1)
-
         history = model.fit(train_images, train_labels, epochs=10, 
-                        validation_data=(test_images, test_labels), callbacks=[cp_callback])
+                        validation_data=(test_images, test_labels))
+        
+        model.save(save_path + str(feature) + "/save.h5")
 
         neural_nets.append(history)
         make_plots(history)
