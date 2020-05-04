@@ -109,7 +109,7 @@ if __name__ == "__main__":
     checkpoint_path = 'categorization/model_saves/'
     image_size = 217
     face_features = ["mouth", "face", "skin", "eyes"]
-    models = []
+    neural_nets = []
 
     for feature in face_features:
         
@@ -133,7 +133,7 @@ if __name__ == "__main__":
         history = model.fit(train_images, train_labels, epochs=10, 
                         validation_data=(test_images, test_labels), callbacks=[cp_callback])
 
-        models.apend(history)
+        neural_nets.apend(history)
 
         plt.plot(history.history['accuracy'], label='accuracy')
         plt.plot(history.history['val_accuracy'], label = 'val_accuracy')

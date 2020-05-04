@@ -19,8 +19,8 @@ sys.path.append(os.getcwd())
 from augment.layers import *
 from augment.model import *
 
-img_height = 217
-img_width = 217
+img_height = 220
+img_width = 220
 img_layer = 3
 img_size = img_height * img_width
 
