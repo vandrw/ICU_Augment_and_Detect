@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 import os
+import sys
 import skimage
 
 sys.path.append(os.getcwd())
@@ -104,36 +105,31 @@ def alter_and_save(img, filename):
         blurred = bilateral_filtering(img, size)
         exportImage("altered", filename, "bilateral-" + str(size) + ".png", blurred)
 
+def flip_all(source_path):
+    for f in os.listdir(source_path):
+        if f.startswith('.'):
+            continue
+        full_path = os.path.join(source_path, f)
+        if os.path.isfile(full_path) and "right" not in f and "left" not in f:
+            print(f)
+            img =  cv2.imread(full_path)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            flipped = cv2.flip(img, 1)
+            exportImage("altered", f, "flipped" + ".png", flipped)
+
 
 # %%
 if __name__ == "__main__":
     
-    for f in os.listdir("data/parsed/sick"):
+    source_path = "data/parsed/sick"
+    target_path = "data/parsed/altered"
+    for f in os.listdir(source_path):
         if f.startswith('.'):
             continue
-        full_path = os.path.join("data/parsed/sick", f)
+        full_path = os.path.join(source_path, f)
         if os.path.isfile(full_path):
-            print(f)
             img =  cv2.imread(full_path)
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             alter_and_save(img, f)
+    flip_all(target_path)
     print("Finished!\n")
-
-
-# %%
-full_path = "data/parsed/sick/s1s-m_face.png"
-img =  cv2.imread(full_path)
-img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-plot_all(img)
-
-
-# %%
-full_path = "data/parsed/altered/s1s-m_face_noisy-speckle.png"
-img =  cv2.imread(full_path)
-imag = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-plt.imshow(imag)
-
-
-# %%
-
-

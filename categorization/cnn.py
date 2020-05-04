@@ -21,7 +21,7 @@ def load_data(folder_sick, folder_healthy, image_size, type):
     for filename in files_healthy:
         sick = 0
         full_path = folder_healthy + "/" + str(filename)
-        if type in filename and os.path.isfile(full_path):
+        if type in filename and "n2-" not in filename and os.path.isfile(full_path):
             image =  cv2.imread(full_path)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             image = cv2.resize(image, dsize=(image_size, image_size), interpolation=cv2.INTER_CUBIC)
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     train_images_mouth, train_labels_mouth = load_data(image_folder_altered, image_folder_cfd, image_size, key)
 
     model = make_model(image_size)
-    model.compile(optimizer='adam',
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
               loss="binary_crossentropy",
               metrics=['accuracy'])
 
