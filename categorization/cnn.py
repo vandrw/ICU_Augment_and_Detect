@@ -78,7 +78,7 @@ def make_model(image_size):
     model.add(layers.Flatten())
     model.add(layers.Dense(52, activation='relu'))
     model.add(layers.Dropout(0.5))
-    model.add(layers.Dense(1, activation='softmax'))
+    model.add(layers.Dense(1, activation='sigmoid'))
 
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
                 loss="binary_crossentropy",
