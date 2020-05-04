@@ -98,7 +98,7 @@ def load_data_eyes(image_folder_sick, image_folder_healthy, image_size):
 
     permutation = np.random.permutation(len(images))
 
-    return images(permutation), labels(permutation)
+    return images[permutation], labels[permutation]
 
 
 def make_plots(history):
