@@ -8,18 +8,19 @@ Created on Wed Jul 25 19:26:12 2018
 
 import tensorflow as tf
 import numpy as np
-from scipy.misc import imsave
+from imageio import imwrite as imsave
 import os
 import time
 import random
 import sys
 
+sys.path.append(os.getcwd())
 
 from augment.layers import *
 from augment.model import *
 
-img_height = 256
-img_width = 256
+img_height = 217
+img_width = 217
 img_layer = 3
 img_size = img_height * img_width
 

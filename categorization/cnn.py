@@ -83,45 +83,75 @@ def make_model(image_size):
 
     return model
 
+
+
+
+def load_data_eyes(image_folder_sick, image_folder_healthy, image_size):
+    images_left, labels_left = load_data(image_folder_sick, image_folder_healthy, image_size, "left")
+    images_right, labels_right = load_data(image_folder_sick, image_folder_healthy, image_size, "right")
+
+    images = np.concatenate((images_left, images_right), axis = 0)
+    labels = np.concatenate((labels_left, labels_right), axis =0)
+
+    permutation = np.random.permutation(len(images))
+
+    return images(permutation), labels(permutation)
+
+
+    
+
 if __name__ == "__main__":
+    
     image_folder_sick = 'data/parsed/sick'
     image_folder_healthy = 'data/parsed/healthy'
     image_folder_altered = 'data/parsed/altered'
     image_folder_cfd = 'data/parsed/cfd'
-    checkpoint_path = 'categorization/model_saves/mouth.ckpt'
+    checkpoint_path = 'categorization/model_saves/'
     image_size = 217
-    key = "mouth"
+    face_features = ["mouth", "face", "skin", "eyes"]
+    models = []
 
-    test_images_mouth, test_labels_mouth = load_data(image_folder_sick, image_folder_healthy, image_size, key)
-    train_images_mouth, train_labels_mouth = load_data(image_folder_altered, image_folder_cfd, image_size, key)
+    for feature in face_features:
+        
+        if feature == "eyes":
+            test_images, test_labels = load_data_eyes(image_folder_sick, image_folder_healthy, image_size)
+            train_images, train_labels = load_data_eyes(image_folder_altered, image_folder_cfd, image_size)
 
-    model = make_model(image_size)
-    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-              loss="binary_crossentropy",
-              metrics=['accuracy'])
+        else:
+            test_images, test_labels = load_data(image_folder_sick, image_folder_healthy, image_size, feature)
+            train_images, train_labels = load_data(image_folder_altered, image_folder_cfd, image_size, feature)
 
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path,
+        model = make_model(image_size)
+        model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+                loss="binary_crossentropy",
+                metrics=['accuracy'])
+
+        cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path + str(feature + "/"),
                                                  save_weights_only=True,
                                                  verbose=1)
 
-    history = model.fit(train_images_mouth, train_labels_mouth, epochs=100, 
-                    validation_data=(test_images_mouth, test_labels_mouth), callbacks=[cp_callback])
+        history = model.fit(train_images, train_labels, epochs=10, 
+                        validation_data=(test_images, test_labels), callbacks=[cp_callback])
 
-    plt.plot(history.history['accuracy'], label='accuracy')
-    plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy')
-    plt.ylim([0.5, 1])
-    plt.legend(loc='lower right')
-    plt.savefig('data/plots/accuracy_mouth.png')
+        models.apend(history)
 
-    plt.title('Learning Curves')
-    plt.xlabel('Epoch')
-    plt.ylabel('Cross Entropy')
-    plt.plot(history.history['loss'], label='train')
-    plt.plot(history.history['val_loss'], label='val')
-    plt.legend()
-    plt.savefig('data/plots/learning_curve_mouth.png')
+        plt.plot(history.history['accuracy'], label='accuracy')
+        plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
+        plt.xlabel('Epoch')
+        plt.ylabel('Accuracy')
+        plt.ylim([0.5, 1])
+        plt.legend(loc='lower right')
+        fig_path = "data/plots/accuracy_" + str(feature) + ".png"
+        plt.savefig(fig_path)
+
+        plt.title('Learning Curves')
+        plt.xlabel('Epoch')
+        plt.ylabel('Cross Entropy')
+        plt.plot(history.history['loss'], label='train')
+        plt.plot(history.history['val_loss'], label='val')
+        plt.legend()
+        fig_path = "data/plots/learning_curve_" + str(feature) + ".png"
+        plt.savefig(fig_path)
 
 
 
