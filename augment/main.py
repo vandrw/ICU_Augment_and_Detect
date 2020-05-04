@@ -62,9 +62,9 @@ class CycleGAN():
         '''
 
         filenames_n = tf.train.match_filenames_once("./data/parsed/healthy/*.png")    
-        self.queue_length_n = tf.size(filenames_n)
+        self.queue_length_A = tf.size(filenames_n)
         filenames_y = tf.train.match_filenames_once("./data/parsed/sick/*.png")    
-        self.queue_length_y = tf.size(filenames_y)
+        self.queue_length_B = tf.size(filenames_y)
         
         filename_queue_n = tf.train.string_input_producer(filenames_n)
         filename_queue_y = tf.train.string_input_producer(filenames_y)
@@ -73,8 +73,8 @@ class CycleGAN():
         _, image_file_n = image_reader.read(filename_queue_n)
         _, image_file_y = image_reader.read(filename_queue_y)
 
-        self.image_n = tf.subtract(tf.div(tf.image.resize_images(tf.image.decode_jpeg(image_file_n),[512,512]),127.5),1)
-        self.image_y = tf.subtract(tf.div(tf.image.resize_images(tf.image.decode_jpeg(image_file_y),[512,512]),127.5),1)
+        self.image_A = tf.subtract(tf.div(tf.image.resize_images(tf.image.decode_jpeg(image_file_n),[512,512]),127.5),1)
+        self.image_B = tf.subtract(tf.div(tf.image.resize_images(tf.image.decode_jpeg(image_file_y),[512,512]),127.5),1)
 
     
 
@@ -258,7 +258,7 @@ class CycleGAN():
         self.loss_calc()
       
         # Initializing the global variables
-        init = tf.global_variables_initializer()
+        init = ([tf.global_variables_initializer(), tf.local_variables_initializer()]) 
         saver = tf.train.Saver()     
 
         with tf.Session() as sess:
