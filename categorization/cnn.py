@@ -16,7 +16,7 @@ import os
 import sys
 import numpy as np
 import pickle
-# from keras.layers.normalization import BatchNormalization
+
 import random
 
 sys.path.append(os.getcwd())
