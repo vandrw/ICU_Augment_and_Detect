@@ -1,3 +1,13 @@
+'''
+Plots:
+- accuracy
+- precision
+- recall
+- ROC
+- binary classification
+- explanation part
+'''
+
 import tensorflow as tf
 from tensorflow.keras import datasets, layers, models
 import matplotlib.pyplot as plt
@@ -104,7 +114,7 @@ def load_data_eyes(image_folder_sick, image_folder_healthy, image_size):
     return images[permutation], labels[permutation]
 
 
-def make_plots(history):
+def make_plots(history, feature):
     plt.plot(history.history['accuracy'], label='accuracy')
     plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
     plt.xlabel('Epoch')
@@ -156,7 +166,7 @@ if __name__ == "__main__":
         model.save(save_path + str(feature) + "/save.h5")
 
         neural_nets.append(history)
-        make_plots(history)
+        make_plots(history, feature)
 
 
 
