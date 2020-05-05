@@ -31,7 +31,7 @@ def define_stacked_model(neural_nets, features):
 	model = tf.keras.Model(inputs=ensemble_visible, outputs=output)
 
 	plot_model(model, show_shapes=True, to_file='data/plots/model_graph.png')
-	model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy', tf.keras.metrics.AUC(), 'precision', 'recall'])
+	model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy', tf.keras.metrics.AUC()])
 	return model
 
 def make_training_sets(face_features, image_folder_sick, image_folder_healthy, image_size):
@@ -51,18 +51,17 @@ def make_training_sets(face_features, image_folder_sick, image_folder_healthy, i
     return train_sets_images, train_sets_labels
 
 if __name__ == "__main__":
+	save_path = 'categorization/model_saves/'
+	image_folder_sick = 'data/parsed/sick'
+	image_folder_healthy = 'data/parsed/healthy'
+	face_features = ["mouth", "face", "skin", "eyes"]
+	image_size = 217
 
-    save_path = 'categorization/model_saves/'
-    image_folder_sick = 'data/parsed/sick'
-    image_folder_healthy = 'data/parsed/healthy'
-    face_features = ["mouth", "face", "skin", "eyes"]
-    image_size = 217
+	all_models = load_all_models(save_path, face_features)
 
-    all_models = load_all_models(save_path, face_features)
+	train_sets_images, train_sets_labels = make_training_sets(face_features, image_folder_sick, image_folder_healthy, image_size)
 
-    train_sets_images, train_sets_labels = make_training_sets(face_features, image_folder_sick, image_folder_healthy, image_size)
-
-    stacked = define_stacked_model(all_models, face_features)
-    history = stacked.fit(train_sets_images, train_sets_labels, epochs=100, verbose=0)
+	stacked = define_stacked_model(all_models, face_features)
+	history = stacked.fit(train_sets_images, train_sets_labels, epochs=100, verbose=0)
 	save_history(save_path, history, "stacked")
-	model.save(save_path  + "stacked/save.h5")
+	stacked.save(save_path  + "stacked/save.h5")
