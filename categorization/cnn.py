@@ -135,6 +135,8 @@ if __name__ == "__main__":
 
     for feature in face_features:
         
+        print("[INFO] Training %s" %(feature))
+        
         if feature == "eyes":
             test_images, test_labels = load_data_eyes(image_folder_sick, image_folder_healthy, image_size)
             train_images, train_labels = load_data_eyes(image_folder_altered, image_folder_cfd, image_size)

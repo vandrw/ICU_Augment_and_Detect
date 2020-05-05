@@ -23,6 +23,8 @@ data/plots/*
 !data/delete.py
 !data/extract.py
 
+*.zip
+
 augment/output/checkpoints/*
 
 .vscode
