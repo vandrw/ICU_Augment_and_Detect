@@ -28,6 +28,8 @@ data/plots/*
 augment/output/checkpoints/*
 
 categorization/model_saves/*
+categorization/__pycache__/*
+augment/__pycache__/*
 
 .vscode
 
