@@ -15,6 +15,7 @@ import cv2
 import os
 import sys
 import numpy as np
+import pickle
 # from keras.layers.normalization import BatchNormalization
 import random
 
@@ -30,7 +31,7 @@ def load_data(folder_sick, folder_healthy, image_size, type):
     for filename in files_healthy:
         sick = 0
         full_path = folder_healthy + "/" + str(filename)
-        if type in filename and "n2-" not in filename and os.path.isfile(full_path):
+        if type in filename and os.path.isfile(full_path):
             image =  cv2.imread(full_path)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             image = cv2.resize(image, dsize=(image_size, image_size), interpolation=cv2.INTER_CUBIC)
@@ -95,7 +96,7 @@ def make_model(image_size, feature):
 
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0008),
                 loss="binary_crossentropy",
-                metrics=['accuracy'])
+                metrics=['accuracy', tf.keras.metrics.AUC(), 'precision', 'recall'])
 
     return model
 
@@ -114,25 +115,9 @@ def load_data_eyes(image_folder_sick, image_folder_healthy, image_size):
     return images[permutation], labels[permutation]
 
 
-def make_plots(history, feature):
-    plt.plot(history.history['accuracy'], label='accuracy')
-    plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy')
-    plt.ylim([0.5, 1])
-    plt.legend(loc='lower right')
-    fig_path = "data/plots/accuracy_" + str(feature) + ".png"
-    plt.savefig(fig_path)
-
-    plt.title('Learning Curves')
-    plt.xlabel('Epoch')
-    plt.ylabel('Cross Entropy')
-    plt.plot(history.history['loss'], label='train')
-    plt.plot(history.history['val_loss'], label='val')
-    plt.legend()
-    fig_path = "data/plots/learning_curve_" + str(feature) + ".png"
-    plt.savefig(fig_path)
-
+def save_history(save_path, history, feature):
+    with open(save_path + str(feature) + "history.pickle" , 'wb') as file_pi:
+        pickle.dump(history.history, file_pi)
 
 
 if __name__ == "__main__":
@@ -144,7 +129,6 @@ if __name__ == "__main__":
     save_path = 'categorization/model_saves/'
     image_size = 217
     face_features = ["mouth", "face", "skin", "eyes"]
-    neural_nets = []
 
     for feature in face_features:
         
@@ -164,9 +148,7 @@ if __name__ == "__main__":
                         validation_data=(test_images, test_labels))
         
         model.save(save_path + str(feature) + "/save.h5")
-
-        neural_nets.append(history)
-        make_plots(history, feature)
+        save_history(save_path, history, feature)
 
 
 
