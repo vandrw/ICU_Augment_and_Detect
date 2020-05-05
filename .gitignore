@@ -25,6 +25,8 @@ data/plots/*
 
 augment/output/checkpoints/*
 
+categorization/model_saves/*
+
 .vscode
 
 *.jpg
