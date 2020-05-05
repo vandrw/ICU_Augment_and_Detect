@@ -148,7 +148,7 @@ if __name__ == "__main__":
             test_images, test_labels = load_data(image_folder_sick, image_folder_healthy, image_size, feature)
             train_images, train_labels = load_data(image_folder_altered, image_folder_cfd, image_size, feature)
 
-        model = make_model(image_size)
+        model = make_model(image_size, feature)
 
         history = model.fit(train_images, train_labels, epochs=2, 
                         validation_data=(test_images, test_labels))
