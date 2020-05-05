@@ -42,10 +42,10 @@ def load_data(folder_sick, folder_healthy, image_size, type):
     # print(data)
     return np.asarray(data, dtype=np.int32), np.asarray(labels, dtype=np.int32)
 
-def make_model(image_size):
+def make_model(image_size, feature):
     model = models.Sequential()
 
-    model.add(layers.Conv2D(image_size, (3, 3), activation='relu', input_shape=(image_size, image_size, 3)))
+    model.add(layers.Conv2D(image_size, (3, 3), activation='relu', input_shape=(image_size, image_size, 3), name = "input_" + str(feature)))
     model.add(layers.BatchNormalization())
     model.add(layers.Conv2D(image_size, (3, 3), activation='relu'))
     model.add(layers.BatchNormalization())
@@ -98,7 +98,7 @@ def load_data_eyes(image_folder_sick, image_folder_healthy, image_size):
 
     permutation = np.random.permutation(len(images))
 
-    return images(permutation), labels(permutation)
+    return images[permutation], labels[permutation]
 
 
 def make_plots(history):
