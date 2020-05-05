@@ -45,40 +45,43 @@ def load_data(folder_sick, folder_healthy, image_size, type):
 def make_model(image_size, feature):
     model = models.Sequential()
 
-    model.add(layers.Conv2D(image_size, (3, 3), activation='relu', input_shape=(image_size, image_size, 3), name = "input_" + str(feature)))
-    model.add(layers.BatchNormalization())
-    model.add(layers.Conv2D(image_size, (3, 3), activation='relu'))
-    model.add(layers.BatchNormalization())
-    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.Conv2D(image_size, (3, 3), activation='relu', 
+                            input_shape=(image_size, image_size, 3), 
+                            name = "input_" + str(feature)))
 
-    model.add(layers.Conv2D(int(image_size/2), (3, 3), activation='relu'))
-    model.add(layers.BatchNormalization())
-    model.add(layers.Conv2D(int(image_size/2), (3, 3), activation='relu'))
-    model.add(layers.BatchNormalization())
-    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.BatchNormalization(), name = "batch1_" + str(feature))
+    model.add(layers.Conv2D(image_size, (3, 3), activation='relu', name = "conv1_" + str(feature)))
+    model.add(layers.BatchNormalization(name = "batch2_" + str(feature)))
+    model.add(layers.MaxPooling2D((2, 2), name = "max1_" + str(feature)))
 
-    model.add(layers.Conv2D(int(image_size/4), (3, 3), activation='relu'))
-    model.add(layers.BatchNormalization())
-    model.add(layers.Conv2D(int(image_size/4), (3, 3), activation='relu'))
-    model.add(layers.BatchNormalization())
-    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.Conv2D(int(image_size/2), (3, 3), activation='relu', name = "conv2_" + str(feature)))
+    model.add(layers.BatchNormalization(name = "batch3_" + str(feature)))
+    model.add(layers.Conv2D(int(image_size/2), (3, 3), activation='relu', name = "conv3_" + str(feature)))
+    model.add(layers.BatchNormalization(name = "batch4_" + str(feature)))
+    model.add(layers.MaxPooling2D((2, 2), name = "max2_" + str(feature)))
 
-    model.add(layers.Conv2D(int(image_size/8), (3, 3), activation='relu'))
-    model.add(layers.BatchNormalization())
-    model.add(layers.Conv2D(int(image_size/8), (3, 3), activation='relu'))
-    model.add(layers.BatchNormalization())
-    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.Conv2D(int(image_size/4), (3, 3), activation='relu', name = "conv4_" + str(feature)))
+    model.add(layers.BatchNormalization(name = "batch5_" + str(feature)))
+    model.add(layers.Conv2D(int(image_size/4), (3, 3), activation='relu', name = "conv5_" + str(feature)))
+    model.add(layers.BatchNormalization(name = "batch6_" + str(feature)))
+    model.add(layers.MaxPooling2D((2, 2), name = "max3_" + str(feature)))
 
-    model.add(layers.Conv2D(int(image_size/16), (3, 3), activation='relu'))
-    model.add(layers.BatchNormalization())
-    model.add(layers.Conv2D(int(image_size/16), (3, 3), activation='relu'))
-    model.add(layers.BatchNormalization())
-    model.add(layers.AveragePooling2D((2, 2)))
+    model.add(layers.Conv2D(int(image_size/8), (3, 3), activation='relu', name = "conv6_" + str(feature)))
+    model.add(layers.BatchNormalization(name = "batch7_" + str(feature)))
+    model.add(layers.Conv2D(int(image_size/8), (3, 3), activation='relu', name = "conv7_" + str(feature)))
+    model.add(layers.BatchNormalization(name = "batch8_" + str(feature)))
+    model.add(layers.MaxPooling2D((2, 2), name = "max4_" + str(feature)))
 
-    model.add(layers.Flatten())
-    model.add(layers.Dense(52, activation='relu'))
-    model.add(layers.Dropout(0.5))
-    model.add(layers.Dense(1, activation='sigmoid'))
+    model.add(layers.Conv2D(int(image_size/16), (3, 3), activation='relu', name = "conv8_" + str(feature)))
+    model.add(layers.BatchNormalization(name = "batch9_" + str(feature)))
+    model.add(layers.Conv2D(int(image_size/16), (3, 3), activation='relu', name = "conv9_" + str(feature)))
+    model.add(layers.BatchNormalization(name = "batch10_" + str(feature)))
+    model.add(layers.AveragePooling2D((2, 2), name = "avg1_" + str(feature)))
+
+    model.add(layers.Flatten(name = "flatten_" + str(feature)))
+    model.add(layers.Dense(52, activation='relu', name = "dense1_" + str(feature)))
+    model.add(layers.Dropout(0.5, name = "dropout_" + str(feature)))
+    model.add(layers.Dense(1, activation='sigmoid', name = "dense2_" + str(feature)))
 
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0008),
                 loss="binary_crossentropy",
@@ -94,7 +97,7 @@ def load_data_eyes(image_folder_sick, image_folder_healthy, image_size):
     images_right, labels_right = load_data(image_folder_sick, image_folder_healthy, image_size, "right")
 
     images = np.concatenate((images_left, images_right), axis = 0)
-    labels = np.concatenate((labels_left, labels_right), axis =0)
+    labels = np.concatenate((labels_left, labels_right), axis = 0)
 
     permutation = np.random.permutation(len(images))
 
