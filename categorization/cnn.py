@@ -93,9 +93,13 @@ def make_model(image_size, feature):
     model.add(layers.AveragePooling2D((2, 2), name = "avg1_" + str(feature)))
 
     model.add(layers.Flatten(name = "flatten_" + str(feature)))
-    model.add(layers.Dense(52, activation='relu', name = "dense1_" + str(feature)))
-    model.add(layers.Dropout(0.5, name = "dropout_" + str(feature)))
-    model.add(layers.Dense(1, activation='sigmoid', name = "dense2_" + str(feature)))
+    model.add(layers.Dense(48, activation='relu', name = "dense1_" + str(feature)))
+    model.add(layers.Dropout(0.3, name = "dropout1_" + str(feature)))
+    
+    model.add(layers.Dense(16, activation='relu', name = "dense2_" + str(feature)))
+    model.add(layers.Dropout(0.5, name = "dropout2_" + str(feature)))
+
+    model.add(layers.Dense(1, activation='sigmoid', name = "dense3_" + str(feature)))
 
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0008),
                 loss="binary_crossentropy",
