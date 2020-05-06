@@ -100,7 +100,7 @@ def make_model(image_size, feature):
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0008),
                 loss="binary_crossentropy",
                 metrics=['accuracy', tf.keras.metrics.AUC(), tf.keras.metrics.FalsePositives(), 
-                    tf.keras.metrics.TruePositives(), tf.keras.metrics.FalsePositives(), tf.keras.metrics.FalseNegatives()])
+                    tf.keras.metrics.TruePositives(), tf.keras.metrics.TrueNegatives(), tf.keras.metrics.FalseNegatives()])
 
     return model
 
