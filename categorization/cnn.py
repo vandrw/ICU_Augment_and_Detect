@@ -27,7 +27,6 @@ def load_data(folder_sick, folder_healthy, image_size, type):
     files_sick = os.listdir(folder_sick)
     data = []
     labels = []
-
     for filename in files_healthy:
         sick = 0
         full_path = folder_healthy + "/" + str(filename)
@@ -40,7 +39,7 @@ def load_data(folder_sick, folder_healthy, image_size, type):
     for filename in files_sick:
         sick = 1
         full_path = folder_sick + "/" + str(filename)
-        if type in filename and os.path.isfile(full_path) and "":
+        if type in filename and os.path.isfile(full_path):
             image =  cv2.imread(full_path)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             image = cv2.resize(image, dsize=(image_size, image_size), interpolation=cv2.INTER_CUBIC)
@@ -97,7 +96,8 @@ def make_model(image_size, feature):
 
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0008),
                 loss="binary_crossentropy",
-                metrics=['accuracy', tf.keras.metrics.AUC(), tf.keras.metrics.FalsePositives(), tf.keras.metrics.TruePositives()])
+                metrics=['accuracy', tf.keras.metrics.AUC(), tf.keras.metrics.FalsePositives(), 
+                    tf.keras.metrics.TruePositives(), tf.keras.metrics.FalsePositives(), tf.keras.metrics.FalseNegatives()])
 
     return model
 

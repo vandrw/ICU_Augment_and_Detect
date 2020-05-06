@@ -41,7 +41,8 @@ def define_stacked_model(neural_nets, features):
 
     plot_model(model, show_shapes=True, to_file='data/plots/model_graph.png')
     model.compile(loss='binary_crossentropy', optimizer=tf.keras.optimizers.Adam(learning_rate=0.0008),
-                  metrics=['accuracy', tf.keras.metrics.AUC(), tf.keras.metrics.FalsePositives(), tf.keras.metrics.TruePositives()])
+                  metrics=['accuracy', tf.keras.metrics.AUC(), tf.keras.metrics.FalsePositives(), tf.keras.metrics.TruePositives(), 
+                  tf.keras.metrics.FalsePositives(), tf.keras.metrics.FalseNegatives()])
     return model
 
 
@@ -80,23 +81,29 @@ def make_training_sets(face_features, image_folder_sick, image_folder_healthy, i
     train_images_right_eye, train_labels = load_data(
         image_folder_sick, image_folder_healthy, image_size, "right")
 
-    permutation = np.random.permutation(len(train_labels))
-    train_images_mouth = train_images_mouth[permutation]
-    train_images_face = train_images_face[permutation]
-    train_images_skin = train_images_skin[permutation]
-    train_images_right_eye = train_images_right_eye[permutation]
-    train_labels = train_labels[permutation]
+    test_images_mouth = np.concatenate([train_images_mouth[:3], train_images_mouth[len(train_images_mouth)-3:]])
+    test_images_face = np.concatenate([train_images_face[:3], train_images_face[len(train_images_face)-3:]])
+    test_images_skin = np.concatenate([train_images_skin[:3], train_images_skin[len(train_images_skin)-3:]])
+    test_images_eyes = np.concatenate([train_images_right_eye[:3], train_images_right_eye[len(train_images_right_eye)-3:]])
+    test_labels = np.concatenate([train_labels[:3], train_labels[len(train_labels)-3:]])
 
-    size = len(train_labels)-15
+    perm1 = np.random.permutation(6)
+    test_images = [test_images_mouth[perm1], test_images_face[perm1], test_images_skin[perm1], test_images_eyes[perm1]]
+    test_labels = test_labels[perm1]
 
-    train_images = [train_images_mouth[:size], train_images_face[:size],
-                    train_images_skin[:size], train_images_right_eye[:size]]
+    perm2 = np.random.permutation(len(train_labels)-6)
 
-    test_images = [train_images_mouth[size:], train_images_face[size:],
-                   train_images_skin[size:], train_images_right_eye[size:]]
+    train_images_mouth = train_images_mouth[3:len(train_images_mouth)-3]
+    train_images_face = train_images_face[3:len(train_images_face)-3]
+    train_images_skin = train_images_skin[3:len(train_images_skin)-3]
+    train_images_eyes = train_images_right_eye[3:len(train_images_right_eye)-3]
 
-    return train_images, train_labels[:size], test_images, train_labels[size:]
+    train_images = [train_images_mouth[perm2], train_images_face[perm2],
+                    train_images_skin[perm2], train_images_eyes[perm2]]
 
+    train_labels = train_labels[perm2]
+
+    return train_images, train_labels, test_images, test_labels
 
 #%%
 if __name__ == "__main__":
