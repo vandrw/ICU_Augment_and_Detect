@@ -70,24 +70,24 @@ def make_model(image_size, feature):
 
     model.add(layers.Conv2D(int(image_size/2), (3, 3), activation='relu', name = "conv2_" + str(feature)))
     model.add(layers.BatchNormalization(name = "batch3_" + str(feature)))
-    model.add(layers.Conv2D(int(image_size/2), (3, 3), activation='relu', name = "conv3_" + str(feature)))
-    model.add(layers.BatchNormalization(name = "batch4_" + str(feature)))
-    model.add(layers.MaxPooling2D((2, 2), name = "max2_" + str(feature)))
+    # model.add(layers.Conv2D(int(image_size/2), (3, 3), activation='relu', name = "conv3_" + str(feature)))
+    # model.add(layers.BatchNormalization(name = "batch4_" + str(feature)))
+    # model.add(layers.MaxPooling2D((2, 2), name = "max2_" + str(feature)))
 
-    model.add(layers.Conv2D(int(image_size/4), (3, 3), activation='relu', name = "conv4_" + str(feature)))
-    model.add(layers.BatchNormalization(name = "batch5_" + str(feature)))
+    # model.add(layers.Conv2D(int(image_size/4), (3, 3), activation='relu', name = "conv4_" + str(feature)))
+    # model.add(layers.BatchNormalization(name = "batch5_" + str(feature)))
     model.add(layers.Conv2D(int(image_size/4), (3, 3), activation='relu', name = "conv5_" + str(feature)))
     model.add(layers.BatchNormalization(name = "batch6_" + str(feature)))
     model.add(layers.MaxPooling2D((2, 2), name = "max3_" + str(feature)))
 
     model.add(layers.Conv2D(int(image_size/8), (3, 3), activation='relu', name = "conv6_" + str(feature)))
     model.add(layers.BatchNormalization(name = "batch7_" + str(feature)))
-    model.add(layers.Conv2D(int(image_size/8), (3, 3), activation='relu', name = "conv7_" + str(feature)))
-    model.add(layers.BatchNormalization(name = "batch8_" + str(feature)))
-    model.add(layers.MaxPooling2D((2, 2), name = "max4_" + str(feature)))
+    # model.add(layers.Conv2D(int(image_size/8), (3, 3), activation='relu', name = "conv7_" + str(feature)))
+    # model.add(layers.BatchNormalization(name = "batch8_" + str(feature)))
+    # model.add(layers.MaxPooling2D((2, 2), name = "max4_" + str(feature)))
 
-    model.add(layers.Conv2D(int(image_size/16), (3, 3), activation='relu', name = "conv8_" + str(feature)))
-    model.add(layers.BatchNormalization(name = "batch9_" + str(feature)))
+    # model.add(layers.Conv2D(int(image_size/16), (3, 3), activation='relu', name = "conv8_" + str(feature)))
+    # model.add(layers.BatchNormalization(name = "batch9_" + str(feature)))
     model.add(layers.Conv2D(int(image_size/16), (3, 3), activation='relu', name = "conv9_" + str(feature)))
     model.add(layers.BatchNormalization(name = "batch10_" + str(feature)))
     model.add(layers.AveragePooling2D((2, 2), name = "avg1_" + str(feature)))
@@ -146,7 +146,7 @@ if __name__ == "__main__":
 
         model = make_model(image_size, feature)
 
-        history = model.fit(train_images, train_labels, epochs=3, 
+        history = model.fit(train_images, train_labels, epochs=3, batch_size = 30
                         validation_data=(test_images, test_labels))
         
         model.save(save_path + str(feature) + "/save.h5")
