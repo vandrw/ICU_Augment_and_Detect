@@ -150,7 +150,7 @@ if __name__ == "__main__":
 
         model = make_model(image_size, feature)
 
-        history = model.fit(train_images, train_labels, epochs=3, batch_size = 30
+        history = model.fit(train_images, train_labels, epochs=3, batch_size = 30,
                         validation_data=(test_images, test_labels))
         
         model.save(save_path + str(feature) + "/save.h5")
