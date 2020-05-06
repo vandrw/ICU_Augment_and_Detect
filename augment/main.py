@@ -211,8 +211,8 @@ class CycleGAN():
 
     def save_training_images(self, sess, epoch):
 
-        if not os.path.exists("./output/imgs"):
-            os.makedirs("./output/imgs")
+        if not os.path.exists(".augment/output/imgs"):
+            os.makedirs(".augment/output/imgs")
 
         for i in range(0,10):
             fake_A_temp, fake_B_temp, cyc_A_temp, cyc_B_temp = sess.run([self.fake_A, self.fake_B, self.cyc_A, self.cyc_B],feed_dict={self.input_A:self.A_input[i], self.input_B:self.B_input[i]})
@@ -272,7 +272,7 @@ class CycleGAN():
                 chkpt_fname = tf.train.latest_checkpoint(check_dir)
                 saver.restore(sess, chkpt_fname)
 
-            writer = tf.summary.FileWriter("./output/2")
+            writer = tf.summary.FileWriter(".augment/output/2")
 
             if not os.path.exists(check_dir):
                 os.makedirs(check_dir)
@@ -295,7 +295,7 @@ class CycleGAN():
 
                 for ptr in range(0,max_images):
                     print("In the iteration ",ptr)
-                    print("Starting",time.time()*1000.0)
+                    print("Starting",time.time())
 
                     # Optimizing the G_A network
 

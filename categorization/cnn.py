@@ -6,6 +6,9 @@ Plots:
 - ROC
 - binary classification
 - explanation part
+
+Other:
+- plot with what we did (extract, neural network, train)
 '''
 
 import tensorflow as tf
