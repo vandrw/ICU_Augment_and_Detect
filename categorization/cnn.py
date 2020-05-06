@@ -115,7 +115,7 @@ def load_data_eyes(image_folder_sick, image_folder_healthy, image_size):
 
 
 def save_history(save_path, history, feature):
-    with open(save_path + str(feature) + "history.pickle" , 'wb') as file_pi:
+    with open(save_path + str(feature) + "/history.pickle" , 'wb') as file_pi:
         pickle.dump(history.history, file_pi)
 
 
@@ -143,7 +143,7 @@ if __name__ == "__main__":
 
         model = make_model(image_size, feature)
 
-        history = model.fit(train_images, train_labels, epochs=2, 
+        history = model.fit(train_images, train_labels, epochs=10, 
                         validation_data=(test_images, test_labels))
         
         model.save(save_path + str(feature) + "/save.h5")
