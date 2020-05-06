@@ -40,7 +40,7 @@ def define_stacked_model(neural_nets, features):
     model = tf.keras.Model(inputs=ensemble_visible, outputs=output)
 
     plot_model(model, show_shapes=True, to_file='data/plots/model_graph.png')
-    model.compile(loss='binary_crossentropy', optimizer='adam',
+    model.compile(loss='binary_crossentropy', optimizer=tf.keras.optimizers.Adam(learning_rate=0.0008),
                   metrics=['accuracy', tf.keras.metrics.AUC()])
     return model
 
