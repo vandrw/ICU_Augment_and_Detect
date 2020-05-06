@@ -33,5 +33,7 @@ augment/__pycache__/*
 
 .vscode
 
+*.pub
+
 *.jpg
 *.png
