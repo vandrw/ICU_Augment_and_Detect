@@ -118,8 +118,13 @@ if __name__ == "__main__":
 
     train_images, train_labels, test_images, test_labels = make_training_sets(
         face_features, image_folder_sick, image_folder_healthy, image_size)
+    
+    print("Finished loading sets...")
 
     stacked = define_stacked_model(all_models, face_features)
+    
+    print("Starting training...")
+
     history = stacked.fit(
         train_images, train_labels, epochs=100, verbose=0,
         validation_data=(test_images, test_labels))
