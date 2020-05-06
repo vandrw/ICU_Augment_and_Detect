@@ -11,8 +11,8 @@ import random
 import pydot
 
 sys.path.append(os.getcwd())
+from categorization.cnn import make_model, load_data, save_history
 
-from categorization.cnn import make_model, load_data, load_data_eyes, save_history
 
 def load_all_models(save_path, features):
     all_models = list()
@@ -69,24 +69,34 @@ def import_data(path):
 
     return img_dict
 
-
 def make_training_sets(face_features, image_folder_sick, image_folder_healthy, image_size):
-    train_sets_images = []
-    train_sets_labels = []
-    for feature in face_features:
-        print("[INFO] loading %s" % (feature))
-        if feature == "eyes":
-            train_images, train_labels = load_data_eyes(
-                image_folder_sick, image_folder_healthy, image_size)
-            size = int(len(train_images)/2)
-            train_images = train_images[:size]
-            train_sets_labels.append(train_labels[:size])
-        else:
-            train_images, train_labels = load_data(
-                image_folder_sick, image_folder_healthy, image_size, feature)
-        train_sets_images.append(train_images)
 
-    return train_sets_images, train_sets_labels
+    train_images_mouth, train_labels = load_data(
+        image_folder_sick, image_folder_healthy, image_size, "mouth")
+    train_images_face, train_labels = load_data(
+        image_folder_sick, image_folder_healthy, image_size, "face")
+    train_images_skin, train_labels = load_data(
+        image_folder_sick, image_folder_healthy, image_size, "skin")
+    train_images_right_eye, train_labels = load_data(
+        image_folder_sick, image_folder_healthy, image_size, "right")
+
+    permutation = np.random.permutation(len(train_labels))
+    train_images_mouth = train_images_mouth[permutation]
+    train_images_face = train_images_face[permutation]
+    train_images_skin = train_images_skin[permutation]
+    train_images_right_eye = train_images_right_eye[permutation]
+    train_labels = train_labels[permutation]
+
+    size = len(train_labels)-15
+
+    train_images = [train_images_mouth[:size], train_images_face[:size],
+                    train_images_skin[:size], train_images_right_eye[:size]]
+
+    test_images = [train_images_mouth[size:], train_images_face[size:],
+                   train_images_skin[size:], train_images_right_eye[size:]]
+
+    return train_images, train_labels[:size], test_images, train_labels[size:]
+
 
 #%%
 if __name__ == "__main__":
@@ -96,24 +106,22 @@ if __name__ == "__main__":
     face_features = ["mouth", "face", "skin", "eyes"]
     image_size = 217
     
-    img_dict = import_data(image_folder_sick)
+        
+    # img_dict = import_data(image_folder_sick)
 
-# %%
-    print(len(img_dict["s1s-m"]))
+    # print(len(img_dict["s1s-m"]))
     
-    for x, y in img_dict.items():
-        img = cv2.cvtColor(y, cv2.COLOR_BGR2RGB)
+    # for x, y in img_dict.items():
+    #     img = cv2.cvtColor(y, cv2.COLOR_BGR2RGB)
 
-    # all_models = load_all_models(save_path, face_features)
+    all_models = load_all_models(save_path, face_features)
 
-    # train_sets_images, train_sets_labels = make_training_sets(face_features, image_folder_sick, image_folder_healthy, image_size)
+    train_images, train_labels, test_images, test_labels = make_training_sets(
+        face_features, image_folder_sick, image_folder_healthy, image_size)
 
-    # test_num = len(train_sets_images[0])
-
-    # stacked = define_stacked_model(all_models, face_features)
-    # history = stacked.fit(train_sets_images, train_sets_labels, epochs=100, verbose=0)
-    # save_history(save_path, history, "stacked")
-    # stacked.save(save_path  + "stacked/save.h5")
-
-
-# %%
+    stacked = define_stacked_model(all_models, face_features)
+    history = stacked.fit(
+        train_images, train_labels, epochs=100, verbose=0,
+        validation_data=(test_images, test_labels))
+    save_history(save_path, history, "stacked")
+    stacked.save(save_path + "stacked/save.h5")

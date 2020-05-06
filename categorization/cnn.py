@@ -46,12 +46,13 @@ def load_data(folder_sick, folder_healthy, image_size, type):
             image = cv2.resize(image, dsize=(image_size, image_size), interpolation=cv2.INTER_CUBIC)
             data.append(np.asarray(image, dtype = np.int32))
             labels.append(np.asarray(sick, dtype = np.int32))
-
-    events = list(zip(data, labels))
-    random.shuffle(events)
-    data, labels = zip(*events)
-    # print(data)
     return np.asarray(data, dtype=np.int32), np.asarray(labels, dtype=np.int32)
+
+def load_shuffled_data(folder_sick, folder_healthy, image_size, type):
+    data, labels = load_data(folder_sick, folder_healthy, image_size, type)
+    permutation = np.random.permutation(len(data))
+    return data[permutation], labels[permutation]
+
 
 def make_model(image_size, feature):
     model = models.Sequential()
@@ -101,11 +102,9 @@ def make_model(image_size, feature):
     return model
 
 
-
-
 def load_data_eyes(image_folder_sick, image_folder_healthy, image_size):
-    images_left, labels_left = load_data(image_folder_sick, image_folder_healthy, image_size, "left")
-    images_right, labels_right = load_data(image_folder_sick, image_folder_healthy, image_size, "right")
+    images_left, labels_left = load_shuffled_data(image_folder_sick, image_folder_healthy, image_size, "left")
+    images_right, labels_right = load_shuffled_data(image_folder_sick, image_folder_healthy, image_size, "right")
 
     images = np.concatenate((images_left, images_right), axis = 0)
     labels = np.concatenate((labels_left, labels_right), axis = 0)
@@ -139,8 +138,8 @@ if __name__ == "__main__":
             train_images, train_labels = load_data_eyes(image_folder_altered, image_folder_cfd, image_size)
 
         else:
-            test_images, test_labels = load_data(image_folder_sick, image_folder_healthy, image_size, feature)
-            train_images, train_labels = load_data(image_folder_altered, image_folder_cfd, image_size, feature)
+            test_images, test_labels = load_shuffled_data(image_folder_sick, image_folder_healthy, image_size, feature)
+            train_images, train_labels = load_shuffled_data(image_folder_altered, image_folder_cfd, image_size, feature)
 
         model = make_model(image_size, feature)
 
