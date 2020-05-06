@@ -126,7 +126,7 @@ if __name__ == "__main__":
     print("Starting training...")
 
     history = stacked.fit(
-        train_images, train_labels, epochs=100, verbose=0,
+        train_images, train_labels, epochs=10,
         validation_data=(test_images, test_labels))
     save_history(save_path, history, "stacked")
     stacked.save(save_path + "stacked/save.h5")
