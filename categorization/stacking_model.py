@@ -72,36 +72,28 @@ def import_data(path):
 
 def make_training_sets(face_features, image_folder_sick, image_folder_healthy, image_size):
 
-    train_images_mouth, train_labels = load_data(
+    images_mouth, labels = load_data(
         image_folder_sick, image_folder_healthy, image_size, "mouth")
-    train_images_face, train_labels = load_data(
+    images_face, labels = load_data(
         image_folder_sick, image_folder_healthy, image_size, "face")
-    train_images_skin, train_labels = load_data(
+    images_skin, labels = load_data(
         image_folder_sick, image_folder_healthy, image_size, "skin")
-    train_images_right_eye, train_labels = load_data(
+    images_right_eye, labels = load_data(
         image_folder_sick, image_folder_healthy, image_size, "right")
 
-    test_images_mouth = np.concatenate([train_images_mouth[:3], train_images_mouth[len(train_images_mouth)-3:]])
-    test_images_face = np.concatenate([train_images_face[:3], train_images_face[len(train_images_face)-3:]])
-    test_images_skin = np.concatenate([train_images_skin[:3], train_images_skin[len(train_images_skin)-3:]])
-    test_images_eyes = np.concatenate([train_images_right_eye[:3], train_images_right_eye[len(train_images_right_eye)-3:]])
-    test_labels = np.concatenate([train_labels[:3], train_labels[len(train_labels)-3:]])
+    train = int(len(labels)*90/100)
 
-    perm1 = np.random.permutation(6)
-    test_images = [test_images_mouth[perm1], test_images_face[perm1], test_images_skin[perm1], test_images_eyes[perm1]]
-    test_labels = test_labels[perm1]
+    perm = np.random.permutation(len(labels))
 
-    perm2 = np.random.permutation(len(train_labels)-6)
+    images_mouth = images_mouth[perm]
+    images_face = images_face[perm]
+    images_skin = images_skin[perm]
+    images_right_eye = images_right_eye[perm]
 
-    train_images_mouth = train_images_mouth[3:len(train_images_mouth)-3]
-    train_images_face = train_images_face[3:len(train_images_face)-3]
-    train_images_skin = train_images_skin[3:len(train_images_skin)-3]
-    train_images_eyes = train_images_right_eye[3:len(train_images_right_eye)-3]
-
-    train_images = [train_images_mouth[perm2], train_images_face[perm2],
-                    train_images_skin[perm2], train_images_eyes[perm2]]
-
-    train_labels = train_labels[perm2]
+    train_images = [images_mouth[:train], images_face[:train], images_skin[:train], images_right_eye[:train]]
+    test_images = [images_mouth[train:], images_face[train:], images_skin[train:], images_right_eye[train:]]
+    train_labels = labels[:train]
+    test_labels = labels[train:]
 
     return train_images, train_labels, test_images, test_labels
 

@@ -8,47 +8,41 @@ from categorization.stacking_model import *
 
 if __name__ == "__main__":
     
-    image_folder_sick = 'data/parsed/sick'
-    image_folder_healthy = 'data/parsed/healthy'
-    image_folder_all_sick = 'data/parsed/all_sick'
-    image_folder_all_healthy = 'data/parsed/all_healthy'
-    image_folder_altered = 'data/parsed/altered'
-    image_folder_altered_1 = 'data/parsed/altered_1'
-    image_folder_cfd = 'data/parsed/cfd'
+    folder_sick_cnn = 'data/parsed/sick_1'
+    folder_healthy_cnn = 'data/parsed/healthy_1'
+    folder_sick_stacked = 'data/parsed/sick_2'
+    folder_healthy_stacked = 'data/parsed/healthy_2'
     save_path = 'categorization/model_saves/'
     image_size = 128
     face_features = ["mouth", "face", "skin", "eyes"]
     
+
     for feature in face_features:
         
         print("[INFO] Training %s" %(feature))
+
         
         if feature == "eyes":
-            test_images, test_labels = load_data_eyes(image_folder_sick, image_folder_healthy, image_size)
-            train_images, train_labels = load_data_eyes(image_folder_altered_1, image_folder_cfd, image_size)
+            all_images, all_labels = load_data_eyes(folder_sick_cnn, folder_healthy_cnn, image_size)
 
         else:
-            test_images, test_labels = load_shuffled_data(image_folder_sick, image_folder_healthy, image_size, feature)
-            train_images, train_labels = load_shuffled_data(image_folder_altered_1, image_folder_cfd, image_size, feature)
+            all_images, all_labels = load_shuffled_data(folder_sick_cnn, folder_healthy_cnn, image_size, feature)
+
+        train = int(len(all_images)*90/100)
 
         model = make_model(image_size, feature)
-        # model.summary()
 
-        history = model.fit(train_images, train_labels, epochs=10, batch_size = 32, validation_data=(test_images, test_labels))
+        history = model.fit(all_images[:train], all_labels[:train], epochs=10, batch_size = 32, validation_data=(all_images[train:], all_labels[train:]))
         
         model.save(save_path + str(feature) + "/save.h5")
         save_history(save_path, history, feature)
         
-    save_path = 'categorization/model_saves/'
-    image_folder_sick = 'data/parsed/sick'
-    image_folder_healthy = 'data/parsed/healthy'
-    face_features = ["mouth", "face", "skin", "eyes"]
-    image_size = 128
+   
         
     all_models = load_all_models(save_path, face_features)
 
     train_images, train_labels, test_images, test_labels = make_training_sets(
-        face_features, image_folder_sick, image_folder_healthy, image_size)
+        face_features, folder_sick_stacked, folder_healthy_stacked, image_size)
     
     print("Finished loading sets...")
 
