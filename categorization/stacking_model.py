@@ -111,7 +111,7 @@ if __name__ == "__main__":
     image_folder_sick = 'data/parsed/sick'
     image_folder_healthy = 'data/parsed/healthy'
     face_features = ["mouth", "face", "skin", "eyes"]
-    image_size = 217
+    image_size = 128
     
         
     # img_dict = import_data(image_folder_sick)

@@ -48,7 +48,7 @@ def load_data(folder_sick, folder_healthy, image_size, type):
             image = cv2.resize(image, dsize=(image_size, image_size), interpolation=cv2.INTER_CUBIC)
             data.append(np.asarray(image, dtype = np.int32))
             labels.append(np.asarray(sick, dtype = np.int32))
-    return np.asarray(data, dtype=np.int32) / 255, np.asarray(labels, dtype=np.int32)
+    return np.asarray(data, dtype=np.float32) / 255, np.asarray(labels, dtype=np.int32)
 
 def load_shuffled_data(folder_sick, folder_healthy, image_size, type):
     data, labels = load_data(folder_sick, folder_healthy, image_size, type)
@@ -155,7 +155,7 @@ if __name__ == "__main__":
             train_images, train_labels = load_shuffled_data(image_folder_altered_1, image_folder_cfd, image_size, feature)
 
         model = make_model(image_size, feature)
-        model.summary()
+        # model.summary()
 
         history = model.fit(train_images, train_labels, epochs=10, batch_size = 32, validation_data=(test_images, test_labels))
         
