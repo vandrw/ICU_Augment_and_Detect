@@ -33,14 +33,14 @@ def define_stacked_model(neural_nets, features):
     ensemble_outputs = [model.layers[19].output for model in neural_nets]
 
     merge = tf.keras.layers.concatenate(ensemble_outputs)
-    hidden = tf.keras.layers.Dense(128, activation='relu')(merge)
-    hidden2 = tf.keras.layers.Dense(32, activation='relu')(hidden)
+    hidden = tf.keras.layers.Dense(32, activation='relu')(merge)
+    hidden2 = tf.keras.layers.Dense(16, activation='relu')(hidden)
     hidden3 = tf.keras.layers.Dense(4, activation='relu')(hidden2)
     output = tf.keras.layers.Dense(1, activation='sigmoid')(hidden3)
     model = tf.keras.Model(inputs=ensemble_visible, outputs=output)
 
     plot_model(model, show_shapes=True, to_file='data/plots/model_graph.png')
-    model.compile(loss='binary_crossentropy', optimizer=tf.keras.optimizers.Adam(learning_rate=0.0008),
+    model.compile(loss='binary_crossentropy', optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
                   metrics=['accuracy', tf.keras.metrics.AUC(), tf.keras.metrics.FalsePositives(), tf.keras.metrics.TruePositives(), 
                   tf.keras.metrics.TrueNegatives(), tf.keras.metrics.FalseNegatives()])
     return model
