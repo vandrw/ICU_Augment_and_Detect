@@ -30,7 +30,7 @@ def define_stacked_model(neural_nets, features):
             layer.trainable = False
 
     ensemble_visible = [model.input for model in neural_nets]
-    ensemble_outputs = [model.layers[19].output for model in neural_nets]
+    ensemble_outputs = [model.layers[18].output for model in neural_nets]
 
     merge = tf.keras.layers.concatenate(ensemble_outputs)
     hidden = tf.keras.layers.Dense(32, activation='relu')(merge)
