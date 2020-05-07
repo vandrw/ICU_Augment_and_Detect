@@ -119,7 +119,7 @@ def load_data_eyes(image_folder_sick, image_folder_healthy, image_size):
     permutation = np.random.permutation(len(images))
 
     return images[permutation], labels[permutation]
-
+    
 
 def save_history(save_path, history, feature):
     with open(save_path + str(feature) + "/history.pickle" , 'wb') as file_pi:
@@ -130,7 +130,10 @@ if __name__ == "__main__":
     
     image_folder_sick = 'data/parsed/sick'
     image_folder_healthy = 'data/parsed/healthy'
+    image_folder_all_sick = 'data/parsed/all_sick'
+    image_folder_all_healthy = 'data/parsed/all_healthy'
     image_folder_altered = 'data/parsed/altered'
+    image_folder_altered_1 = 'data/parsed/altered_1'
     image_folder_cfd = 'data/parsed/cfd'
     save_path = 'categorization/model_saves/'
     image_size = 217
@@ -142,15 +145,15 @@ if __name__ == "__main__":
         
         if feature == "eyes":
             test_images, test_labels = load_data_eyes(image_folder_sick, image_folder_healthy, image_size)
-            train_images, train_labels = load_data_eyes(image_folder_altered, image_folder_cfd, image_size)
+            train_images, train_labels = load_data_eyes(image_folder_altered_1, image_folder_cfd, image_size)
 
         else:
             test_images, test_labels = load_shuffled_data(image_folder_sick, image_folder_healthy, image_size, feature)
-            train_images, train_labels = load_shuffled_data(image_folder_altered, image_folder_cfd, image_size, feature)
+            train_images, train_labels = load_shuffled_data(image_folder_altered_1, image_folder_cfd, image_size, feature)
 
         model = make_model(image_size, feature)
 
-        history = model.fit(train_images, train_labels, epochs=3, batch_size = 30,
+        history = model.fit(train_images, train_labels, epochs=10, batch_size = 32,
                         validation_data=(test_images, test_labels))
         
         model.save(save_path + str(feature) + "/save.h5")
