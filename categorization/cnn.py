@@ -64,11 +64,11 @@ def make_model(image_size, feature):
                             name = "input_" + str(feature)))
 
     model.add(layers.BatchNormalization(name = "batch1_" + str(feature)))
-    model.add(layers.Conv2D(int(image_size / 2), (4, 4), activation='relu', name = "conv1_" + str(feature)))
+    model.add(layers.Conv2D(int(image_size / 2), (3, 3), activation='relu', name = "conv1_" + str(feature)))
     model.add(layers.BatchNormalization(name = "batch2_" + str(feature)))
     model.add(layers.MaxPooling2D((2, 2), name = "max1_" + str(feature)))
 
-    model.add(layers.Conv2D(int(image_size/4), (4, 4), activation='relu', name = "conv2_" + str(feature)))
+    model.add(layers.Conv2D(int(image_size/4), (3, 3), activation='relu', name = "conv2_" + str(feature)))
     model.add(layers.BatchNormalization(name = "batch3_" + str(feature)))
     model.add(layers.MaxPooling2D((2, 2), name = "max2_" + str(feature)))
 
