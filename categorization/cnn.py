@@ -22,6 +22,7 @@ import pickle
 import random
 
 sys.path.append(os.getcwd())
+
 from augment.face_org import *
 
 def load_data(folder_sick, folder_healthy, image_size, type):
@@ -98,10 +99,15 @@ def make_model(image_size, feature):
     model.add(layers.Dense(1, activation='sigmoid',
                            name="dense3_" + str(feature)))
 
+    checkpoint = tf.keras.callbacks.ModelCheckpoint(
+        'categorization/model_saves/' + str(feature) + '/epochs/model-{epoch:03d}-{acc:03f}-{val_acc:03f}.h5',
+        verbose=1, monitor='val_acc', save_best_only=True, mode='auto')
+
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
                   loss="binary_crossentropy",
-                  metrics=['accuracy', tf.keras.metrics.AUC(), tf.keras.metrics.FalsePositives(),
-                           tf.keras.metrics.TruePositives(), tf.keras.metrics.TrueNegatives(), tf.keras.metrics.FalseNegatives()])
+                  metrics=['accuracy', tf.keras.metrics.AUC(), checkpoint,
+                           tf.keras.metrics.FalsePositives(), tf.keras.metrics.TruePositives(), 
+                           tf.keras.metrics.FalseNegatives(), tf.keras.metrics.TrueNegatives()])
 
     return model
 
@@ -166,4 +172,3 @@ if __name__ == "__main__":
 
         model.save(save_path + str(feature) + "/save.h5")
         save_history(save_path, history, feature)
-

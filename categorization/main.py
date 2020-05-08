@@ -3,8 +3,9 @@ import sys
 import random
 
 sys.path.append(os.getcwd())
-from categorization.stacking_model import *
+
 from categorization.cnn import *
+from categorization.stacking_model import *
 
 if __name__ == "__main__":
 
@@ -21,7 +22,6 @@ if __name__ == "__main__":
     folder_healthy_cnn = healthy_1
     folder_sick_stacked = sick_2
     folder_healthy_stacked = healthy_2
-    
 
     for i in range(1, cross_validation):
 
@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
             model = make_model(image_size, feature)
 
-            history = model.fit(all_images[:train], all_labels[:train], epochs=2, batch_size=8, validation_data=(
+            history = model.fit(all_images[:train], all_labels[:train], epochs=10, batch_size=16, validation_data=(
                 all_images[train:], all_labels[train:]))
 
             model.save(save_path + str(feature) + "/save_" + str(i) + ".h5")

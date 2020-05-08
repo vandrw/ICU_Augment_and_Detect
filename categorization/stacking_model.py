@@ -11,6 +11,7 @@ import random
 import pydot
 
 sys.path.append(os.getcwd())
+
 from categorization.cnn import make_model, load_data, save_history
 
 
