@@ -91,7 +91,8 @@ def plot_confusion_matrix(all_histories):
         ax.set_xlabel("Actual Values")
         ax.set_ylabel("Predicted Values")
         plt.savefig("data/plots/confusion_matrix_" + str(model) + ".png")
-        plt.show()
+        plt.figure()
+        # plt.show()
 
 def plot_all_auc_acc(all_histories):
 
@@ -128,7 +129,8 @@ def plot_all_auc_acc(all_histories):
     plt.ylabel('Validation AUC')
 
     plt.savefig("data/plots/models_acc_auc.png")
-    plt.show()
+    plt.figure()
+    # plt.show()
 
 if __name__ == "__main__":
 
