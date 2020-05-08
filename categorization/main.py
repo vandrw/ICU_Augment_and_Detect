@@ -58,7 +58,7 @@ if __name__ == "__main__":
             
             checkpoint = tf.keras.callbacks.ModelCheckpoint(
                 save_path + str(feature) + '/epochs/model-{epoch:03d}-{acc:03f}-{val_acc:03f}.h5',
-                verbose=1, monitor='val_acc', save_best_only=True, mode='auto')
+                verbose=1, monitor="val_acc", save_best_only=True, mode="max")
 
             history = model.fit(all_images[:train], all_labels[:train], epochs=10, batch_size=16, callbacks=[checkpoint], 
                                 validation_data=(all_images[train:], all_labels[train:]))
@@ -77,7 +77,7 @@ if __name__ == "__main__":
         
         checkpoint = tf.keras.callbacks.ModelCheckpoint(
                 save_path + 'stacked/epochs/model-{epoch:03d}-{acc:03f}-{val_acc:03f}.h5',
-                verbose=1, monitor='val_acc', save_best_only=True, mode='auto')
+                verbose=1, monitor="val_acc", save_best_only=True, mode="max")
 
         print("Starting training...")
 
