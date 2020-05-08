@@ -57,7 +57,7 @@ if __name__ == "__main__":
             model = make_model(image_size, feature)
             
             checkpoint = tf.keras.callbacks.ModelCheckpoint(
-                save_path + str(feature) + '/epochs/model-{epoch:03d}-{acc:03f}-{val_acc:03f}.h5',
+                save_path + str(feature) + '/epochs/model-{epoch:03d}-{val_accuracy:03f}.h5',
                 verbose=1, monitor="val_acc", save_best_only=True, mode="max")
 
             history = model.fit(all_images[:train], all_labels[:train], epochs=10, batch_size=16, callbacks=[checkpoint], 
@@ -76,7 +76,7 @@ if __name__ == "__main__":
         stacked = define_stacked_model(all_models, face_features)
         
         checkpoint = tf.keras.callbacks.ModelCheckpoint(
-                save_path + 'stacked/epochs/model-{epoch:03d}-{acc:03f}-{val_acc:03f}.h5',
+                save_path + 'stacked/epochs/model-{epoch:03d}-{val_accuracy:03f}.h5',
                 verbose=1, monitor="val_acc", save_best_only=True, mode="max")
 
         print("Starting training...")
