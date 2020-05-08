@@ -17,6 +17,12 @@ if __name__ == "__main__":
     image_size = 128
     cross_validation = 11
 
+    folder_sick_cnn = sick_1
+    folder_healthy_cnn = healthy_1
+    folder_sick_stacked = sick_2
+    folder_healthy_stacked = healthy_2
+    
+
     for i in range(1, cross_validation):
 
         # if random.uniform(0, 1) < 0.5:
@@ -46,7 +52,7 @@ if __name__ == "__main__":
 
             model = make_model(image_size, feature)
 
-            history = model.fit(all_images[:train], all_labels[:train], epochs=10, batch_size=32, validation_data=(
+            history = model.fit(all_images[:train], all_labels[:train], epochs=2, batch_size=8, validation_data=(
                 all_images[train:], all_labels[train:]))
 
             model.save(save_path + str(feature) + "/save_" + str(i) + ".h5")
