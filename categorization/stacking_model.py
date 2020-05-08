@@ -14,10 +14,13 @@ sys.path.append(os.getcwd())
 from categorization.cnn import make_model, load_data, save_history
 
 
-def load_all_models(save_path, features):
+def load_all_models(save_path, features, i):
     all_models = list()
     for feature in features:
-        filename = save_path + str(feature) + '/save.h5'
+        if i == 0:
+            filename = save_path + str(feature) + '/save.h5'
+        else:
+            filename = save_path + str(feature) + '/save_' + str(i) + '.h5'
         model = tf.keras.models.load_model(filename)
         all_models.append(model)
         print('loaded model of ' + str(feature))
@@ -46,29 +49,29 @@ def define_stacked_model(neural_nets, features):
     return model
 
 
-def import_data(path):
-    img_dict = {}
+# def import_data(path):
+#     img_dict = {}
 
-    for root, dirs, files in os.walk(path):
+#     for root, dirs, files in os.walk(path):
 
-        for file_name in files:
-            if file_name == ".gitkeep":
-                continue
+#         for file_name in files:
+#             if file_name == ".gitkeep":
+#                 continue
 
-            split = file_name.split("_")
-            if split[1].split(".")[0] == "left":
-                continue
+#             split = file_name.split("_")
+#             if split[1].split(".")[0] == "left":
+#                 continue
 
-            name = split[0].lower()
-            full_path = path = root + os.sep + file_name
+#             name = split[0].lower()
+#             full_path = path = root + os.sep + file_name
 
-            img = np.asarray(cv2.imread(full_path))
-            if (name in img_dict):
-                img_dict[name].append(img)
-            else:
-                img_dict[name] = [img]
+#             img = np.asarray(cv2.imread(full_path))
+#             if (name in img_dict):
+#                 img_dict[name].append(img)
+#             else:
+#                 img_dict[name] = [img]
 
-    return img_dict
+#     return img_dict
 
 def make_training_sets(face_features, image_folder_sick, image_folder_healthy, image_size):
 
@@ -99,34 +102,3 @@ def make_training_sets(face_features, image_folder_sick, image_folder_healthy, i
     return train_images, train_labels, test_images, test_labels
 
 #%%
-if __name__ == "__main__":
-    save_path = 'categorization/model_saves/'
-    image_folder_sick = 'data/parsed/sick'
-    image_folder_healthy = 'data/parsed/healthy'
-    face_features = ["mouth", "face", "skin", "eyes"]
-    image_size = 128
-    
-        
-    # img_dict = import_data(image_folder_sick)
-
-    # print(len(img_dict["s1s-m"]))
-    
-    # for x, y in img_dict.items():
-    #     img = cv2.cvtColor(y, cv2.COLOR_BGR2RGB)
-
-    all_models = load_all_models(save_path, face_features)
-
-    train_images, train_labels, test_images, test_labels = make_training_sets(
-        face_features, image_folder_sick, image_folder_healthy, image_size)
-    
-    print("Finished loading sets...")
-
-    stacked = define_stacked_model(all_models, face_features)
-    
-    print("Starting training...")
-
-    history = stacked.fit(
-        train_images, train_labels, epochs=10,
-        validation_data=(test_images, test_labels))
-    save_history(save_path, history, "stacked")
-    stacked.save(save_path + "stacked/save.h5")
