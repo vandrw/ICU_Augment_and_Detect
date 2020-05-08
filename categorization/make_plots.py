@@ -34,9 +34,9 @@ def rename_keys(dictionary):
     for key in dictionary:
         if hasNumbers(key):
             new_key = "_".join(key.split("_")[:-1])
-            new_dictionary[new_key] = dictionary[key]
+            new_dictionary[new_key] = np.asarray(dictionary[key])
         else:
-            new_dictionary[key] = dictionary[key]
+            new_dictionary[key] = np.asarray(dictionary[key])
     return new_dictionary
 
 def load_average(save_path, model):
@@ -59,11 +59,13 @@ def load_average(save_path, model):
                     sum_histories[key] += history[key]
             i += 1
     for key in sum_histories:
-        for entry in sum_histories[key]:
-            entry = entry/i
+        if model == "eyes":
+            print(sum_histories[key])
+        sum_histories[key]= sum_histories[key]/i
+        if model == "eyes":
+            print(sum_histories[key])
 
     return sum_histories
-
 
 # %%
 def print_raw(all_histories):
