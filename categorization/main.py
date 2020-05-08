@@ -37,6 +37,10 @@ if __name__ == "__main__":
         #     folder_healthy_stacked = healthy_1
 
         for feature in face_features:
+            
+            if not os.path.exists(save_path + str(feature) + "/epochs"):
+                print("[INFO] Creating ", save_path + str(feature) + "/epochs")
+                os.makedirs(save_path + str(feature) + "/epochs")
 
             print("[INFO] Training %s" % (feature))
 
