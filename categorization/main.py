@@ -19,16 +19,16 @@ if __name__ == "__main__":
 
     for i in range(1, cross_validation):
 
-        if random.uniform(0, 1) < 0.5:
-            folder_sick_cnn = sick_1
-            folder_healthy_cnn = healthy_1
-            folder_sick_stacked = sick_2
-            folder_healthy_stacked = healthy_2
-        else:
-            folder_sick_cnn = sick_2
-            folder_healthy_cnn = healthy_2
-            folder_sick_stacked = sick_1
-            folder_healthy_stacked = healthy_1
+        # if random.uniform(0, 1) < 0.5:
+        #     folder_sick_cnn = sick_1
+        #     folder_healthy_cnn = healthy_1
+        #     folder_sick_stacked = sick_2
+        #     folder_healthy_stacked = healthy_2
+        # else:
+        #     folder_sick_cnn = sick_2
+        #     folder_healthy_cnn = healthy_2
+        #     folder_sick_stacked = sick_1
+        #     folder_healthy_stacked = healthy_1
 
         for feature in face_features:
 

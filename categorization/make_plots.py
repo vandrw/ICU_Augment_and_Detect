@@ -81,8 +81,8 @@ def print_raw(all_histories):
 def plot_confusion_matrix(all_histories):
     for model in all_histories:
         final = len(all_histories[model]["accuracy"]) - 1
-        matrix = [[all_histories[model]["val_true_positives"][final], all_histories[model]["val_false_positives"][final]],
-                    [all_histories[model]["val_false_negatives"][final], all_histories[model]["val_true_negatives"][final]]]
+        matrix = [[all_histories[model]["val_true_positives"][final]*10, all_histories[model]["val_false_positives"][final]*10],
+                    [all_histories[model]["val_false_negatives"][final]*10, all_histories[model]["val_true_negatives"][final]*10]]
         df_cm = pd.DataFrame(matrix, index = ["Positives", "Negative"],
               columns = ["Positives", "Negative"])
         ax = plt.axes()
@@ -129,7 +129,7 @@ def plot_all_auc_acc(all_histories):
     plt.ylabel('Validation AUC')
 
     plt.savefig("data/plots/models_acc_auc.png")
-    plt.figure()
+    # plt.figure()
     # plt.show()
 
 if __name__ == "__main__":
