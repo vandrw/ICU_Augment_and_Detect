@@ -41,6 +41,10 @@ if __name__ == "__main__":
             if not os.path.exists(save_path + str(feature) + "/epochs"):
                 print("[INFO] Creating ", save_path + str(feature) + "/epochs")
                 os.makedirs(save_path + str(feature) + "/epochs")
+                
+            if not os.path.exists(save_path + str(feature) + "/epochs/" + str(i)):
+                print("[INFO] Creating ", save_path + str(feature) + "/epochs/" + str(i))
+                os.makedirs(save_path + str(feature) + "/epochs/" + str(i))
 
             print("[INFO] Training %s" % (feature))
 
@@ -78,6 +82,9 @@ if __name__ == "__main__":
         if not os.path.exists(save_path + "stacked/epochs"):
             print("[INFO] Creating ", save_path + "stacked/epochs")
             os.makedirs(save_path + "stacked/epochs")
+        if not os.path.exists(save_path + "stacked/epochs/" + str(i)):
+                print("[INFO] Creating ", save_path + "stacked/epochs/" + str(i))
+                os.makedirs(save_path + "stacked/epochs/" + str(i))
         
         checkpoint = tf.keras.callbacks.ModelCheckpoint(
                 save_path + 'stacked/epochs/' + str(i) + '/model-{epoch:03d}-{val_accuracy:03f}.h5',
