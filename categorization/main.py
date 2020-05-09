@@ -97,4 +97,4 @@ if __name__ == "__main__":
             validation_data=(test_images, test_labels))
         
         save_history(save_path, history, "stacked", i)
-        stacked.save(save_path + "/save_" + str(i) + ".h5")
+        stacked.save(save_path + "stacked/save_" + str(i) + ".h5")
