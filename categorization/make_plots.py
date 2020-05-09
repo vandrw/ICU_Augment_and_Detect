@@ -88,10 +88,7 @@ def print_raw(all_histories):
             val_recall =  val_tp / (val_tp+val_fn)
             f1 = 2 * precision * recall / (precision + recall)
             val_f1 = 2 * val_precision * val_recall / (val_precision + val_recall)
-            den = math.sqrt((tp + fp) * (fn + tn) * (fp + tn) * (tp + fn))
-            if den == 0:
-                den = 
-            mcc = (tp * tn - fp * fn)/
+            mcc = (tp * tn - fp * fn)/math.sqrt((tp + fp) * (fn + tn) * (fp + tn) * (tp + fn))
             val_mcc = (val_tp * val_tn - val_fp * val_fn)/math.sqrt((val_tp + val_fp) * (val_fn + val_tn) * (val_fp + val_tn) * (val_tp + val_fn))
             row = [str(model), acc, val_acc, precision, val_precision, recall, val_recall, f1, val_f1, mcc, val_mcc]
             writer.writerow(row)
