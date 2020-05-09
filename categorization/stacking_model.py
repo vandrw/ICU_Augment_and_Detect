@@ -136,7 +136,7 @@ if __name__ == "__main__":
                 os.makedirs(save_path + "stacked/epochs/" + str(i))
         
         checkpoint = tf.keras.callbacks.ModelCheckpoint(
-                save_path + 'stacked/epochs/' + str(i) + '/model-{epoch:03d}-{accuarcy:03f}-{val_accuracy:03f}.h5',
+                save_path + 'stacked/epochs/' + str(i) + '/model-{epoch:03d}-{accuracy:03f}-{val_accuracy:03f}.h5',
                 verbose=1, monitor="val_acc", save_freq="epoch", save_best_only=False, mode="auto")
 
         print("Starting training...")
