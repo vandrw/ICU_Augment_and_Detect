@@ -16,7 +16,7 @@ if __name__ == "__main__":
     save_path = 'categorization/model_saves/'
     face_features = ["mouth", "face", "skin", "eyes"]
     image_size = 128
-    cross_validation = 11
+    cross_validation = 100
 
     folder_sick_cnn = sick_1
     folder_healthy_cnn = healthy_1
