@@ -13,6 +13,7 @@ import csv
 import seaborn as sn
 import pandas as pd
 import re
+import math
 sys.path.append(os.getcwd())
 
 
@@ -59,11 +60,7 @@ def load_average(save_path, model):
                     sum_histories[key] += history[key]
             i += 1
     for key in sum_histories:
-        if model == "eyes":
-            print(sum_histories[key])
         sum_histories[key]= sum_histories[key]/i
-        if model == "eyes":
-            print(sum_histories[key])
 
     return sum_histories
 
@@ -71,11 +68,32 @@ def load_average(save_path, model):
 def print_raw(all_histories):
     with open("data/exact_values.csv", "w") as data_file:
         writer = csv.writer(data_file, delimiter=',')
-        header = ['Model', 'Training Accuracy', 'Training AUC', 'Validation Accuracy', 'Validation AUC']
+        header = ['Model', 'Training Accuracy', 'Validation Accuracy', "Training Precision", "Validation Precision", "Training Recall", "Validation Recall", "Training F1", "Validation F1", "Training MCC", "Validation MCC"]
         writer.writerow(header)
         for model in all_histories:
             final = len(all_histories[model]["accuracy"]) - 1
-            row = [str(model), all_histories[model]["accuracy"][final], all_histories[model]["auc"][final], all_histories[model]["val_accuracy"][final], all_histories[model]["val_auc"][final]]
+            acc = all_histories[model]["accuracy"][final]
+            val_acc = all_histories[model]["val_accuracy"][final]
+            val_tp = all_histories[model]["val_true_positives"][final]
+            val_tn = all_histories[model]["val_true_negatives"][final]
+            val_fp = all_histories[model]["val_false_positives"][final]
+            val_fn = all_histories[model]["val_false_negatives"][final]
+            tp = all_histories[model]["true_positives"][final]
+            tn = all_histories[model]["true_negatives"][final]
+            fp = all_histories[model]["false_positives"][final]
+            fn = all_histories[model]["false_negatives"][final]
+            precision =  tp / (tp+fp)
+            val_precision =  val_tp / (val_tp+val_fp)
+            recall =  tp / (tp+fn)
+            val_recall =  val_tp / (val_tp+val_fn)
+            f1 = 2 * precision * recall / (precision + recall)
+            val_f1 = 2 * val_precision * val_recall / (val_precision + val_recall)
+            den = math.sqrt((tp + fp) * (fn + tn) * (fp + tn) * (tp + fn))
+            if den == 0:
+                den = 
+            mcc = (tp * tn - fp * fn)/
+            val_mcc = (val_tp * val_tn - val_fp * val_fn)/math.sqrt((val_tp + val_fp) * (val_fn + val_tn) * (val_fp + val_tn) * (val_tp + val_fn))
+            row = [str(model), acc, val_acc, precision, val_precision, recall, val_recall, f1, val_f1, mcc, val_mcc]
             writer.writerow(row)
 
 def plot_confusion_matrix(all_histories):
