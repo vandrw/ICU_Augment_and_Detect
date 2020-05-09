@@ -16,7 +16,7 @@ if __name__ == "__main__":
     save_path = 'categorization/model_saves/'
     face_features = ["mouth", "face", "skin", "eyes"]
     image_size = 128
-    cross_validation = 100
+    cross_validation = 10
 
     folder_sick_cnn = sick_1
     folder_healthy_cnn = healthy_1
@@ -38,13 +38,13 @@ if __name__ == "__main__":
 
         for feature in face_features:
             
-            # if not os.path.exists(save_path + str(feature) + "/epochs"):
-            #     print("[INFO] Creating ", save_path + str(feature) + "/epochs")
-            #     os.makedirs(save_path + str(feature) + "/epochs")
+            if not os.path.exists(save_path + str(feature) + "/epochs"):
+                print("[INFO] Creating ", save_path + str(feature) + "/epochs")
+                os.makedirs(save_path + str(feature) + "/epochs")
                 
-            # if not os.path.exists(save_path + str(feature) + "/epochs/" + str(i)):
-            #     print("[INFO] Creating ", save_path + str(feature) + "/epochs/" + str(i))
-            #     os.makedirs(save_path + str(feature) + "/epochs/" + str(i))
+            if not os.path.exists(save_path + str(feature) + "/epochs/" + str(i)):
+                print("[INFO] Creating ", save_path + str(feature) + "/epochs/" + str(i))
+                os.makedirs(save_path + str(feature) + "/epochs/" + str(i))
 
             print("[INFO] Training %s" % (feature))
 
@@ -60,11 +60,11 @@ if __name__ == "__main__":
 
             model = make_model(image_size, feature)
             
-            # checkpoint = tf.keras.callbacks.ModelCheckpoint(
-            #     save_path + str(feature) + '/epochs/' + str(i) +'/model-{epoch:03d}-{val_accuracy:03f}.h5',
-            #     verbose=1, monitor="val_acc", save_freq="epoch", save_best_only=False, mode="auto")
+            checkpoint = tf.keras.callbacks.ModelCheckpoint(
+                save_path + str(feature) + '/epochs/' + str(i) +'/model-{epoch:03d}-{val_accuracy:03f}.h5',
+                verbose=1, monitor="val_acc", save_freq="epoch", save_best_only=False, mode="auto")
 
-            history = model.fit(all_images[:train], all_labels[:train], epochs=10, batch_size=16, 
+            history = model.fit(all_images[:train], all_labels[:train], epochs=10, batch_size=16, callbacks=[checkpoint], 
                                 validation_data=(all_images[train:], all_labels[train:]))
 
             model.save(save_path + str(feature) + "/save_" + str(i) + ".h5")
@@ -86,14 +86,14 @@ if __name__ == "__main__":
                 print("[INFO] Creating ", save_path + "stacked/epochs/" + str(i))
                 os.makedirs(save_path + "stacked/epochs/" + str(i))
         
-        # checkpoint = tf.keras.callbacks.ModelCheckpoint(
-        #         save_path + 'stacked/epochs/' + str(i) + '/model-{epoch:03d}-{val_accuracy:03f}.h5',
-        #         verbose=1, monitor="val_acc", save_freq="epoch", save_best_only=False, mode="auto")
+        checkpoint = tf.keras.callbacks.ModelCheckpoint(
+                save_path + 'stacked/epochs/' + str(i) + '/model-{epoch:03d}-{val_accuracy:03f}.h5',
+                verbose=1, monitor="val_acc", save_freq="epoch", save_best_only=False, mode="auto")
 
         print("Starting training...")
 
         history = stacked.fit(
-            train_images, train_labels, epochs=10,
+            train_images, train_labels, epochs=10, callbacks=[checkpoint],
             validation_data=(test_images, test_labels))
         
         save_history(save_path, history, "stacked", i)
