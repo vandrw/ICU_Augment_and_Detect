@@ -18,15 +18,12 @@ sys.path.append(os.getcwd())
 
 
 def load_histories(save_path):
-    history = '/history.pickle'
     models = ["mouth", "face", "skin", "eyes", "stacked"]
     all_histories = {}
     for model in models:
         all_histories[model] = load_average(save_path, model)
     return all_histories
 
-
-# %%
 def hasNumbers(inputString):
     return bool(re.search(r'\d', inputString))
 
@@ -64,7 +61,6 @@ def load_average(save_path, model):
 
     return sum_histories
 
-# %%
 def print_raw(all_histories):
     with open("data/exact_values.csv", "w") as data_file:
         writer = csv.writer(data_file, delimiter=',')
@@ -101,7 +97,7 @@ def plot_confusion_matrix(all_histories):
         df_cm = pd.DataFrame(matrix, index = ["Positives", "Negative"],
               columns = ["Positives", "Negative"])
         ax = plt.axes()
-        sn.heatmap(df_cm, annot=True, ax=ax)
+        sn.heatmap(df_cm, annot=True, ax=ax, fmt='g')
         ax.set_title('Confusion Matrix ' + str(model))
         ax.set_xlabel("Actual Values")
         ax.set_ylabel("Predicted Values")
@@ -111,9 +107,9 @@ def plot_confusion_matrix(all_histories):
 
 def plot_all_auc_acc(all_histories):
 
-    fig = plt.figure(figsize=(10,10))
+    fig = plt.figure(figsize=(12,6))
 
-    plt.subplot(2,2,1)
+    plt.subplot(1,2,1)
     for key in all_histories:
         plt.plot(all_histories[key]["accuracy"], label = str(key))
     plt.xlim((0,10))
@@ -122,30 +118,42 @@ def plot_all_auc_acc(all_histories):
     plt.legend(bbox_to_anchor=(0.2, 1.02, 1.8, .102), loc='lower left',
             ncol=5, mode="expand", borderaxespad=0., title = "Model")
 
-    plt.subplot(2,2,2)
-    for key in all_histories:
-        plt.plot(all_histories[key]["auc"], label = str(key))
-    plt.xlim((0,10))
-    plt.xlabel('Training Epochs')
-    plt.ylabel('Training AUC')
+    # plt.subplot(2,2,2)
+    # for key in all_histories:
+    #     plt.plot(all_histories[key]["auc"], label = str(key))
+    # plt.xlim((0,10))
+    # plt.xlabel('Training Epochs')
+    # plt.ylabel('Training AUC')
 
-    plt.subplot(2,2,3)
+    plt.subplot(1,2,2)
     for key in all_histories:
         plt.plot(all_histories[key]["val_accuracy"], label = str(key))
     plt.xlim((0,10))
     plt.xlabel('Training Epochs')
     plt.ylabel('Validation Accuracy')
 
-    plt.subplot(2,2,4)
-    for key in all_histories:
-        plt.plot(all_histories[key]["val_auc"], label = str(key))
-    plt.xlim((0,10))
-    plt.xlabel('Training Epochs')
-    plt.ylabel('Validation AUC')
-
-    plt.savefig("data/plots/models_acc_auc.png")
+    # plt.subplot(2,2,4)
+    # for key in all_histories:
+    #     plt.plot(all_histories[key]["val_auc"], label = str(key))
+    # plt.xlim((0,10))
+    # plt.xlabel('Training Epochs')
+    # plt.ylabel('Validation AUC')
+    plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.25, hspace=None)
+    plt.savefig("data/plots/models_acc.png")
     # plt.figure()
     # plt.show()
+
+def plot_best_stacked(all_histories):
+    plt.plot(all_histories["stacked"]["accuracy"], label = "Training accuracy")
+    plt.plot(all_histories["stacked"]["val_accuracy"], label = "Validation accuracy")
+    plt.legend()
+    plt.ylim((0.5,1.05))
+    plt.xlim((0,20))
+    plt.xlabel('Training Epochs')
+    plt.ylabel('Accuracy')
+    plt.title("Accuracy of the Best Stacked Model")
+    plt.savefig("data/plots/best_stacked_accuracy.png")
+
 
 if __name__ == "__main__":
 
@@ -154,6 +162,7 @@ if __name__ == "__main__":
     all_histories = load_histories(save_path)
     plot_all_auc_acc(all_histories)
     plot_confusion_matrix(all_histories)
+    # plot_best_stacked(all_histories)
     print_raw(all_histories)
 
 
