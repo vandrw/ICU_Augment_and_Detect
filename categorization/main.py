@@ -1,3 +1,11 @@
+'''
+- flip original mouth/face/skin
+- use one eye + not flipped images for training/testing stacked model
+- for testing use the individual testing sets for CNNs + stacked testing set
+- early stopping for CNNs
+- keep best model for graphs
+'''
+
 import os
 import sys
 import random
