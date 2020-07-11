@@ -95,6 +95,10 @@ def make_training_sets(face_features, image_folder_sick, image_folder_healthy, i
     images_right_eye = images_right_eye[perm]
     labels = labels[perm]
 
+    print(len(images_face))
+    print(len(images_right_eye))
+
+
     train_images = [images_mouth[:train], images_face[:train], images_skin[:train], images_right_eye[:train]]
     test_images = [images_mouth[train:], images_face[train:], images_skin[train:], images_right_eye[train:]]
     train_labels = labels[:train]

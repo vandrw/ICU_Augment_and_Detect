@@ -73,28 +73,28 @@ def readAndResize(image_path, target_size=512):
         min_dim = img.shape[1]
     else:
         min_dim = img.shape[0]
-    
+
     if (min_dim > target_size):
         scale = target_size / min_dim
-        
+
         new_size = (int(img.shape[1] * scale), int(img.shape[0] * scale))
          
         img = cv2.resize(img, 
                          new_size,
                          interpolation=cv2.INTER_AREA)
-        
+
         centerY = int(img.shape[0] / 2)
         centerX = int(img.shape[1] / 2)
-        
+
         if (centerX > centerY):
             rightX = int(centerX + (target_size / 2))
             leftX =  int(centerX - (target_size / 2))
-            img = img[:, leftX:rightX]
+            img = img[:, leftX:rightX,:]
         else:
-            bottomY = int(centerY + (target_size / 2))
-            topY =    int(centerY - (target_size / 2))
-            img = img[bottomY:topY, :]
-        
+            topY = int(centerY + (target_size / 2))
+            bottomY =    int(centerY - (target_size / 2))
+            img = img[bottomY:topY,:,:]
+
     return img
 
 def exportImage(status, file_name, part_name, img):
@@ -157,7 +157,7 @@ def extractFace(path_to_img, status, file_name, faceCascade, detector, predictor
         if (img.size == 0):
             print("The image could not be loaded!")
             return None
-    
+
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
    
     faces = faceCascade.detectMultiScale(
@@ -229,7 +229,8 @@ def extractFace(path_to_img, status, file_name, faceCascade, detector, predictor
 # %%
 if __name__ == "__main__":
     
-    for s in ["healthy", "sick"]:
+    # for s in ["healthy", "sick", "validation-healthy", "validation-sick"]:
+    for s in ["validation-healthy", "validation-sick"]:
         print("Scanning ", s, " patients...")
         for path in os.listdir("data/unparsed/" + s):
             
