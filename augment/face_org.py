@@ -53,13 +53,14 @@ predictor = dlib.shape_predictor('augment/shape_predictor_68_face_landmarks.dat'
 
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
+# %%
 def getDominantColor(img):
     data = np.reshape(img, (-1,3))
     data = np.float32(data)
 
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
     flags = cv2.KMEANS_RANDOM_CENTERS
-    compactness,labels,centers = cv2.kmeans(data,1,None,criteria,10,flags)
+    _,_,centers = cv2.kmeans(data,1,None,criteria,10,flags)
     
     return tuple([int(x) for x in centers[0].astype(np.int32)])
 
@@ -177,6 +178,8 @@ def extractFace(path_to_img, status, file_name, faceCascade, detector, predictor
     
     face = copy[y:y + h, x:x + w]
     
+    # plt.figure()
+    # plt.imshow(cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
     exportImage(status, file_name, "face", cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
     
     dominant_color = getDominantColor(face)
@@ -185,26 +188,28 @@ def extractFace(path_to_img, status, file_name, faceCascade, detector, predictor
     
     if shapeFeatures is None:
         return None
+    
+    face_copy = face.copy()
 
-    blur = cv2.blur(face,(10,10))
+    thresh = cv2.inRange(face_copy, (160, 160, 160), (170, 170, 170))
+    face_copy[thresh == 255] = dominant_color
+
+    thresh = cv2.inRange(face_copy, (0, 0, 0), (100, 100, 100))
+    face_copy[thresh == 255] = dominant_color
+
+    blur = cv2.blur(face_copy,(10,10))
     
     gray = cv2.cvtColor(blur, cv2.COLOR_BGR2GRAY)
     
-    _, thresh = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY_INV)
-    
-    face_copy = face.copy()
+    _, thresh = cv2.threshold(gray, 90, 150, cv2.THRESH_BINARY)
     
     kernel = np.ones((8,8),np.uint8)
     erosion = cv2.erode(thresh,kernel,iterations = 1)
     dilation = cv2.dilate(erosion,kernel,iterations = 1)
-    
-    face_copy[dilation == 255] = dominant_color
-    
-    _, thresh = cv2.threshold(cv2.cvtColor(face_copy, cv2.COLOR_BGR2GRAY), 230, 255, cv2.THRESH_BINARY_INV)
-    
-    kernel = np.ones((10,10),np.uint8)
-    erosion = cv2.erode(thresh,kernel,iterations = 1)
-    dilation = cv2.dilate(erosion,kernel,iterations = 1)
+
+    # plt.figure()
+    # plt.imshow(dilation)
+    # print(dominant_color)
     
     face_copy[dilation == 0] = dominant_color
     
@@ -227,10 +232,12 @@ def extractFace(path_to_img, status, file_name, faceCascade, detector, predictor
     exportImage(status, file_name, "skin", cv2.cvtColor(face_copy, cv2.COLOR_BGR2RGB))
 
 # %%
+# extractFace("data/unparsed/sick/s23s-m.jpg", "sick", "lol", faceCascade, detector, predictor)
+# %%
 if __name__ == "__main__":
     
-    # for s in ["healthy", "sick", "validation-healthy", "validation-sick"]:
-    for s in ["validation-healthy", "validation-sick"]:
+    for s in ["healthy", "sick", "validation_healthy", "validation_sick"]:
+    # for s in ["healthy", "sick"]:
         print("Scanning ", s, " patients...")
         for path in os.listdir("data/unparsed/" + s):
             
