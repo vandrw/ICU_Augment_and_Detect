@@ -229,8 +229,8 @@ def extractFace(path_to_img, status, file_name, faceCascade, detector, predictor
 # %%
 if __name__ == "__main__":
     
-    # for s in ["healthy", "sick", "validation-healthy", "validation-sick"]:
-    for s in ["validation-healthy", "validation-sick"]:
+    for s in ["healthy", "sick"]:
+    # "validation-healthy", "validation-sick"]:
         print("Scanning ", s, " patients...")
         for path in os.listdir("data/unparsed/" + s):
             
