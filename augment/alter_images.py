@@ -87,23 +87,25 @@ def plot_all(img):
     
 def alter_and_save(img, filename):
     noise_types = ["gaussian", "localvar", "poisson", "speckle"]
-    gamma_vals = [75, 125, 150]
+    # gamma_vals = [75, 100, 150]
     blur = [3, 5]
     filename = filename.split(".")[0]
-    for gamma in gamma_vals:
-        gamma = gamma/100
-        gamma = gamma if gamma > 0 else 0.5
-        adjusted = adjust_gamma(img, gamma=gamma)
-        exportImage("altered", filename, "gamma-"+ str(gamma) + ".png", adjusted)
+    # for gamma in gamma_vals:
+        # gamma = gamma/100
+        # gamma = gamma if gamma > 0 else 0.5
+        # adjusted = adjust_gamma(img, gamma=gamma)
+        # exportImage(target, filename, "gamma-"+ str(gamma) + ".png", adjusted)
+    adjusted = adjust_gamma(img, gamma=1.3)
+    exportImage(target, filename, "gamma-"+ str(1.3) + ".png", adjusted)
     for n in noise_types:
         noisy = noise(img, n)
-        exportImage("altered", filename, "noisy-" + str(n) + ".png", noisy)
+        exportImage(target, filename, "noisy-" + str(n) + ".png", noisy)
     for size in blur:
         blurred = gaussian_blur(img, size)
-        exportImage("altered", filename, "gaussian-"+ str(size) + ".png", blurred)
+        exportImage(target, filename, "gaussian-"+ str(size) + ".png", blurred)
     for size in blur:
         blurred = bilateral_filtering(img, size)
-        exportImage("altered", filename, "bilateral-" + str(size) + ".png", blurred)
+        exportImage(target, filename, "bilateral-" + str(size) + ".png", blurred)
 
 def flip_all(source_path):
     for f in os.listdir(source_path):
@@ -115,14 +117,15 @@ def flip_all(source_path):
             img =  cv2.imread(full_path)
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             flipped = cv2.flip(img, 1)
-            exportImage("altered", f, "flipped" + ".png", flipped)
+            exportImage(target, f, "flipped" + ".png", flipped)
 
 
 # %%
 if __name__ == "__main__":
     
-    source_path = "data/parsed/sick"
-    target_path = "data/parsed/altered"
+    source_path = "data/parsed/validation_healthy"
+    target_path = "data/parsed/altered/validation_healthy"
+    target = "altered/validation_healthy"
     for f in os.listdir(source_path):
         if f.startswith('.'):
             continue
