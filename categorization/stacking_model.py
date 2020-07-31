@@ -2,6 +2,7 @@
 #%%
 import tensorflow as tf
 from tensorflow.keras.utils import plot_model
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import matplotlib.pyplot as plt
 import cv2
 import os
@@ -110,17 +111,21 @@ if __name__ == "__main__":
     train_images, train_labels, test_images, test_labels = make_training_sets(face_features, image_folder_sick, image_folder_healthy, image_folder_val_sick, image_folder_val_healthy, image_size)
 
     stacked = define_stacked_model(all_models, face_features)
-    # checkpoint = tf.keras.callbacks.ModelCheckpoint(save_path + 'stacked/epochs/' + str(i) + '/model-{epoch:03d}-{accuracy:03f}-{val_accuracy:03f}.h5', verbose=1, monitor="val_acc", save_freq="epoch", save_best_only=False, mode="auto")
-
+    
+    monitor = "val_accuracy"
+    early_stopping = tf.keras.callbacks.EarlyStopping(monitor = monitor, mode = 'max', patience=10, verbose = 1)
+    model_check = tf.keras.callbacks.ModelCheckpoint(save_path + 'stacked.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
+    
     print("Starting training...")
 
     history = stacked.fit(
-        train_images, train_labels, epochs=20, callbacks=[checkpoint],
+        train_images, train_labels, epochs=50, callbacks=[model_check, early_stopping],
         validation_data=(test_images, test_labels), verbose = 1)
 
     
-    # save_history(save_path, history, "stacked", i)
-    # stacked.save(save_path + "stacked/save_" + str(i) + ".h5")
+    save_history(save_path, history, "stacked", 0)
+
+    stacked = tf.keras.models.load_model(save_path + 'stacked.h5')
     
     
     #  load best model as stacked to plot AUC
