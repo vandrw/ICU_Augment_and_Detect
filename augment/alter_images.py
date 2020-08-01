@@ -111,28 +111,29 @@ def flip_all(source_path):
     for f in os.listdir(source_path):
         if f.startswith('.'):
             continue
-        full_path = os.path.join(source_path, f)
-        if os.path.isfile(full_path) and "right" not in f and "left" not in f:
-            print(f)
+        if os.path.isfile(os.path.join(source_path, f)) and "_right" not in f and "_left" not in f:
             img =  cv2.imread(full_path)
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             flipped = cv2.flip(img, 1)
-            exportImage(target, f, "flipped" + ".png", flipped)
+            target = '/'.join(source_path.split("/")[2:])
+            exportImage(target, f[:-4], "flipped" + ".png", flipped)
 
 
 # %%
 if __name__ == "__main__":
     
-    source_path = "data/parsed/validation_healthy"
-    target_path = "data/parsed/altered/validation_healthy"
-    target = "altered/validation_healthy"
-    for f in os.listdir(source_path):
-        if f.startswith('.'):
-            continue
-        full_path = os.path.join(source_path, f)
-        if os.path.isfile(full_path):
-            img =  cv2.imread(full_path)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            alter_and_save(img, f)
-    flip_all(target_path)
+    source_path = "data/parsed/"
+    target_path = "data/parsed/brightened/"
+    folders = ["healthy", "sick"]
+    for folder in folders:
+        for f in os.listdir(source_path + folder):
+            if f.startswith('.'):
+                continue
+            full_path = os.path.join(source_path + folder, f)
+            if os.path.isfile(full_path):
+                img =  cv2.imread(full_path)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                brightened = adjust_gamma(img, 1.3)
+                exportImage("brightened/" + folder, f[:-4], "brightened.png", brightened)
+        flip_all(target_path + folder)
     print("Finished!\n")
