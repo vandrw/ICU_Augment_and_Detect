@@ -120,13 +120,9 @@ def load_data_eyes(image_folder_sick, image_folder_healthy, image_size):
     return images[permutation], labels[permutation]
 
 
-def save_history(save_path, history, feature, i):
-    if i != 0:
-        with open(save_path + str(feature) + "/history_" + str(i) + ".pickle", 'wb') as file_pi:
-            pickle.dump(history.history, file_pi)
-    else:
-        with open(save_path + str(feature) + "/history.pickle", 'wb') as file_pi:
-            pickle.dump(history.history, file_pi)
+def save_history(save_path, history, feature):
+    with open(save_path + str(feature) + "/history.pickle", 'wb') as file_pi:
+        pickle.dump(history.history, file_pi)
 
 
 if __name__ == "__main__":
@@ -139,8 +135,6 @@ if __name__ == "__main__":
     image_size = 128
     face_features = ["mouth", "face", "skin", "eyes"]
     
-
-    i = 0
     for feature in face_features:
 
         print("[INFO] Training %s" % (feature))
@@ -158,25 +152,18 @@ if __name__ == "__main__":
                 image_folder_sick, image_folder_healthy, image_size, feature)
 
         model = make_model(image_size, feature)
-        # model.summary()
-
         
-        # monitor = 'val_auc'
-        # if i > 0:
-        #     monitor = 'val_auc_' + str(i)
-        # i += 1
         monitor = "val_accuracy"
 
         early_stopping = tf.keras.callbacks.EarlyStopping(monitor = monitor, mode = 'max', patience=10, verbose = 1)
-        model_check = tf.keras.callbacks.ModelCheckpoint(save_path + str(feature)+ '.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
+        model_check = tf.keras.callbacks.ModelCheckpoint(save_path + str(feature)+ '/model.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
 
         history = model.fit(train_images, train_labels, epochs=50,
                             batch_size=8, callbacks = [early_stopping, model_check], validation_data=(test_images, test_labels))
 
-        # model.save(save_path + str(feature) + "/save.h5"
-        save_history(save_path, history, feature, 0)
+        save_history(save_path, history, feature)
 
-        saved_model = tf.keras.models.load_model(save_path + str(feature)+ '.h5')
+        saved_model = tf.keras.models.load_model(save_path + str(feature)+ '/model.h5')
 
 
 
