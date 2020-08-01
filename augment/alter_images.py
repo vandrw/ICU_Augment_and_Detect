@@ -86,6 +86,7 @@ def plot_all(img):
     plt.show()
     
 def alter_and_save(img, filename):
+    print("Altering ", filename)
     noise_types = ["gaussian", "localvar", "poisson", "speckle"]
     # gamma_vals = [75, 100, 150]
     blur = [3, 5]
@@ -98,13 +99,13 @@ def alter_and_save(img, filename):
     adjusted = adjust_gamma(img, gamma=1.3)
     exportImage(target, filename, "gamma-"+ str(1.3) + ".png", adjusted)
     for n in noise_types:
-        noisy = noise(img, n)
+        noisy = noise(adjusted, n)
         exportImage(target, filename, "noisy-" + str(n) + ".png", noisy)
     for size in blur:
-        blurred = gaussian_blur(img, size)
+        blurred = gaussian_blur(adjusted, size)
         exportImage(target, filename, "gaussian-"+ str(size) + ".png", blurred)
     for size in blur:
-        blurred = bilateral_filtering(img, size)
+        blurred = bilateral_filtering(adjusted, size)
         exportImage(target, filename, "bilateral-" + str(size) + ".png", blurred)
 
 def flip_all(source_path):
@@ -113,7 +114,7 @@ def flip_all(source_path):
             continue
         full_path = os.path.join(source_path, f)
         if os.path.isfile(full_path) and "right" not in f and "left" not in f:
-            print(f)
+            print("Flipping ", f)
             img =  cv2.imread(full_path)
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             flipped = cv2.flip(img, 1)
@@ -123,9 +124,9 @@ def flip_all(source_path):
 # %%
 if __name__ == "__main__":
     
-    source_path = "data/parsed/validation_healthy"
-    target_path = "data/parsed/altered/validation_healthy"
-    target = "altered/validation_healthy"
+    source_path = "data/parsed/sick"
+    target_path = "data/parsed/altered/sick"
+    target = "altered/sick"
     for f in os.listdir(source_path):
         if f.startswith('.'):
             continue

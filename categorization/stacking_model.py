@@ -97,11 +97,10 @@ def make_training_sets(face_features, image_folder_sick, image_folder_healthy, i
 #%%
 if __name__ == "__main__":
 
-    save_path = 'categorization/model_saves/'
-    image_folder_sick = 'data/parsed/sick-brightened'
-    image_folder_healthy = 'data/parsed/healthy-brightened'
-    image_folder_val_sick = 'data/parsed/validation-sick'
-    image_folder_val_healthy = 'data/parsed/validation-healthy'
+    image_folder_sick = 'data/dataset/sick'
+    image_folder_healthy = 'data/dataset/healthy'
+    image_folder_val_sick = 'data/dataset/validation_sick'
+    image_folder_val_healthy = 'data/dataset/validation_healthy'
     save_path = 'categorization/model_saves/'
     face_features = ["mouth", "face", "skin", "eyes"]
     image_size = 128

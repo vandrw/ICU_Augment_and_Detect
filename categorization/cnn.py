@@ -32,7 +32,8 @@ def load_data(folder_sick, folder_healthy, image_size, type):
     data = []
     labels = []
     for filename in files_healthy:
-        sick = np.array([0,1])
+        # sick = np.array([0,1])
+        sick = 0
         full_path = folder_healthy + "/" + str(filename)
         if type in filename and os.path.isfile(full_path) and "n2" not in filename:
             image = cv2.imread(full_path)
@@ -42,7 +43,8 @@ def load_data(folder_sick, folder_healthy, image_size, type):
             data.append(np.asarray(image, dtype=np.int32))
             labels.append(np.asarray(sick, dtype=np.int32))
     for filename in files_sick:
-        sick = np.array([1,0])
+        # sick = np.array([1,0])
+        sick = 1
         full_path = folder_sick + "/" + str(filename)
         if type in filename and os.path.isfile(full_path):
             image = cv2.imread(full_path)
@@ -97,7 +99,7 @@ def make_model(image_size, feature):
                            name="dense2_" + str(feature)))
     model.add(layers.Dropout(0.5, name="dropout2_" + str(feature)))
 
-    model.add(layers.Dense(2, activation='softmax',
+    model.add(layers.Dense(1, activation='sigmoid',
                            name="dense3_" + str(feature)))
 
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
@@ -127,10 +129,10 @@ def save_history(save_path, history, feature):
 
 if __name__ == "__main__":
 
-    image_folder_sick = 'data/parsed/sick-brightened'
-    image_folder_healthy = 'data/parsed/healthy-brightened'
-    image_folder_val_sick = 'data/parsed/validation-sick'
-    image_folder_val_healthy = 'data/parsed/validation-healthy'
+    image_folder_sick = 'data/dataset/sick'
+    image_folder_healthy = 'data/dataset/healthy'
+    image_folder_val_sick = 'data/dataset/validation_sick'
+    image_folder_val_healthy = 'data/dataset/validation_healthy'
     save_path = 'categorization/model_saves/'
     image_size = 128
     face_features = ["mouth", "face", "skin", "eyes"]
@@ -155,10 +157,10 @@ if __name__ == "__main__":
         
         monitor = "val_accuracy"
 
-        early_stopping = tf.keras.callbacks.EarlyStopping(monitor = monitor, mode = 'max', patience=10, verbose = 1)
+        early_stopping = tf.keras.callbacks.EarlyStopping(monitor = monitor, mode = 'max', patience=5, verbose = 1)
         model_check = tf.keras.callbacks.ModelCheckpoint(save_path + str(feature)+ '/model.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
 
-        history = model.fit(train_images, train_labels, epochs=50,
+        history = model.fit(train_images, train_labels, epochs=10,
                             batch_size=8, callbacks = [early_stopping, model_check], validation_data=(test_images, test_labels))
 
         save_history(save_path, history, feature)
