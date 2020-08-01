@@ -111,7 +111,8 @@ def flip_all(source_path):
     for f in os.listdir(source_path):
         if f.startswith('.'):
             continue
-        if os.path.isfile(os.path.join(source_path, f)) and "_right" not in f and "_left" not in f:
+        full_path = os.path.join(source_path, f)
+        if os.path.isfile(full_path) and "_right" not in f and "_left" not in f:
             img =  cv2.imread(full_path)
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             flipped = cv2.flip(img, 1)
