@@ -17,92 +17,80 @@ from categorization.stacking_model import *
 
 if __name__ == "__main__":
 
-    sick_1 = 'data/parsed/sick_1'
-    healthy_1 = 'data/parsed/healthy_1'
-    sick_2 = 'data/parsed/sick_2'
-    healthy_2 = 'data/parsed/healthy_2'
+    image_folder_sick = 'data/parsed/brightened/sick'
+    image_folder_healthy = 'data/parsed/brightened/healthy'
+    image_folder_val_sick = 'data/parsed/validation_sick'
+    image_folder_val_healthy = 'data/parsed/validation_healthy'
     save_path = 'categorization/model_saves/'
-    face_features = ["mouth", "face", "skin", "eyes"]
     image_size = 128
-    cross_validation = 10
+    face_features = ["mouth", "face", "skin", "eyes"]
+    
+    for feature in face_features:
 
-    folder_sick_cnn = sick_1
-    folder_healthy_cnn = healthy_1
-    folder_sick_stacked = sick_2
-    folder_healthy_stacked = healthy_2
+        print("[INFO] Training %s" % (feature))
 
-    for i in range(1, cross_validation):
+        if feature == "eyes":
+            test_images, test_labels = load_data_eyes(
+                image_folder_val_sick, image_folder_val_healthy, image_size)
+            train_images, train_labels = load_data_eyes(
+                image_folder_sick, image_folder_healthy, image_size)
 
-        if random.uniform(0, 1) < 0.5:
-            folder_sick_cnn = sick_1
-            folder_healthy_cnn = healthy_1
-            folder_sick_stacked = sick_2
-            folder_healthy_stacked = healthy_2
         else:
-            folder_sick_cnn = sick_2
-            folder_healthy_cnn = healthy_2
-            folder_sick_stacked = sick_1
-            folder_healthy_stacked = healthy_1
+            test_images, test_labels = load_shuffled_data(
+                image_folder_val_sick, image_folder_val_healthy, image_size, feature)
+            train_images, train_labels = load_shuffled_data(
+                image_folder_sick, image_folder_healthy, image_size, feature)
 
-        for feature in face_features:
-            
-            if not os.path.exists(save_path + str(feature) + "/epochs"):
-                print("[INFO] Creating ", save_path + str(feature) + "/epochs")
-                os.makedirs(save_path + str(feature) + "/epochs")
-                
-            if not os.path.exists(save_path + str(feature) + "/epochs/" + str(i)):
-                print("[INFO] Creating ", save_path + str(feature) + "/epochs/" + str(i))
-                os.makedirs(save_path + str(feature) + "/epochs/" + str(i))
-
-            print("[INFO] Training %s" % (feature))
-
-            if feature == "eyes":
-                all_images, all_labels = load_data_eyes(
-                    folder_sick_cnn, folder_healthy_cnn, image_size)
-
-            else:
-                all_images, all_labels = load_shuffled_data(
-                    folder_sick_cnn, folder_healthy_cnn, image_size, feature)
-
-            train = int(len(all_images)*90/100)
-
-            model = make_model(image_size, feature)
-            
-            checkpoint = tf.keras.callbacks.ModelCheckpoint(
-                save_path + str(feature) + '/epochs/' + str(i) +'/model-{epoch:03d}-{val_accuracy:03f}.h5',
-                verbose=1, monitor="val_acc", save_freq="epoch", save_best_only=False, mode="auto")
-
-            history = model.fit(all_images[:train], all_labels[:train], epochs=10, batch_size=16, callbacks=[checkpoint], 
-                                validation_data=(all_images[train:], all_labels[train:]))
-
-            model.save(save_path + str(feature) + "/save_" + str(i) + ".h5")
-            save_history(save_path, history, feature, i)
-
-        train_images, train_labels, test_images, test_labels = make_training_sets(
-            face_features, folder_sick_stacked, folder_healthy_stacked, image_size)
-
-        print("Finished loading sets...")
-
-        all_models = load_all_models(save_path, face_features, i)
-
-        stacked = define_stacked_model(all_models, face_features)
+        model = make_model(image_size, feature)
         
-        if not os.path.exists(save_path + "stacked/epochs"):
-            print("[INFO] Creating ", save_path + "stacked/epochs")
-            os.makedirs(save_path + "stacked/epochs")
-        if not os.path.exists(save_path + "stacked/epochs/" + str(i)):
-                print("[INFO] Creating ", save_path + "stacked/epochs/" + str(i))
-                os.makedirs(save_path + "stacked/epochs/" + str(i))
-        
-        checkpoint = tf.keras.callbacks.ModelCheckpoint(
-                save_path + 'stacked/epochs/' + str(i) + '/model-{epoch:03d}-{val_accuracy:03f}.h5',
-                verbose=1, monitor="val_acc", save_freq="epoch", save_best_only=False, mode="auto")
+        monitor = "val_accuracy"
 
-        print("Starting training...")
+        early_stopping = tf.keras.callbacks.EarlyStopping(monitor = monitor, mode = 'max', patience=10, verbose = 1)
+        model_check = tf.keras.callbacks.ModelCheckpoint(save_path + str(feature)+ '/model.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
 
-        history = stacked.fit(
-            train_images, train_labels, epochs=10, callbacks=[checkpoint],
-            validation_data=(test_images, test_labels))
-        
-        save_history(save_path, history, "stacked", i)
-        stacked.save(save_path + "stacked/save_" + str(i) + ".h5")
+        history = model.fit(train_images, train_labels, epochs=50,
+                            batch_size=8, callbacks = [early_stopping, model_check], validation_data=(test_images, test_labels))
+
+        save_history(save_path, history, feature)
+
+        saved_model = tf.keras.models.load_model(save_path + str(feature)+ '/model.h5')
+
+    print("Loading the stacked model...")
+
+    all_models = load_all_models(save_path, face_features)
+
+    train_images, train_labels, test_images, test_labels = make_training_sets(face_features, image_folder_sick, image_folder_healthy, image_folder_val_sick, image_folder_val_healthy, image_size)
+
+    stacked = define_stacked_model(all_models, face_features)
+    
+    monitor = "val_accuracy"
+    early_stopping = tf.keras.callbacks.EarlyStopping(monitor = monitor, mode = 'max', patience=10, verbose = 1)
+    model_check = tf.keras.callbacks.ModelCheckpoint(save_path + 'stacked/model.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
+    
+    print("Starting training...")
+
+    history = stacked.fit(
+        train_images, train_labels, epochs=50, callbacks=[model_check, early_stopping],
+        validation_data=(test_images, test_labels), verbose = 1)
+
+    
+    save_history(save_path, history, "stacked")
+
+    stacked = tf.keras.models.load_model(save_path + 'stacked/model.h5')
+    
+    
+    #  load best model as stacked to plot AUC
+
+
+    pred = stacked.predict(test_images)
+    fpr, tpr, threshold = sklearn.metrics.roc_curve(test_labels, pred)
+    roc_auc = sklearn.metrics.auc(fpr, tpr)
+    plt.title('Receiver Operating Characteristic')
+    plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)
+    plt.legend(loc = 'lower right')
+    plt.plot([0, 1], [0, 1],'r--')
+    plt.xlim([0, 1])
+    plt.ylim([0, 1])
+    plt.ylabel('True Positive Rate')
+    plt.xlabel('False Positive Rate')
+    plt.savefig("data/plots/best_stacked_auc.png")

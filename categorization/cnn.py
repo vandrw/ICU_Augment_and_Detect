@@ -129,8 +129,8 @@ if __name__ == "__main__":
 
     image_folder_sick = 'data/parsed/brightened/sick'
     image_folder_healthy = 'data/parsed/brightened/healthy'
-    image_folder_val_sick = 'data/parsed/validation-sick'
-    image_folder_val_healthy = 'data/parsed/validation-healthy'
+    image_folder_val_sick = 'data/parsed/validation_sick'
+    image_folder_val_healthy = 'data/parsed/validation_healthy'
     save_path = 'categorization/model_saves/'
     image_size = 128
     face_features = ["mouth", "face", "skin", "eyes"]
