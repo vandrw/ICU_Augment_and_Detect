@@ -41,4 +41,4 @@ for i in range(25):
     # The CIFAR labels happen to be arrays,
     # which is why you need the extra index
     plt.xlabel(pred[i])
-plt.show()
+plt.imsave("data/plots/predictions.png")
