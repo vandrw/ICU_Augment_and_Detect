@@ -14,7 +14,7 @@ import sklearn.metrics
 
 sys.path.append(os.getcwd())
 
-from categorization.cnn import make_model, load_data, save_history
+from categorization.cnn import make_model, load_data, save_history, plot_roc
 
 
 def load_all_models(save_path, features):
@@ -130,15 +130,4 @@ if __name__ == "__main__":
     #  load best model as stacked to plot AUC
 
 
-    pred = stacked.predict(test_images)
-    fpr, tpr, threshold = sklearn.metrics.roc_curve(test_labels.argmax(axis=1), pred.argmax(axis=1))
-    roc_auc = sklearn.metrics.auc(fpr, tpr)
-    plt.title('Receiver Operating Characteristic')
-    plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)
-    plt.legend(loc = 'lower right')
-    plt.plot([0, 1], [0, 1],'r--')
-    plt.xlim([0, 1])
-    plt.ylim([0, 1])
-    plt.ylabel('True Positive Rate')
-    plt.xlabel('False Positive Rate')
-    plt.savefig("data/plots/best_stacked_auc.png")
+    plot_roc("stacked", stacked, test_images, test_labels)

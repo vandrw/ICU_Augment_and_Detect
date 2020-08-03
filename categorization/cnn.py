@@ -19,7 +19,7 @@ import os
 import sys
 import numpy as np
 import pickle
-from sklearn.metrics import roc_auc_score
+import sklearn.metrics
 import random
 
 sys.path.append(os.getcwd())
@@ -125,6 +125,21 @@ def save_history(save_path, history, feature):
         pickle.dump(history.history, file_pi)
 
 
+def plot_roc(feature, saved_model, test_images, test_labels):
+    pred = saved_model.predict(test_images)
+    fpr, tpr, threshold = sklearn.metrics.roc_curve(test_labels.argmax(axis=1), pred.argmax(axis=1))
+    roc_auc = sklearn.metrics.auc(fpr, tpr)
+    plt.title('Receiver Operating Characteristic')
+    plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)
+    plt.legend(loc = 'lower right')
+    plt.plot([0, 1], [0, 1],'r--')
+    plt.xlim([0, 1])
+    plt.ylim([0, 1])
+    plt.ylabel('True Positive Rate')
+    plt.xlabel('False Positive Rate')
+    plt.savefig("data/plots/" + str(feature) + "_auc.png")
+
+
 if __name__ == "__main__":
 
     image_folder_sick = 'data/parsed/brightened/sick'
@@ -164,6 +179,9 @@ if __name__ == "__main__":
         save_history(save_path, history, feature)
 
         saved_model = tf.keras.models.load_model(save_path + str(feature)+ '/model.h5')
+
+        plot_roc(feature, saved_model, test_images, test_labels)
+
 
 
 
