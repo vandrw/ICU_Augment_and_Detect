@@ -17,7 +17,7 @@ test_images_face, test_labels = load_data(
 test_images_skin, test_labels = load_data(
     'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "skin")
 test_images_right_eye, test_labels = load_data(
-    'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "right")
+    'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "_right")
 
 perm = np.random.permutation(len(test_images_mouth))
 test_images = [test_images_mouth[perm], test_images_face[perm],
