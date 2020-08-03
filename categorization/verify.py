@@ -26,24 +26,49 @@ test_labels = test_labels[perm]
 
 print("Loading model and making predictions...")
 
-feature = "stacked"
+for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
+    model = tf.keras.models.load_model(
+        "categorization/model_saves/" + feature + "/model.h5")
 
-stacked = tf.keras.models.load_model(
-    "categorization/model_saves/stacked/model.h5")
+    if feature == "stacked":
+        pred = model.predict(test_images)
+        plt.figure(figsize=(10, 10))
+        for i in range(25):
+            plt.subplot(5, 5, i+1)
+            plt.title("Results " + feature + " model")
+            plt.xticks([])
+            plt.yticks([])
+            plt.grid(False)
+            plt.imshow(test_images[1][i], cmap=plt.cm.binary)
+            # The CIFAR labels happen to be arrays,
+            # which is why you need the extra index
+            result = pred[i].argmax()
+            real = test_labels[i].argmax()
+            plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result], real))
+        plt.savefig("data/plots/predictions.png")
 
-pred = stacked.predict(test_images)
+    elif feature == "mouth":
+        imgs = test_images_mouth
+    elif feature == "face":
+        imgs = test_images_face
+    elif feature == "skin":
+        imgs = test_images_skin
+    elif feature == "eyes":
+        imgs = test_images_right_eye
+    
+    pred = model.predict(imgs)
 
-plt.figure(figsize=(10, 10))
-for i in range(25):
-    plt.subplot(5, 5, i+1)
-    plt.title("Results " + feature + " model")
-    plt.xticks([])
-    plt.yticks([])
-    plt.grid(False)
-    plt.imshow(test_images[1][i], cmap=plt.cm.binary)
-    # The CIFAR labels happen to be arrays,
-    # which is why you need the extra index
-    result = pred[i].argmax()
-    real = test_labels[i].argmax()
-    plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result], real))
-plt.savefig("data/plots/predictions.png")
+    plt.figure(figsize=(10, 10))
+    for i in range(25):
+        plt.subplot(5, 5, i+1)
+        plt.title("Results " + feature + " model")
+        plt.xticks([])
+        plt.yticks([])
+        plt.grid(False)
+        plt.imshow(imgs[i], cmap=plt.cm.binary)
+        # The CIFAR labels happen to be arrays,
+        # which is why you need the extra index
+        result = pred[i].argmax()
+        real = test_labels[i].argmax()
+        plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result], real))
+    plt.savefig("data/plots/predictions_" + feature + ".png")
