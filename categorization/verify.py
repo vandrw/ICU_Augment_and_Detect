@@ -2,6 +2,7 @@ import tensorflow as tf
 import sys
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 
 sys.path.append(os.getcwd())
 from categorization.cnn import load_data
