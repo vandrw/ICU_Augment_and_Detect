@@ -140,6 +140,18 @@ def plot_roc(feature, saved_model, test_images, test_labels):
     plt.savefig("data/plots/" + str(feature) + "_auc.png")
 
 
+def plot_acc(feature, history):
+    plt.plot(history["accuracy"], label = "Training accuracy")
+    plt.plot(history["val_accuracy"], label = "Validation accuracy")
+    plt.legend()
+    plt.ylim((0.3,1.05))
+    plt.xlim((0,len(history["accuracy"])))
+    plt.xlabel('Training Epochs')
+    plt.ylabel('Accuracy')
+    plt.title("Accuracy of the " + str(feature) + " CNN")
+    plt.savefig("data/plots/" + str(feature) + "_accuracy.png")
+
+
 if __name__ == "__main__":
 
     image_folder_sick = 'data/parsed/brightened/sick'
@@ -181,6 +193,7 @@ if __name__ == "__main__":
         saved_model = tf.keras.models.load_model(save_path + str(feature)+ '/model.h5')
 
         plot_roc(feature, saved_model, test_images, test_labels)
+        plot_acc(feature, history)
 
 
 
