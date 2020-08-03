@@ -26,6 +26,8 @@ test_labels = test_labels[perm]
 
 print("Loading model and making predictions...")
 
+feature = "stacked"
+
 stacked = tf.keras.models.load_model(
     "categorization/model_saves/stacked/model.h5")
 
@@ -34,11 +36,14 @@ pred = stacked.predict(test_images)
 plt.figure(figsize=(10, 10))
 for i in range(25):
     plt.subplot(5, 5, i+1)
+    plt.title("Results " + feature + " model")
     plt.xticks([])
     plt.yticks([])
     plt.grid(False)
     plt.imshow(test_images[1][i], cmap=plt.cm.binary)
     # The CIFAR labels happen to be arrays,
     # which is why you need the extra index
-    plt.xlabel(pred[i])
+    result = pred[i].argmax()
+    real = test_labels[i].argmax()
+    plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result], real))
 plt.savefig("data/plots/predictions.png")
