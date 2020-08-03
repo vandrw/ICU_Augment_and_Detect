@@ -49,7 +49,7 @@ if __name__ == "__main__":
         model_check = tf.keras.callbacks.ModelCheckpoint(save_path + str(feature)+ '/model.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
 
         history = model.fit(train_images, train_labels, epochs=50,
-                            batch_size=8, callbacks = [early_stopping, model_check], validation_data=(test_images, test_labels))
+                            batch_size=2, callbacks = [early_stopping, model_check], validation_data=(test_images, test_labels))
 
         save_history(save_path, history, feature)
 
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     print("Starting training...")
 
     history = stacked.fit(
-        train_images, train_labels, epochs=50, callbacks=[model_check, early_stopping],
+        train_images, train_labels, epochs=50, batch_size=2, callbacks=[model_check, early_stopping],
         validation_data=(test_images, test_labels), verbose = 1)
 
     
@@ -83,7 +83,7 @@ if __name__ == "__main__":
 
 
     pred = stacked.predict(test_images)
-    fpr, tpr, threshold = sklearn.metrics.roc_curve(test_labels, pred)
+    fpr, tpr, threshold = sklearn.metrics.roc_curve(test_labels.argmax(axis=1), pred.argmax(axis=1))
     roc_auc = sklearn.metrics.auc(fpr, tpr)
     plt.title('Receiver Operating Characteristic')
     plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)
