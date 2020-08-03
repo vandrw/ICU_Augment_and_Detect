@@ -188,7 +188,7 @@ if __name__ == "__main__":
         model_check = tf.keras.callbacks.ModelCheckpoint(save_path + str(feature)+ '/model.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
 
         history = model.fit(train_images, train_labels, epochs=50,
-                            batch_size=2, callbacks = [early_stopping, model_check], validation_data=(test_images, test_labels))
+                            batch_size=1, callbacks = [early_stopping, model_check], validation_data=(test_images, test_labels))
 
         save_history(save_path, history, feature)
 
