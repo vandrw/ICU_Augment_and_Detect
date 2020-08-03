@@ -54,41 +54,6 @@ def load_data(folder_sick, folder_healthy, image_size, ftype):
     return np.asarray(data, dtype=np.float64) / 255, np.asarray(labels, dtype=np.int32)
 
 
-def load_data_unshuffeled_eyes(folder_sick, folder_healthy, image_size):
-    files_healthy = os.listdir(folder_healthy)
-    files_sick = os.listdir(folder_sick)
-    data = []
-    labels = []
-    for filename in files_healthy:
-        sick = np.array([0, 1])
-        full_path = folder_healthy + "/" + str(filename)
-        if ("_left" in filename) or \
-           ("_right" in filename) and \
-           os.path.isfile(full_path) and \
-           "n2" not in filename:
-            
-            image = cv2.imread(full_path)
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            image = cv2.resize(image, dsize=(
-                image_size, image_size), interpolation=cv2.INTER_CUBIC)
-            data.append(np.asarray(image, dtype=np.int32))
-            labels.append(np.asarray(sick, dtype=np.int32))
-    for filename in files_sick:
-        sick = np.array([1, 0])
-        full_path = folder_sick + "/" + str(filename)
-        if ("_left" in filename) or \
-           ("_right" in filename) and \ 
-           os.path.isfile(full_path):
-            
-            image = cv2.imread(full_path)
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            image = cv2.resize(image, dsize=(
-                image_size, image_size), interpolation=cv2.INTER_CUBIC)
-            data.append(np.asarray(image, dtype=np.int32))
-            labels.append(np.asarray(sick, dtype=np.int32))
-    return np.asarray(data, dtype=np.float64) / 255, np.asarray(labels, dtype=np.int32)
-
-
 def load_shuffled_data(folder_sick, folder_healthy, image_size, ftype):
     data, labels = load_data(folder_sick, folder_healthy, image_size, ftype)
     permutation = np.random.permutation(len(data))

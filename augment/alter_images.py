@@ -111,13 +111,18 @@ def flip_all(source_path):
     for f in os.listdir(source_path):
         if f.startswith('.'):
             continue
+
         full_path = os.path.join(source_path, f)
+        if "_left" in f:
+            renamed = f.split("_")[0] + "_right_brightened_flipped.png"
+            os.rename(full_path, os.path.join(source_path,renamed))
         if os.path.isfile(full_path) and "_right" not in f and "_left" not in f:
             img =  cv2.imread(full_path)
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             flipped = cv2.flip(img, 1)
             target = '/'.join(source_path.split("/")[2:])
             exportImage(target, f[:-4], "flipped" + ".png", flipped)
+
 
 
 # %%
