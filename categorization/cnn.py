@@ -138,6 +138,7 @@ def plot_roc(feature, saved_model, test_images, test_labels):
     plt.ylabel('True Positive Rate')
     plt.xlabel('False Positive Rate')
     plt.savefig("data/plots/" + str(feature) + "_auc.png")
+    plt.figure()
 
 
 def plot_acc(feature, history):
@@ -150,6 +151,7 @@ def plot_acc(feature, history):
     plt.ylabel('Accuracy')
     plt.title("Accuracy of the " + str(feature) + " CNN")
     plt.savefig("data/plots/" + str(feature) + "_accuracy.png")
+    plt.figure()
 
 
 if __name__ == "__main__":
