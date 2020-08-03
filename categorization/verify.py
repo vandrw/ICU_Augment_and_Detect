@@ -37,7 +37,7 @@ for i in range(25):
     plt.xticks([])
     plt.yticks([])
     plt.grid(False)
-    plt.imshow(train_images[1][i], cmap=plt.cm.binary)
+    plt.imshow(test_images[1][i], cmap=plt.cm.binary)
     # The CIFAR labels happen to be arrays,
     # which is why you need the extra index
     plt.xlabel(pred[i])
