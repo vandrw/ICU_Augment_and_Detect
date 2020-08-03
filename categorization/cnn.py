@@ -108,9 +108,9 @@ def make_model(image_size, feature):
 
 def load_data_eyes(image_folder_sick, image_folder_healthy, image_size):
     images_left, labels_left = load_shuffled_data(
-        image_folder_sick, image_folder_healthy, image_size, "left")
+        image_folder_sick, image_folder_healthy, image_size, "_left")
     images_right, labels_right = load_shuffled_data(
-        image_folder_sick, image_folder_healthy, image_size, "right")
+        image_folder_sick, image_folder_healthy, image_size, "_right")
 
     images = np.concatenate((images_left, images_right), axis=0)
     labels = np.concatenate((labels_left, labels_right), axis=0)
