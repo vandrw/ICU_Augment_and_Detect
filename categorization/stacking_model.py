@@ -21,7 +21,7 @@ def load_all_models(save_path, features):
 	all_models = list()
 	for feature in features:
 		# filename = save_path + str(feature) + '/save.h5'
-		filename = save_path + str(feature) + '.h5'
+		filename = save_path + str(feature) + '/model.h5'
 		model = tf.keras.models.load_model(filename)
 		all_models.append(model)
 		print('loaded model of ' + str(feature))
@@ -85,7 +85,7 @@ def make_training_sets(face_features, image_folder_sick, image_folder_healthy, i
     test_images = [test_images_mouth[perm1], test_images_face[perm1], test_images_skin[perm1], test_images_right_eye[perm1]]
     test_labels = test_labels[perm1]
 
-    perm2 = np.random.permutation(len(train_labels))
+    perm2 = np.random.permutation(len(train_images_mouth))
     train_images = [train_images_mouth[perm2], train_images_face[perm2],
                     train_images_skin[perm2], train_images_right_eye[perm2]]
 
@@ -131,7 +131,7 @@ if __name__ == "__main__":
 
 
     pred = stacked.predict(test_images)
-    fpr, tpr, threshold = sklearn.metrics.roc_curve(test_labels, pred)
+    fpr, tpr, threshold = sklearn.metrics.roc_curve(test_labels.argmax(axis=1), pred.argmax(axis=1))
     roc_auc = sklearn.metrics.auc(fpr, tpr)
     plt.title('Receiver Operating Characteristic')
     plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)
