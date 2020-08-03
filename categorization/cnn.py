@@ -141,11 +141,11 @@ def plot_roc(feature, saved_model, test_images, test_labels):
 
 
 def plot_acc(feature, history):
-    plt.plot(history["accuracy"], label = "Training accuracy")
-    plt.plot(history["val_accuracy"], label = "Validation accuracy")
+    plt.plot(history.history['accuracy'], label = "Training accuracy")
+    plt.plot(history.history['val_accuracy'], label = "Validation accuracy")
     plt.legend()
     plt.ylim((0.3,1.05))
-    plt.xlim((0,len(history["accuracy"])))
+    plt.xlim((0,len(history.history["accuracy"])))
     plt.xlabel('Training Epochs')
     plt.ylabel('Accuracy')
     plt.title("Accuracy of the " + str(feature) + " CNN")
@@ -186,7 +186,7 @@ if __name__ == "__main__":
         model_check = tf.keras.callbacks.ModelCheckpoint(save_path + str(feature)+ '/model.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
 
         history = model.fit(train_images, train_labels, epochs=50,
-                            batch_size=8, callbacks = [early_stopping, model_check], validation_data=(test_images, test_labels))
+                            batch_size=2, callbacks = [early_stopping, model_check], validation_data=(test_images, test_labels))
 
         save_history(save_path, history, feature)
 
