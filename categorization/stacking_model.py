@@ -74,12 +74,12 @@ def make_training_sets(face_features, image_folder_sick, image_folder_healthy, i
     train_images_skin, train_labels = load_data(
         image_folder_sick, image_folder_healthy, image_size, "skin")
     train_images_right_eye, train_labels = load_data(
-        image_folder_sick, image_folder_healthy, image_size, "right")
+        image_folder_sick, image_folder_healthy, image_size, "_right")
 
     test_images_mouth, test_labels = load_data(image_folder_val_sick, image_folder_val_healthy, image_size, "mouth")
     test_images_face, test_labels = load_data(image_folder_val_sick, image_folder_val_healthy, image_size, "face")
     test_images_skin, test_labels = load_data(image_folder_val_sick, image_folder_val_healthy, image_size, "skin")
-    test_images_right_eye, test_labels = load_data(image_folder_val_sick, image_folder_val_healthy, image_size, "right")
+    test_images_right_eye, test_labels = load_data(image_folder_val_sick, image_folder_val_healthy, image_size, "_right")
 
     perm1 = np.random.permutation(len(test_images_mouth))
     test_images = [test_images_mouth[perm1], test_images_face[perm1], test_images_skin[perm1], test_images_right_eye[perm1]]
