@@ -27,6 +27,7 @@ test_labels = test_labels[perm]
 print("Loading model and making predictions...")
 
 for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
+    print("Predicting for " + feature + "...")
     model = tf.keras.models.load_model(
         "categorization/model_saves/" + feature + "/model.h5")
 
@@ -46,6 +47,7 @@ for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
             real = test_labels[i].argmax()
             plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result], real))
         plt.savefig("data/plots/predictions.png")
+        continue
 
     elif feature == "mouth":
         imgs = test_images_mouth
