@@ -36,7 +36,6 @@ for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
         plt.figure(figsize=(10, 10))
         for i in range(25):
             plt.subplot(5, 5, i+1)
-            plt.title("Results " + feature + " model")
             plt.xticks([])
             plt.yticks([])
             plt.grid(False)
@@ -46,24 +45,25 @@ for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
             result = pred[i].argmax()
             real = test_labels[i].argmax()
             plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result], real))
+        plt.suptitle("Results " + feature + " model")
         plt.savefig("data/plots/predictions.png")
         continue
 
     elif feature == "mouth":
-        imgs = test_images_mouth
+        imgs = test_images[0]
     elif feature == "face":
-        imgs = test_images_face
+        imgs = test_images[1]
     elif feature == "skin":
-        imgs = test_images_skin
+        imgs = test_images[2]
     elif feature == "eyes":
-        imgs = test_images_right_eye
+        imgs = test_images[3]
     
     pred = model.predict(imgs)
 
     plt.figure(figsize=(10, 10))
-    for i in range(25):
-        plt.subplot(5, 5, i+1)
-        plt.title("Results " + feature + " model")
+    plt.title("Results " + feature + " model")
+    for i in range(30):
+        plt.subplot(6, 5, i+1)
         plt.xticks([])
         plt.yticks([])
         plt.grid(False)
@@ -73,4 +73,5 @@ for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
         result = pred[i].argmax()
         real = test_labels[i].argmax()
         plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result], real))
+    plt.suptitle("Results " + feature + " model")
     plt.savefig("data/plots/predictions_" + feature + ".png")
