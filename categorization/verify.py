@@ -25,7 +25,7 @@ test_labels = test_labels[perm]
 
 print("Loading model and making predictions...")
 
-model = tf.keras.models.load_model(
+stacked = tf.keras.models.load_model(
     "categorization/model_saves/stacked/model.h5")
 
 pred = stacked.predict(test_images)
