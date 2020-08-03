@@ -34,8 +34,8 @@ for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
     if feature == "stacked":
         pred = model.predict(test_images)
         plt.figure(figsize=(10, 10))
-        for i in range(25):
-            plt.subplot(5, 5, i+1)
+        for i in range(30):
+            plt.subplot(6, 5, i+1)
             plt.xticks([])
             plt.yticks([])
             plt.grid(False)
