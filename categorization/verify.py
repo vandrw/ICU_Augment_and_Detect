@@ -72,6 +72,6 @@ for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
         # which is why you need the extra index
         result = pred[i].argmax()
         real = test_labels[i].argmax()
-        plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result], real))
+        plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result] * 7, real))
     plt.suptitle("Results " + feature + " model")
     plt.savefig("data/plots/predictions_" + feature + ".png")
