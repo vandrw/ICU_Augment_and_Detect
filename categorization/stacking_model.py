@@ -86,9 +86,7 @@ def make_training_sets(face_features, image_folder_sick, image_folder_healthy, i
     test_labels = test_labels[perm1]
 
     perm2 = np.random.permutation(len(train_images_mouth))
-    train_images = [train_images_mouth[perm2], train_images_face[perm2],
-                    train_images_skin[perm2], train_images_right_eye[perm2]]
-
+    train_images = [train_images_mouth[perm2], train_images_face[perm2], train_images_skin[perm2], train_images_right_eye[perm2]]
     train_labels = train_labels[perm2]
 
     return train_images, train_labels, test_images, test_labels

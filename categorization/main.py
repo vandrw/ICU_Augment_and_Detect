@@ -54,6 +54,9 @@ if __name__ == "__main__":
         save_history(save_path, history, feature)
 
         saved_model = tf.keras.models.load_model(save_path + str(feature)+ '/model.h5')
+        plot_roc(feature, saved_model, test_images, test_labels)
+        plot_acc(feature, history)
+
 
     print("Loading the stacked model...")
 
@@ -77,20 +80,6 @@ if __name__ == "__main__":
     save_history(save_path, history, "stacked")
 
     stacked = tf.keras.models.load_model(save_path + 'stacked/model.h5')
-    
-    
-    #  load best model as stacked to plot AUC
+    plot_acc("stacked", history)
+    plot_roc("stacked", stacked, test_images, test_labels)
 
-
-    pred = stacked.predict(test_images)
-    fpr, tpr, threshold = sklearn.metrics.roc_curve(test_labels.argmax(axis=1), pred.argmax(axis=1))
-    roc_auc = sklearn.metrics.auc(fpr, tpr)
-    plt.title('Receiver Operating Characteristic')
-    plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)
-    plt.legend(loc = 'lower right')
-    plt.plot([0, 1], [0, 1],'r--')
-    plt.xlim([0, 1])
-    plt.ylim([0, 1])
-    plt.ylabel('True Positive Rate')
-    plt.xlabel('False Positive Rate')
-    plt.savefig("data/plots/best_stacked_auc.png")
