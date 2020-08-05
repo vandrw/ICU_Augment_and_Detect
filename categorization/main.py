@@ -64,6 +64,9 @@ if __name__ == "__main__":
         save_history(save_path, history, feature)
 
         saved_model = tf.keras.models.load_model(save_path + str(feature)+ '/model.h5')
+        plot_roc(feature, saved_model, test_images, test_labels)
+        plot_acc(feature, history)
+
 
     print("Loading the stacked model...")
 
