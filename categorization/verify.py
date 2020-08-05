@@ -19,10 +19,7 @@ test_images_skin, test_labels = load_data(
 test_images_right_eye, test_labels = load_data(
     'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "_right")
 
-perm = np.random.permutation(len(test_images_mouth))
-test_images = [test_images_mouth[perm], test_images_face[perm],
-               test_images_skin[perm], test_images_right_eye[perm]]
-test_labels = test_labels[perm]
+test_images = [test_images_mouth, test_images_face, test_images_skin, test_images_right_eye]
 
 print("Loading model and making predictions...")
 

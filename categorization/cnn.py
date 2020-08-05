@@ -10,7 +10,7 @@ Plots:
 Other:
 - plot with what we did (extract, neural network, train)
 '''
-from augment.face_org import *
+
 import tensorflow as tf
 from tensorflow.keras import datasets, layers, models
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
@@ -24,7 +24,7 @@ import sklearn.metrics
 import random
 
 sys.path.append(os.getcwd())
-
+from augment.face_org import *
 
 def load_data(folder_sick, folder_healthy, image_size, ftype):
     files_healthy = os.listdir(folder_healthy)
@@ -158,6 +158,29 @@ def plot_acc(feature, history):
     plt.savefig("data/plots/" + str(feature) + "_accuracy.png")
     plt.figure()
 
+def plot_validation(model, feature, validation, test_labels):
+    pred = model.predict(validation)
+    temp = sum(test_labels == pred)
+    acc = temp/len(test_labels)
+    plt.figure(figsize=(10, 10))
+    plt.title("Results " + feature + " model accuracy = " + str(acc))
+
+    for i in range(10):
+        plt.subplot(3, 4, i+1)
+        plt.xticks([])
+        plt.yticks([])
+        plt.grid(False)
+        plt.imshow(validation[i], cmap=plt.cm.binary)
+        # The CIFAR labels happen to be arrays,
+        # which is why you need the extra index
+        result = pred[i].argmax()
+        real = test_labels[i].argmax()
+        plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result] * 7, real))
+
+    plt.suptitle("Results " + feature + " model accuracy = " + str(acc))
+    plt.savefig("data/plots/predictions_" + feature + ".png")
+    plt.figure()
+
 
 if __name__ == "__main__":
 
@@ -195,7 +218,7 @@ if __name__ == "__main__":
             save_path + str(feature) + '/model.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
 
         history = model.fit(train_images, train_labels, epochs=50,
-                            batch_size=1, callbacks=[early_stopping, model_check], validation_data=(test_images, test_labels))
+                            batch_size=1, callbacks=[early_stopping, model_check], validation_data=(test_images[:20], test_labels[:20]))
 
         save_history(save_path, history, feature)
 
@@ -204,3 +227,4 @@ if __name__ == "__main__":
 
         plot_roc(feature, saved_model, test_images, test_labels)
         plot_acc(feature, history)
+        plot_validation(saved_model, feature, test_images[20:], test_labels[20:])
