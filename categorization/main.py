@@ -1,9 +1,11 @@
 '''
-- flip original mouth/face/skin
-- use one eye + not flipped images for training/testing stacked model
-- for testing use the individual testing sets for CNNs + stacked testing set
-- early stopping for CNNs
-- keep best model for graphs
+- make each network more complex
+- binary output
+- cross validation
+- increase size of images
+- the other metrics
+- try Marco's GAN
+- extract nose and replace face with it
 '''
 
 import os
@@ -14,6 +16,14 @@ sys.path.append(os.getcwd())
 
 from categorization.cnn import *
 from categorization.stacking_model import *
+
+def get_accuracy(test_labels, prediction_labels):
+    sum_acc = 0.0
+    for i in range(len(test_labels)):
+        if (test_labels[i].argmax() == prediction_labels[i].argmax()):
+            sum_acc += 1
+    
+    return sum_acc / len(test_labels)
 
 if __name__ == "__main__":
 
@@ -76,6 +86,7 @@ if __name__ == "__main__":
     
     save_history(save_path, history, "stacked")
 
+    print("Loading model and making predictions...")
     stacked = tf.keras.models.load_model(save_path + 'stacked/model.h5')
     
     
@@ -83,7 +94,24 @@ if __name__ == "__main__":
 
 
     pred = stacked.predict(test_images)
+    print("Accuracy: ", get_accuracy(test_labels, pred))
+    plt.figure(figsize=(10, 10))
+    for i in range(30):
+        plt.subplot(6, 5, i+1)
+        plt.xticks([])
+        plt.yticks([])
+        plt.grid(False)
+        plt.imshow(test_images[1][i], cmap=plt.cm.binary)
+        # The CIFAR labels happen to be arrays,
+        # which is why you need the extra index
+        result = pred[i].argmax()
+        real = test_labels[i].argmax()
+        plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result] * 7, real))
+    plt.suptitle("Results " + feature + " model")
+    plt.savefig("data/plots/predictions.png")
+
     fpr, tpr, threshold = sklearn.metrics.roc_curve(test_labels.argmax(axis=1), pred.argmax(axis=1))
+    plt.figure()
     roc_auc = sklearn.metrics.auc(fpr, tpr)
     plt.title('Receiver Operating Characteristic')
     plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)

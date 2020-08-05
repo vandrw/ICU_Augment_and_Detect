@@ -7,6 +7,14 @@ import matplotlib.pyplot as plt
 sys.path.append(os.getcwd())
 from categorization.cnn import load_data
 
+def get_accuracy(test_labels, prediction_labels):
+    sum_acc = 0.0
+    for i in range(len(test_labels)):
+        if (test_labels[i].argmax() == prediction_labels[i].argmax()):
+            sum_acc += 1
+    
+    return sum_acc / len(test_labels)
+
 print("Loading data...")
 
 image_size = 128
@@ -29,10 +37,11 @@ print("Loading model and making predictions...")
 for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
     print("Predicting for " + feature + "...")
     model = tf.keras.models.load_model(
-        "categorization/model_saves/" + feature + "/model.h5")
+        "categorization/model_saves/" + feature + "/    model.h5")
 
     if feature == "stacked":
         pred = model.predict(test_images)
+        print("Accuracy: ", get_accuracy(test_labels, pred))
         plt.figure(figsize=(10, 10))
         for i in range(30):
             plt.subplot(6, 5, i+1)
@@ -44,7 +53,7 @@ for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
             # which is why you need the extra index
             result = pred[i].argmax()
             real = test_labels[i].argmax()
-            plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result], real))
+            plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result] * 7, real))
         plt.suptitle("Results " + feature + " model")
         plt.savefig("data/plots/predictions.png")
         continue
@@ -57,7 +66,7 @@ for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
         imgs = test_images[2]
     elif feature == "eyes":
         imgs = test_images[3]
-    
+
     pred = model.predict(imgs)
 
     plt.figure(figsize=(10, 10))
