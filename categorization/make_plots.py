@@ -58,7 +58,27 @@ def load_average(save_path, model):
             i += 1
     for key in sum_histories:
         sum_histories[key]= sum_histories[key]/i
+    return sum_histories
 
+def load_history(save_path, model):
+    path = save_path + str(model)
+    files = os.listdir(path)
+    sum_histories = {}
+    i = 0
+    for f in files:
+        if "pickle" in f:
+            hist_path = path + "/history_" + str(i+1) + ".pickle"
+            if not os.path.isfile(hist_path):
+                hist_path = path + "/history.pickle"
+            hist_file = open(hist_path, "rb")
+            history = pickle.load(hist_file)
+            history = rename_keys(history)
+            if i == 0:
+                sum_histories = history
+            else:
+                for key in history:
+                    sum_histories[key] += history[key]
+            i += 1
     return sum_histories
 
 def print_raw(all_histories):
@@ -89,7 +109,7 @@ def print_raw(all_histories):
             row = [str(model), acc, val_acc, precision, val_precision, recall, val_recall, f1, val_f1, mcc, val_mcc]
             writer.writerow(row)
 
-def plot_confusion_matrix(all_histories):
+def plot_confusion_matrix_all(all_histories):
     for model in all_histories:
         final = len(all_histories[model]["accuracy"]) - 1
         matrix = [[all_histories[model]["val_true_positives"][final]*10, all_histories[model]["val_false_positives"][final]*10],
@@ -161,7 +181,7 @@ if __name__ == "__main__":
 
     all_histories = load_histories(save_path)
     plot_all_auc_acc(all_histories)
-    plot_confusion_matrix(all_histories)
+    plot_confusion_matrix_all(all_histories)
     # plot_best_stacked(all_histories)
     print_raw(all_histories)
 

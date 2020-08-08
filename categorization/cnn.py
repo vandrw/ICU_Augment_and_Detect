@@ -19,6 +19,8 @@ import cv2
 import os
 import sys
 import numpy as np
+import seaborn as sn
+import pandas as pd
 import pickle
 import sklearn.metrics
 import random
@@ -32,7 +34,7 @@ def load_data(folder_sick, folder_healthy, image_size, ftype):
     data = []
     labels = []
     for filename in files_healthy:
-        sick = 0
+        sick = np.array([0])
         full_path = folder_healthy + "/" + str(filename)
         if ftype in filename and os.path.isfile(full_path) and "n2" not in filename:
             image = cv2.imread(full_path)
@@ -42,7 +44,7 @@ def load_data(folder_sick, folder_healthy, image_size, ftype):
             data.append(np.asarray(image, dtype=np.int32))
             labels.append(np.asarray(sick, dtype=np.int32))
     for filename in files_sick:
-        sick = 1
+        sick = np.array([1])
         full_path = folder_sick + "/" + str(filename)
         if ftype in filename and os.path.isfile(full_path):
             image = cv2.imread(full_path)
@@ -102,7 +104,8 @@ def make_model(image_size, feature):
 
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
                   loss="binary_crossentropy",
-                  metrics=['accuracy', tf.keras.metrics.AUC()])
+                  metrics=['accuracy', tf.keras.metrics.AUC(), tf.keras.metrics.FalseNegatives(), 
+                  tf.keras.metrics.FalsePositives(),tf.keras.metrics.TruePositives(), tf.keras.metrics.TrueNegatives()])
 
     return model
 
@@ -124,9 +127,13 @@ def load_data_eyes(image_folder_sick, image_folder_healthy, image_size):
     return images[permutation], labels[permutation]
 
 
-def save_history(save_path, history, feature):
-    with open(save_path + str(feature) + "/history.pickle", 'wb') as file_pi:
-        pickle.dump(history.history, file_pi)
+def save_history(save_path, history, feature, i):
+    if i < 3: 
+        with open(save_path + str(feature) + "/history_" + str(i) + ".pickle", 'wb') as file_pi:
+            pickle.dump(history.history, file_pi)
+    else:
+        with open(save_path + str(feature) + "/history.pickle", 'wb') as file_pi:
+            pickle.dump(history.history, file_pi)
 
 
 def plot_roc(feature, saved_model, test_images, test_labels):
@@ -160,8 +167,11 @@ def plot_acc(feature, history):
 
 def plot_validation(model, feature, validation, test_labels):
     pred = model.predict(validation)
-    temp = sum(test_labels == pred)
-    acc = temp/len(test_labels)
+    acc = 0.0
+    for i in len(pred):
+        if pred[i] == test_labels[i]:
+            acc = acc + 1
+    acc = acc/len(pred)
     plt.figure(figsize=(10, 10))
     plt.title("Results " + feature + " model accuracy = " + str(acc))
 
@@ -181,13 +191,48 @@ def plot_validation(model, feature, validation, test_labels):
     plt.savefig("data/plots/predictions_" + feature + ".png")
     plt.figure()
 
+def print_confusion_matrix(pred, true, feature):
+    matrix = np.zeros((2,2))
+    for i in range(len(pred)):
+        if pred[i] == 1 and true[i] == 1:
+            matrix[0][0] += 1
+        if pred[i] == 1 and true[i] == 0:
+            matrix[0][1] += 1
+        if pred[i] == 0 and true[i] == 1:
+            matrix[1][0] += 1
+        if pred[i] == 0 and true[i] == 0:
+            matrix[1][1] += 1
+    df_cm = pd.DataFrame(matrix, index = ["Positives", "Negative"], columns = ["Positives", "Negative"])
+    ax = plt.axes()
+    sn.heatmap(df_cm, annot=True, ax=ax, fmt='g')
+    ax.set_title('Confusion Matrix ' + str(feature))
+    ax.set_xlabel("Actual Values")
+    ax.set_ylabel("Predicted Values")
+    plt.savefig("data/plots/confusion_matrix_" + str(feature) + ".png")
+    plt.figure()
+
+
+def to_labels(predictions):
+    pred = np.zeros((len(predictions), 1))
+    for i in range(len(predictions)):
+        if predictions[i] < 0.5:
+            pred[i] = 0
+        else:
+            pred[i] = 1
+    return pred
 
 if __name__ == "__main__":
 
-    image_folder_sick = 'data/parsed/brightened/sick'
-    image_folder_healthy = 'data/parsed/brightened/healthy'
-    image_folder_val_sick = 'data/parsed/validation_sick'
-    image_folder_val_healthy = 'data/parsed/validation_healthy'
+    # parsed/all contains all augmented (training) data (52 sick + 52 healthy)
+    # parsed/training contains 42 sick + 42 healthy
+    # parsed/tuning contains 10 sick + 10 healthy
+    # parsed/validation contains 30 sick + 30 healthy
+    # parsed/sick and parsed healthy contain non-augmented only parsed images
+
+    image_folder_sick = 'data/parsed/all/sick'
+    image_folder_healthy = 'data/parsed/all/healthy'
+    image_folder_val_sick = 'data/parsed/validation/sick'
+    image_folder_val_healthy = 'data/parsed/validation/healthy'
     save_path = 'categorization/model_saves/'
     image_size = 128
     face_features = ["mouth", "face", "skin", "eyes"]
@@ -213,18 +258,39 @@ if __name__ == "__main__":
         monitor = "val_accuracy"
 
         early_stopping = tf.keras.callbacks.EarlyStopping(
-            monitor=monitor, mode='max', patience=10, verbose=1)
+            monitor=monitor, mode='max', patience=5, verbose=1)
         model_check = tf.keras.callbacks.ModelCheckpoint(
             save_path + str(feature) + '/model.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
 
-        history = model.fit(train_images, train_labels, epochs=50,
-                            batch_size=1, callbacks=[early_stopping, model_check], validation_data=(test_images[:20], test_labels[:20]))
+        # cross-validate testing and validation
+ 
+        for i in range(3):
+            if i == 0:
+                test = (test_images[10:], test_labels[10:])
+                validation = (test_images[:10], test_labels[:10])
+            if i == 1:
+                test = (np.concatenate((test_images[:10], test_images[20:]), axis = 0), np.concatenate((test_labels[:10], test_labels[20:]),axis = 0))
+                validation = (test_images[10:20], test_labels[10:20])
+            if i == 2:
+                test = (test_images[0:20], test_labels[0:20])
+                validation = (test_images[20:], test_labels[20:])
+            
+            history = model.fit(train_images, train_labels, epochs=50,
+                                batch_size=1, callbacks=[early_stopping, model_check], validation_data=test)
 
-        save_history(save_path, history, feature)
+            save_history(save_path, history, feature, i)
 
-        saved_model = tf.keras.models.load_model(
-            save_path + str(feature) + '/model.h5')
+            saved_model = tf.keras.models.load_model(
+                save_path + str(feature) + '/model.h5')
 
-        plot_roc(feature, saved_model, test_images, test_labels)
-        plot_acc(feature, history)
-        plot_validation(saved_model, feature, test_images[20:], test_labels[20:])
+
+            if i == 0:
+                predictions = to_labels(saved_model.predict(validation[0]))
+            else :
+                predictions = np.concatenate((predictions, to_labels(saved_model.predict(validation[0]))), axis = 0)
+
+        print_confusion_matrix(predictions, test_labels, feature)
+
+        # plot_roc(feature, saved_model, test_images, test_labels)
+        # plot_acc(feature, history)
+        # plot_validation(saved_model, feature, validation)
