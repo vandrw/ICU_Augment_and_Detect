@@ -132,6 +132,7 @@ if __name__ == "__main__":
     target_path = "data/parsed/brightened/"
     folders = ["healthy", "sick"]
     for folder in folders:
+        print("Brightening ", folder, "images...")
         for f in os.listdir(source_path + folder):
             if f.startswith('.'):
                 continue
