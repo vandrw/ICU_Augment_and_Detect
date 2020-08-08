@@ -9,12 +9,12 @@ clean-results:
 
 clean-data:
 	@echo "Removing data extracted from unparsed images..."
-	@rm -rf data/parsed/validation_sick/*
-	@rm -rf data/parsed/validation_healthy/*
-	@rm -rf data/parsed/sick/*
-	@rm -rf data/parsed/healthy/*
-	@rm -rf data/parsed/brightened/sick/*
-	@rm -rf data/parsed/brightened/healthy/*
+	@rm -rvf data/parsed/validation_sick/*
+	@rm -rvf data/parsed/validation_healthy/*
+	@rm -rvf data/parsed/sick/*
+	@rm -rvf data/parsed/healthy/*
+	@rm -rvf data/parsed/brightened/sick/*
+	@rm -rvf data/parsed/brightened/healthy/*
 
 create-data:
 	@echo "Extracting data from images..."

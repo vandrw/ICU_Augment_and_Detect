@@ -61,7 +61,7 @@ if __name__ == "__main__":
         history = model.fit(train_images, train_labels, epochs=50,
                             batch_size=2, callbacks = [early_stopping, model_check], validation_data=(test_images, test_labels))
 
-        save_history(save_path, history, feature)
+        save_history(save_path, history, feature, 4)
 
         saved_model = tf.keras.models.load_model(save_path + str(feature)+ '/model.h5')
         plot_roc(feature, saved_model, test_images, test_labels)
@@ -87,7 +87,7 @@ if __name__ == "__main__":
         validation_data=(test_images, test_labels), verbose = 1)
 
     
-    save_history(save_path, history, "stacked")
+    save_history(save_path, history, "stacked", 4)
 
     print("Loading model and making predictions...")
     stacked = tf.keras.models.load_model(save_path + 'stacked/model.h5')
