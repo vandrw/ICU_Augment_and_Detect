@@ -38,13 +38,14 @@ mouth_ids = np.array([48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59])
 
 right_eye_region = np.array([17, 18, 19, 20, 21, 39, 40, 41, 36])
 left_eye_region = np.array([22, 23, 24, 25, 26, 45, 46, 47, 42])
-
+nose_ids = np.arange(27, 36)
 jaw_ids = np.arange(0, 17)
 
 FACIAL_LANDMARKS_IDXS = OrderedDict ([
 	("mouth", mouth_ids),
     ("right", right_eye_region),
     ("left", left_eye_region),
+    ("nose", nose_ids),
     ("jaw", jaw_ids)
 ])
 
@@ -180,7 +181,7 @@ def extractFace(path_to_img, status, file_name, faceCascade, detector, predictor
     
     # plt.figure()
     # plt.imshow(cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
-    exportImage(status, file_name, "face", cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
+    # exportImage(status, file_name, "face", cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
     
     dominant_color = getDominantColor(face)
     
