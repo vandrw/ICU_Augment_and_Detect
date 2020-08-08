@@ -17,7 +17,7 @@ def get_accuracy(test_labels, prediction_labels):
 
 print("Loading data...")
 
-image_size = 128
+image_size = 256
 test_images_mouth, test_labels = load_data(
     'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "mouth")
 test_images_face, test_labels = load_data(
@@ -46,8 +46,6 @@ for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
             plt.yticks([])
             plt.grid(False)
             plt.imshow(test_images[1][i], cmap=plt.cm.binary)
-            # The CIFAR labels happen to be arrays,
-            # which is why you need the extra index
             result = pred[i].argmax()
             real = test_labels[i].argmax()
             plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result] * 7, real))
@@ -74,8 +72,6 @@ for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
         plt.yticks([])
         plt.grid(False)
         plt.imshow(imgs[i], cmap=plt.cm.binary)
-        # The CIFAR labels happen to be arrays,
-        # which is why you need the extra index
         result = pred[i].argmax()
         real = test_labels[i].argmax()
         plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result] * 7, real))

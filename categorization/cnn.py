@@ -32,7 +32,7 @@ def load_data(folder_sick, folder_healthy, image_size, ftype):
     data = []
     labels = []
     for filename in files_healthy:
-        sick = np.array([0, 1])
+        sick = 0
         full_path = folder_healthy + "/" + str(filename)
         if ftype in filename and os.path.isfile(full_path) and "n2" not in filename:
             image = cv2.imread(full_path)
@@ -42,7 +42,7 @@ def load_data(folder_sick, folder_healthy, image_size, ftype):
             data.append(np.asarray(image, dtype=np.int32))
             labels.append(np.asarray(sick, dtype=np.int32))
     for filename in files_sick:
-        sick = np.array([1, 0])
+        sick = 1
         full_path = folder_sick + "/" + str(filename)
         if ftype in filename and os.path.isfile(full_path):
             image = cv2.imread(full_path)
@@ -97,7 +97,7 @@ def make_model(image_size, feature):
                            name="dense2_" + str(feature)))
     model.add(layers.Dropout(0.5, name="dropout2_" + str(feature)))
 
-    model.add(layers.Dense(2, activation='softmax',
+    model.add(layers.Dense(1, activation='sigmoid',
                            name="dense3_" + str(feature)))
 
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),

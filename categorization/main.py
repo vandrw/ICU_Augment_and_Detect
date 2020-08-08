@@ -32,8 +32,8 @@ if __name__ == "__main__":
     image_folder_val_sick = 'data/parsed/validation_sick'
     image_folder_val_healthy = 'data/parsed/validation_healthy'
     save_path = 'categorization/model_saves/'
-    image_size = 128
-    face_features = ["mouth", "face", "skin", "eyes"]
+    image_size = 256
+    face_features = ["mouth", "nose", "skin", "eyes"]
     
     for feature in face_features:
 
@@ -105,8 +105,6 @@ if __name__ == "__main__":
         plt.yticks([])
         plt.grid(False)
         plt.imshow(test_images[1][i], cmap=plt.cm.binary)
-        # The CIFAR labels happen to be arrays,
-        # which is why you need the extra index
         result = pred[i].argmax()
         real = test_labels[i].argmax()
         plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result] * 7, real))
