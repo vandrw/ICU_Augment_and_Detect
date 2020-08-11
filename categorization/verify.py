@@ -10,18 +10,20 @@ from categorization.cnn import load_data
 def get_accuracy(test_labels, prediction_labels):
     sum_acc = 0.0
     for i in range(len(test_labels)):
-        if (test_labels[i].argmax() == prediction_labels[i].argmax()):
+        if (test_labels[i] == (prediction_labels[i] >= 0.5)):
             sum_acc += 1
     
     return sum_acc / len(test_labels)
 
 print("Loading data...")
 
-image_size = 256
+image_size = 128
+test_faces, _ = load_data(
+    'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "face")
 test_images_mouth, test_labels = load_data(
     'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "mouth")
 test_images_face, test_labels = load_data(
-    'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "face")
+    'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "nose")
 test_images_skin, test_labels = load_data(
     'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "skin")
 test_images_right_eye, test_labels = load_data(
@@ -31,10 +33,10 @@ test_images = [test_images_mouth, test_images_face, test_images_skin, test_image
 
 print("Loading model and making predictions...")
 
-for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
+for feature in ["mouth", "nose", "skin", "eyes", "stacked"]:
     print("Predicting for " + feature + "...")
     model = tf.keras.models.load_model(
-        "categorization/model_saves/" + feature + "/    model.h5")
+        "categorization/model_saves/" + feature + "/model.h5")
 
     if feature == "stacked":
         pred = model.predict(test_images)
@@ -45,17 +47,17 @@ for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
             plt.xticks([])
             plt.yticks([])
             plt.grid(False)
-            plt.imshow(test_images[1][i], cmap=plt.cm.binary)
-            result = pred[i].argmax()
-            real = test_labels[i].argmax()
-            plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result] * 7, real))
+            plt.imshow(test_faces[i], cmap=plt.cm.binary)
+            result = pred[i]
+            real = test_labels[i]
+            plt.xlabel("%d (%.2f), real: %.2f" % ((result >= 0.5), result, real))
         plt.suptitle("Results " + feature + " model")
         plt.savefig("data/plots/predictions.png")
         continue
 
     elif feature == "mouth":
         imgs = test_images[0]
-    elif feature == "face":
+    elif feature == "nose":
         imgs = test_images[1]
     elif feature == "skin":
         imgs = test_images[2]
@@ -63,6 +65,7 @@ for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
         imgs = test_images[3]
 
     pred = model.predict(imgs)
+    print("Accuracy: ", get_accuracy(test_labels, pred))
 
     plt.figure(figsize=(10, 10))
     plt.title("Results " + feature + " model")
@@ -72,8 +75,8 @@ for feature in ["mouth", "face", "skin", "eyes", "stacked"]:
         plt.yticks([])
         plt.grid(False)
         plt.imshow(imgs[i], cmap=plt.cm.binary)
-        result = pred[i].argmax()
-        real = test_labels[i].argmax()
-        plt.xlabel("%d (%.3f), real: %d" % (result, pred[i][result] * 7, real))
+        result = pred[i]
+        real = test_labels[i]
+        plt.xlabel("%d (%.2f), real: %.2f" % ((result >= 0.5), result, real))
     plt.suptitle("Results " + feature + " model")
     plt.savefig("data/plots/predictions_" + feature + ".png")

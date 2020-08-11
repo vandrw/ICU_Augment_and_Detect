@@ -1,6 +1,7 @@
 clean-results:
 	@echo "Cleaning model saves and plots..."
 	@rm -rvf categorization/model_saves/nose/*
+	@rm -rvf categorization/model_saves/face/*
 	@rm -rvf categorization/model_saves/eyes/*
 	@rm -rvf categorization/model_saves/skin/*
 	@rm -rvf categorization/model_saves/mouth/*

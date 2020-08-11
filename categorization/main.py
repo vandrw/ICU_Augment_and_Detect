@@ -1,11 +1,11 @@
 '''
 - make each network more complex
-- binary output
+V binary output
 - cross validation
-- increase size of images
+X increase size of images
 - the other metrics
-- try Marco's GAN
-- extract nose and replace face with it
+X try Marco's GAN
+V extract nose and replace face with it
 '''
 
 import os
@@ -20,7 +20,7 @@ from categorization.stacking_model import *
 def get_accuracy(test_labels, prediction_labels):
     sum_acc = 0.0
     for i in range(len(test_labels)):
-        if (test_labels[i].argmax() == prediction_labels[i].argmax()):
+        if (test_labels[i] == prediction_labels[i]:
             sum_acc += 1
     
     return sum_acc / len(test_labels)
@@ -32,7 +32,7 @@ if __name__ == "__main__":
     image_folder_val_sick = 'data/parsed/validation_sick'
     image_folder_val_healthy = 'data/parsed/validation_healthy'
     save_path = 'categorization/model_saves/'
-    image_size = 256
+    image_size = 128
     face_features = ["mouth", "nose", "skin", "eyes"]
     
     for feature in face_features:

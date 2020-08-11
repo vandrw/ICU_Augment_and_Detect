@@ -69,24 +69,24 @@ def make_training_sets(face_features, image_folder_sick, image_folder_healthy, i
 
     train_images_mouth, train_labels = load_data(
         image_folder_sick, image_folder_healthy, image_size, "mouth")
-    train_images_face, train_labels = load_data(
-        image_folder_sick, image_folder_healthy, image_size, "face")
+    train_images_nose, train_labels = load_data(
+        image_folder_sick, image_folder_healthy, image_size, "nose")
     train_images_skin, train_labels = load_data(
         image_folder_sick, image_folder_healthy, image_size, "skin")
     train_images_right_eye, train_labels = load_data(
         image_folder_sick, image_folder_healthy, image_size, "_right")
 
     test_images_mouth, test_labels = load_data(image_folder_val_sick, image_folder_val_healthy, image_size, "mouth")
-    test_images_face, test_labels = load_data(image_folder_val_sick, image_folder_val_healthy, image_size, "face")
+    test_images_nose, test_labels = load_data(image_folder_val_sick, image_folder_val_healthy, image_size, "nose")
     test_images_skin, test_labels = load_data(image_folder_val_sick, image_folder_val_healthy, image_size, "skin")
     test_images_right_eye, test_labels = load_data(image_folder_val_sick, image_folder_val_healthy, image_size, "_right")
 
     perm1 = np.random.permutation(len(test_images_mouth))
-    test_images = [test_images_mouth[perm1], test_images_face[perm1], test_images_skin[perm1], test_images_right_eye[perm1]]
+    test_images = [test_images_mouth[perm1], test_images_nose[perm1], test_images_skin[perm1], test_images_right_eye[perm1]]
     test_labels = test_labels[perm1]
 
     perm2 = np.random.permutation(len(train_images_mouth))
-    train_images = [train_images_mouth[perm2], train_images_face[perm2], train_images_skin[perm2], train_images_right_eye[perm2]]
+    train_images = [train_images_mouth[perm2], train_images_nose[perm2], train_images_skin[perm2], train_images_right_eye[perm2]]
     train_labels = train_labels[perm2]
 
     return train_images, train_labels, test_images, test_labels
@@ -100,7 +100,7 @@ if __name__ == "__main__":
     image_folder_val_sick = 'data/parsed/validation_sick'
     image_folder_val_healthy = 'data/parsed/validation_healthy'
     save_path = 'categorization/model_saves/'
-    face_features = ["mouth", "face", "skin", "eyes"]
+    face_features = ["mouth", "nose", "skin", "eyes"]
     image_size = 128
 
     all_models = load_all_models(save_path, face_features)
@@ -120,7 +120,7 @@ if __name__ == "__main__":
         validation_data=(test_images, test_labels), verbose = 1)
 
     
-    save_history(save_path, history, "stacked")
+    save_history(save_path, history, "stacked", 4)
 
     stacked = tf.keras.models.load_model(save_path + 'stacked/model.h5')
     

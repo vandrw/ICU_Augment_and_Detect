@@ -181,7 +181,7 @@ def extractFace(path_to_img, status, file_name, faceCascade, detector, predictor
     
     # plt.figure()
     # plt.imshow(cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
-    # exportImage(status, file_name, "face", cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
+    exportImage(status, file_name, "face", cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
     
     dominant_color = getDominantColor(face)
     
