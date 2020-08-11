@@ -57,7 +57,7 @@ if __name__ == "__main__":
         
         monitor = "val_accuracy"
         early_stopping = tf.keras.callbacks.EarlyStopping(monitor = monitor, mode = 'max', patience=10, verbose = 1)
-        model_check = tf.keras.callbacks.ModelCheckpoint(save_path + 'stacked/model.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
+        model_check = tf.keras.callbacks.ModelCheckpoint(save_path + 'stacked/model' + i + '.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
         
         print("Starting training...")
 
