@@ -20,7 +20,7 @@ from categorization.stacking_model import *
 def get_accuracy(test_labels, prediction_labels):
     sum_acc = 0.0
     for i in range(len(test_labels)):
-        if (test_labels[i] == prediction_labels[i]:
+        if (test_labels[i] == (prediction_labels[i] >= 0.5)):
             sum_acc += 1
     
     return sum_acc / len(test_labels)
