@@ -35,81 +35,60 @@ if __name__ == "__main__":
     image_size = 128
     face_features = ["mouth", "nose", "skin", "eyes"]
     
+    print("Creating empty models...")
     for feature in face_features:
-
-        print("[INFO] Training %s" % (feature))
-
-        if feature == "eyes":
-            test_images, test_labels = load_data_eyes(
-                image_folder_val_sick, image_folder_val_healthy, image_size)
-            train_images, train_labels = load_data_eyes(
-                image_folder_sick, image_folder_healthy, image_size)
-
-        else:
-            test_images, test_labels = load_shuffled_data(
-                image_folder_val_sick, image_folder_val_healthy, image_size, feature)
-            train_images, train_labels = load_shuffled_data(
-                image_folder_sick, image_folder_healthy, image_size, feature)
-
+        print(feature + "...")
         model = make_model(image_size, feature)
-        
-        monitor = "val_accuracy"
-
-        early_stopping = tf.keras.callbacks.EarlyStopping(monitor = monitor, mode = 'max', patience=10, verbose = 1)
-        model_check = tf.keras.callbacks.ModelCheckpoint(save_path + str(feature)+ '/model.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
-
-        history = model.fit(train_images, train_labels, epochs=50,
-                            batch_size=2, callbacks = [early_stopping, model_check], validation_data=(test_images, test_labels))
-
-        save_history(save_path, history, feature, 4)
-
-        saved_model = tf.keras.models.load_model(save_path + str(feature)+ '/model.h5')
-        plot_roc(feature, saved_model, test_images, test_labels)
-        plot_acc(feature, history)
+        model.save(save_path + os.sep + feature + os.sep + "model.h5")
 
 
     print("Loading the stacked model...")
 
     all_models = load_all_models(save_path, face_features)
 
-    train_images, train_labels, test_images, test_labels = make_training_sets(face_features, image_folder_sick, image_folder_healthy, image_folder_val_sick, image_folder_val_healthy, image_size)
+    test_faces, _ = load_data(
+    'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "face")
 
-    stacked = define_stacked_model(all_models, face_features)
-    
-    monitor = "val_accuracy"
-    early_stopping = tf.keras.callbacks.EarlyStopping(monitor = monitor, mode = 'max', patience=10, verbose = 1)
-    model_check = tf.keras.callbacks.ModelCheckpoint(save_path + 'stacked/model.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
-    
-    print("Starting training...")
+    train_images, train_labels, test_images, test_labels = make_training_sets(
+        face_features, image_folder_sick, image_folder_healthy, image_folder_val_sick, image_folder_val_healthy, image_size)
 
-    history = stacked.fit(
-        train_images, train_labels, epochs=50, batch_size=2, callbacks=[model_check, early_stopping],
-        validation_data=(test_images, test_labels), verbose = 1)
+    for i in range(3):
+        stacked = define_stacked_model(all_models, face_features)
+        
+        monitor = "val_accuracy"
+        early_stopping = tf.keras.callbacks.EarlyStopping(monitor = monitor, mode = 'max', patience=10, verbose = 1)
+        model_check = tf.keras.callbacks.ModelCheckpoint(save_path + 'stacked/model.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
+        
+        print("Starting training...")
 
-    
-    save_history(save_path, history, "stacked", 4)
+        history = stacked.fit(
+            train_images, train_labels, epochs=50, batch_size=2, callbacks=[model_check, early_stopping],
+            validation_data=(test_images, test_labels), verbose = 1)
 
-    print("Loading model and making predictions...")
-    stacked = tf.keras.models.load_model(save_path + 'stacked/model.h5')
-    
-    
-    #  load best model as stacked to plot AUC
+        
+        save_history(save_path, history, "stacked", i)
+
+        print("Loading model and making predictions...")
+        stacked = tf.keras.models.load_model(save_path + 'stacked/model.h5')
+        
+        
+        #  load best model as stacked to plot predictions
 
 
-    pred = stacked.predict(test_images)
-    print("Accuracy: ", get_accuracy(test_labels, pred))
-    plt.figure(figsize=(10, 10))
-    for i in range(30):
-        plt.subplot(6, 5, i+1)
-        plt.xticks([])
-        plt.yticks([])
-        plt.grid(False)
-        plt.imshow(test_images[1][i], cmap=plt.cm.binary)
-        result = pred[i]
-        real = test_labels[i]
-        plt.xlabel("%d, real: %d" % (result, real))
-    plt.suptitle("Results " + feature + " model")
-    plt.savefig("data/plots/predictions.png")
+        pred = stacked.predict(test_images)
+        print("Accuracy: ", get_accuracy(test_labels, pred))
+        plt.figure(figsize=(10, 10))
+        for i in range(30):
+            plt.subplot(6, 5, i+1)
+            plt.xticks([])
+            plt.yticks([])
+            plt.grid(False)
+            plt.imshow(test_images[1][i], cmap=plt.cm.binary)
+            result = pred[i]
+            real = test_labels[i]
+            plt.xlabel("%d, real: %d" % (result, real))
+        plt.suptitle("Results " + feature + " model")
+        plt.savefig("data/plots/predictions" + i + ".png")
 
     # fpr, tpr, threshold = sklearn.metrics.roc_curve(test_labels.argmax(axis=1), pred.argmax(axis=1))
     # plt.figure()
