@@ -229,13 +229,14 @@ if __name__ == "__main__":
     # parsed/validation contains 30 sick + 30 healthy
     # parsed/sick and parsed healthy contain non-augmented only parsed images
 
-    image_folder_sick = 'data/parsed/all/sick'
-    image_folder_healthy = 'data/parsed/all/healthy'
-    image_folder_val_sick = 'data/parsed/validation/sick'
-    image_folder_val_healthy = 'data/parsed/validation/healthy'
+    image_folder_sick = 'data/parsed/brightened/sick'
+    image_folder_healthy = 'data/parsed/brightened/healthy'
+    image_folder_val_sick = 'data/parsed/validation_sick'
+    image_folder_val_healthy = 'data/parsed/validation_healthy'
     save_path = 'categorization/model_saves/'
     image_size = 128
-    face_features = ["mouth", "face", "skin", "eyes"]
+    face_features = ["mouth", "nose", "skin", "eyes"]
+    
 
     for feature in face_features:
 
@@ -266,14 +267,14 @@ if __name__ == "__main__":
  
         for i in range(3):
             if i == 0:
-                test = (test_images[10:], test_labels[10:])
-                validation = (test_images[:10], test_labels[:10])
+                test = (test_images[16:], test_labels[16:])
+                validation = (test_images[:16], test_labels[:16])
             if i == 1:
-                test = (np.concatenate((test_images[:10], test_images[20:]), axis = 0), np.concatenate((test_labels[:10], test_labels[20:]),axis = 0))
-                validation = (test_images[10:20], test_labels[10:20])
+                test = (np.concatenate((test_images[:16], test_images[32:]), axis = 0), np.concatenate((test_labels[:16], test_labels[32:]),axis = 0))
+                validation = (test_images[16:32], test_labels[16:32])
             if i == 2:
-                test = (test_images[0:20], test_labels[0:20])
-                validation = (test_images[20:], test_labels[20:])
+                test = (test_images[0:32], test_labels[0:32])
+                validation = (test_images[32:], test_labels[32:])
             
             history = model.fit(train_images, train_labels, epochs=50,
                                 batch_size=1, callbacks=[early_stopping, model_check], validation_data=test)
