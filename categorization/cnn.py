@@ -282,11 +282,7 @@ if __name__ == "__main__":
             early_stopping = tf.keras.callbacks.EarlyStopping(
                 monitor=monitor, mode='max', patience=5, verbose=1)
             model_check = tf.keras.callbacks.ModelCheckpoint(
-<<<<<<< HEAD
                 save_path + str(feature) + '/model_' + str(i) + '.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
-=======
-                save_path + str(feature) + '/{epoch:02d}-{val_accuracy:.2f}-{accuracy:.2f}_model_' + str(i) + '.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
->>>>>>> ddbfed1079f884100013c6405a6616306829156a
 
             history = model.fit(train_images, train_labels, epochs=50,
                                 batch_size=1, callbacks=[early_stopping, model_check], validation_data=test)
