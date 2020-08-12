@@ -37,11 +37,10 @@ if __name__ == "__main__":
     image_size = 128
     face_features = ["mouth", "nose", "skin", "eyes"]
 
-    fpr_sum = 0
-    tpr_sum = 0
     auc_sum = 0
+    cross_val_runs = 10
     
-    for i in range(10):
+    for i in range(cross_val_runs):
         print("Creating empty models...")
         for feature in face_features:
             print(feature + "...")
@@ -58,7 +57,7 @@ if __name__ == "__main__":
         train_images, train_labels, cross_val_images, cross_val_labels, test_images, test_labels = make_training_sets(
             face_features, image_folder_sick, image_folder_healthy, image_folder_val_sick, image_folder_val_healthy, image_size)
 
-        print(cross_val_labels)
+        # print(cross_val_labels)
 
         # for i in range(3):
         stacked = define_stacked_model(all_models, face_features)
@@ -83,26 +82,34 @@ if __name__ == "__main__":
         #  load best model as stacked to plot predictions
 
 
-        pred = stacked.predict(test_images).ravel()
+        pred = stacked.predict(test_images)
         
-        fpr_keras, tpr_keras, thresholds_keras = roc_curve(test_labels, pred)
-        auc_keras = auc(fpr_keras, tpr_keras)
+        fpr, tpr, _ = roc_curve(test_labels, pred)
+        auc_sum += auc(fpr_keras, tpr_keras)
 
-        fpr_sum += fpr_keras
-        tpr_sum += tpr_keras
-        auc_sum += auc_keras
-    
-    fpr_sum /= 10
-    tpr_sum /= 10
-    auc_sum /= 10
+        plt.plot(fpr, tpr, 'b', alpha=0.15)
+        tpr = interp(base_fpr, fpr, tpr)
+        tpr[0] = 0.0
+        tprs.append(tpr)
 
-    plt.figure()
-    plt.plot([0, 1], [0, 1], 'k--')
-    plt.plot(fpr_sum, tpr_sum, label='Stacked (area = {:.3f})'.format(auc_sum))
-    plt.xlabel('False positive rate')
-    plt.ylabel('True positive rate')
-    plt.title('ROC curve averaged over 10 runs')
-    plt.legend(loc='best')
+    tprs = np.array(tprs)
+    mean_tprs = tprs.mean(axis=0)
+    std = tprs.std(axis=0)
+
+    tprs_upper = np.minimum(mean_tprs + std, 1)
+    tprs_lower = mean_tprs - std
+
+
+    plt.plot(base_fpr, mean_tprs, 'b')
+    plt.fill_between(base_fpr, tprs_lower, tprs_upper, color='grey', alpha=0.3)
+
+    plt.plot([0, 1], [0, 1],'r--')
+    plt.xlim([-0.01, 1.01])
+    plt.ylim([-0.01, 1.01])
+    plt.title("ROC Curve averaged over {} runs (Avg. AUC = {}".format(cross_val_runs, auc_sum / cross_val_runs))
+    plt.ylabel('True Positive Rate')
+    plt.xlabel('False Positive Rate')
+    plt.axes().set_aspect('equal', 'datalim')
     plt.savefig("data/plots/roc.png")
 
     # print("Accuracy: ", get_accuracy(test_labels, pred))
