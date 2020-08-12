@@ -337,7 +337,7 @@ if __name__ == "__main__":
         plt.ylabel('True Positive Rate')
         plt.xlabel('False Positive Rate')
         plt.axes().set_aspect('equal', 'datalim')
-        plt.savefig("data/plots/roc.png")
+        plt.savefig("data/plots/roc_" + str(feature)+".png")
 
         print_confusion_matrix(predictions, test_labels, feature)
 
