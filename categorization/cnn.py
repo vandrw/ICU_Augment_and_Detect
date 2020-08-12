@@ -266,14 +266,14 @@ if __name__ == "__main__":
  
         for i in range(3):
             if i == 0:
-                test = (test_images[16:], test_labels[16:])
-                validation = (test_images[:16], test_labels[:16])
+                test = (test_images[13:], test_labels[13:])
+                validation = (test_images[:13], test_labels[:13])
             if i == 1:
-                test = (np.concatenate((test_images[:16], test_images[32:]), axis = 0), np.concatenate((test_labels[:16], test_labels[32:]),axis = 0))
-                validation = (test_images[16:32], test_labels[16:32])
+                test = (np.concatenate((test_images[:13], test_images[26:]), axis = 0), np.concatenate((test_labels[:12], test_labels[26:]),axis = 0))
+                validation = (test_images[13:26], test_labels[13:26])
             if i == 2:
-                test = (test_images[0:32], test_labels[0:32])
-                validation = (test_images[32:], test_labels[32:])
+                test = (test_images[0:26], test_labels[0:26])
+                validation = (test_images[26:], test_labels[26:])
             
             model = make_model(image_size, feature)
 
@@ -282,7 +282,7 @@ if __name__ == "__main__":
             early_stopping = tf.keras.callbacks.EarlyStopping(
                 monitor=monitor, mode='max', patience=5, verbose=1)
             model_check = tf.keras.callbacks.ModelCheckpoint(
-                save_path + str(feature) + '/{epoch:02d}-{val_accuracy:.2f}-{accuracy:.2f}_model_' + str(i) + '.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
+                save_path + str(feature) + '/model_' + str(i) + '.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
 
             history = model.fit(train_images, train_labels, epochs=50,
                                 batch_size=1, callbacks=[early_stopping, model_check], validation_data=test)
@@ -291,7 +291,7 @@ if __name__ == "__main__":
 
             all_saves = os.listdir(save_path + str(feature))
             for save in all_saves:
-                if "_model_" + str(i) + '.h5' in save:
+                if "model_" + str(i) + '.h5' in save:
                     best_model_path = save_path + str(feature) + "/" + save
 
             saved_model = tf.keras.models.load_model(best_model_path)
