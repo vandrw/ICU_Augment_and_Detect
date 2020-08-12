@@ -13,6 +13,7 @@ import sys
 import random
 from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
+from numpy import interp
 
 sys.path.append(os.getcwd())
 
@@ -39,6 +40,9 @@ if __name__ == "__main__":
 
     auc_sum = 0
     cross_val_runs = 10
+
+    tprs = []
+    base_fpr = np.linspace(0, 1, 101)
     
     for i in range(cross_val_runs):
         print("Creating empty models...")
@@ -85,7 +89,7 @@ if __name__ == "__main__":
         pred = stacked.predict(test_images)
         
         fpr, tpr, _ = roc_curve(test_labels, pred)
-        auc_sum += auc(fpr_keras, tpr_keras)
+        auc_sum += auc(fpr, tpr)
 
         plt.plot(fpr, tpr, 'b', alpha=0.15)
         tpr = interp(base_fpr, fpr, tpr)
@@ -106,7 +110,7 @@ if __name__ == "__main__":
     plt.plot([0, 1], [0, 1],'r--')
     plt.xlim([-0.01, 1.01])
     plt.ylim([-0.01, 1.01])
-    plt.title("ROC Curve averaged over {} runs (Avg. AUC = {}".format(cross_val_runs, auc_sum / cross_val_runs))
+    plt.title("ROC Curve averaged over {} runs (Avg. AUC = {:.3f}".format(cross_val_runs, auc_sum / cross_val_runs))
     plt.ylabel('True Positive Rate')
     plt.xlabel('False Positive Rate')
     plt.axes().set_aspect('equal', 'datalim')
