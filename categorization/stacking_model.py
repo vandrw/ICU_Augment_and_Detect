@@ -118,7 +118,8 @@ if __name__ == "__main__":
 
     all_models = load_all_models(save_path, face_features)
 
-    train_images, train_labels, test_images, test_labels = make_training_sets(face_features, image_folder_sick, image_folder_healthy, image_folder_val_sick, image_folder_val_healthy, image_size)
+    train_images, train_labels, cross_val_images, cross_val_labels, test_images, test_labels = make_training_sets(
+        face_features, image_folder_sick, image_folder_healthy, image_folder_val_sick, image_folder_val_healthy, image_size)
 
     auc_sum = 0
     cross_val_runs = 10
@@ -137,7 +138,7 @@ if __name__ == "__main__":
 
         history = stacked.fit(
             train_images, train_labels, epochs=50, callbacks=[model_check, early_stopping],
-            validation_data=(test_images, test_labels), verbose = 1)
+            validation_data=(cross_val_images, cross_val_labels), verbose = 1)
 
         
         save_history(save_path, history, "stacked", 4)
