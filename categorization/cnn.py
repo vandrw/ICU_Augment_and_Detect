@@ -282,7 +282,7 @@ if __name__ == "__main__":
                 test = (test_images[13:], test_labels[13:])
                 validation = (test_images[:13], test_labels[:13])
             if i == 1:
-                test = (np.concatenate((test_images[:13], test_images[26:]), axis = 0), np.concatenate((test_labels[:12], test_labels[26:]),axis = 0))
+                test = (np.concatenate((test_images[:13], test_images[26:]), axis = 0), np.concatenate((test_labels[:13], test_labels[26:]),axis = 0))
                 validation = (test_images[13:26], test_labels[13:26])
             if i == 2:
                 test = (test_images[0:26], test_labels[0:26])
@@ -315,7 +315,7 @@ if __name__ == "__main__":
             else :
                 predictions = np.concatenate((predictions, to_labels(saved_model.predict(validation[0]))), axis = 0)
         
-            fpr, tpr, _ = roc_curve(test_labels, predictions)
+            fpr, tpr, _ = roc_curve(validation[1], saved_model.predict(validation[0]))
             auc_sum += auc(fpr, tpr)
 
             plt.plot(fpr, tpr, 'b', alpha=0.15)
