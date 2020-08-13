@@ -337,40 +337,11 @@ if __name__ == "__main__":
         plt.plot([0, 1], [0, 1],'r--')
         plt.xlim([-0.01, 1.01])
         plt.ylim([-0.01, 1.01])
-        plt.title("ROC Curve averaged over {} runs (Avg. AUC = {:.3f}".format(cross_val_runs, auc_sum / cross_val_runs))
+        plt.title("ROC Curve averaged over {} runs (Avg. AUC = {:.3f})".format(3, auc_sum / 3))
         plt.ylabel('True Positive Rate')
         plt.xlabel('False Positive Rate')
         plt.axes().set_aspect('equal', 'datalim')
         plt.savefig("data/plots/roc_" + feature + ".png")
-
-            pred = (saved_model.predict(validation[0]))
-            fpr, tpr, _ = roc_curve(validation[1], pred)
-            auc_sum += auc(fpr, tpr)
-
-            plt.plot(fpr, tpr, 'b', alpha=0.15)
-            tpr = interp(base_fpr, fpr, tpr)
-            tpr[0] = 0.0
-            tprs.append(tpr)
-        
-        tprs = np.array(tprs)
-        mean_tprs = tprs.mean(axis=0)
-        std = tprs.std(axis=0)
-
-        tprs_upper = np.minimum(mean_tprs + std, 1)
-        tprs_lower = mean_tprs - std
-
-
-        plt.plot(base_fpr, mean_tprs, 'b')
-        plt.fill_between(base_fpr, tprs_lower, tprs_upper, color='grey', alpha=0.3)
-
-        plt.plot([0, 1], [0, 1],'r--')
-        plt.xlim([-0.01, 1.01])
-        plt.ylim([-0.01, 1.01])
-        plt.title("ROC Curve averaged over {} runs (Avg. AUC = {:.3f}".format(cross_val_runs, auc_sum / cross_val_runs))
-        plt.ylabel('True Positive Rate')
-        plt.xlabel('False Positive Rate')
-        plt.axes().set_aspect('equal', 'datalim')
-        plt.savefig("data/plots/roc.png")
 
         print_confusion_matrix(predictions, test_labels, feature)
 
