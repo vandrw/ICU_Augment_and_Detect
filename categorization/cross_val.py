@@ -8,6 +8,11 @@ X try Marco's GAN
 V extract nose and replace face with it
 '''
 
+'''
+- bootstrapping: 1000x, choose different samples
+- GAN on cfd
+'''
+
 import os
 import sys
 import random

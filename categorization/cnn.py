@@ -12,7 +12,7 @@ Other:
 '''
 
 import tensorflow as tf
-from tensorflow.keras import datasets, layers, models
+from tensorflow.keras import layers, models
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import matplotlib.pyplot as plt
 import cv2
@@ -22,7 +22,9 @@ import numpy as np
 import seaborn as sn
 import pandas as pd
 import pickle
-import sklearn.metrics
+from sklearn.metrics import roc_curve
+from sklearn.metrics import auc
+from numpy import interp
 import random
 
 sys.path.append(os.getcwd())
@@ -263,6 +265,9 @@ if __name__ == "__main__":
                 image_folder_sick, image_folder_healthy, image_size, feature)
 
         # cross-validate testing and validation
+
+        tprs = []
+        base_fpr = np.linspace(0, 1, 101)
  
         for i in range(3):
             if i == 0:
@@ -301,6 +306,34 @@ if __name__ == "__main__":
                 predictions = to_labels(saved_model.predict(validation[0]))
             else :
                 predictions = np.concatenate((predictions, to_labels(saved_model.predict(validation[0]))), axis = 0)
+        
+            fpr, tpr, _ = roc_curve(test_labels, predictions)
+            auc_sum += auc(fpr, tpr)
+
+            plt.plot(fpr, tpr, 'b', alpha=0.15)
+            tpr = interp(base_fpr, fpr, tpr)
+            tpr[0] = 0.0
+            tprs.append(tpr)
+
+        tprs = np.array(tprs)
+        mean_tprs = tprs.mean(axis=0)
+        std = tprs.std(axis=0)
+
+        tprs_upper = np.minimum(mean_tprs + std, 1)
+        tprs_lower = mean_tprs - std
+
+
+        plt.plot(base_fpr, mean_tprs, 'b')
+        plt.fill_between(base_fpr, tprs_lower, tprs_upper, color='grey', alpha=0.3)
+
+        plt.plot([0, 1], [0, 1],'r--')
+        plt.xlim([-0.01, 1.01])
+        plt.ylim([-0.01, 1.01])
+        plt.title("ROC Curve averaged over {} runs (Avg. AUC = {:.3f}".format(cross_val_runs, auc_sum / cross_val_runs))
+        plt.ylabel('True Positive Rate')
+        plt.xlabel('False Positive Rate')
+        plt.axes().set_aspect('equal', 'datalim')
+        plt.savefig("data/plots/roc_" + feature + ".png")
 
         print_confusion_matrix(predictions, test_labels, feature)
 
