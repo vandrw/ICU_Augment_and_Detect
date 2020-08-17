@@ -270,7 +270,7 @@ if __name__ == "__main__":
             early_stopping = tf.keras.callbacks.EarlyStopping(
                 monitor=monitor, mode='max', patience=5, verbose=1)
             model_check = tf.keras.callbacks.ModelCheckpoint(
-                save_path + str(feature) + '/model_' + str(foln_no) + '.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
+                save_path + str(feature) + '/model_' + str(fold_no) + '.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
 
             history = model.fit(images[train], labels[train], epochs=50,
                                 batch_size=1, callbacks=[early_stopping, model_check], validation_data=(images[test], labels[test]))
