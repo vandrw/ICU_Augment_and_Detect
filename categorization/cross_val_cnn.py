@@ -187,17 +187,18 @@ def plot_validation(model, feature, validation, test_labels):
     plt.savefig("data/plots/predictions_" + feature + ".png")
     plt.figure()
 
-def print_confusion_matrix(pred, true, feature):
+def print_confusion_matrix(pred, true, feature, num_folds):
     matrix = np.zeros((2,2))
-    for i in range(len(pred)):
-        if pred[i] == 1 and true[i] == 1:
-            matrix[0][0] += 1
-        if pred[i] == 1 and true[i] == 0:
-            matrix[0][1] += 1
-        if pred[i] == 0 and true[i] == 1:
-            matrix[1][0] += 1
-        if pred[i] == 0 and true[i] == 0:
-            matrix[1][1] += 1
+    for i in range(num_folds):
+        for j in range(len(true)):
+            if pred[i*j] == 1 and true[j] == 1:
+                matrix[0][0] += 1
+            if pred[i*j] == 1 and true[j] == 0:
+                matrix[0][1] += 1
+            if pred[i*j] == 0 and true[j] == 1:
+                matrix[1][0] += 1
+            if pred[i*j] == 0 and true[j] == 0:
+                matrix[1][1] += 1
     df_cm = pd.DataFrame(matrix, index = ["Positives", "Negative"], columns = ["Positives", "Negative"])
     ax = plt.axes()
     sn.heatmap(df_cm, annot=True, ax=ax, fmt='g')
@@ -321,4 +322,4 @@ if __name__ == "__main__":
         plt.axes().set_aspect('equal', 'datalim')
         plt.savefig("data/plots/roc_" + str(feature)+".png")
 
-        print_confusion_matrix(predictions, labels, feature)
+        print_confusion_matrix(predictions, val_labels, feature, folds)
