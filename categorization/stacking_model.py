@@ -10,7 +10,9 @@ import sys
 import numpy as np
 import random
 import pydot 
-import sklearn.metrics
+from sklearn.metrics import roc_curve
+from sklearn.metrics import auc
+from numpy import interp
 from sklearn.model_selection import train_test_split
 import copy
 
@@ -30,9 +32,9 @@ def load_all_models(save_path, features):
 	return all_models
 
 def define_stacked_model(neural_nets, features):
-    # for model in neural_nets:
-    #     for layer in model.layers:
-    #         layer.trainable = False
+    for model in neural_nets:
+        for layer in model.layers:
+            layer.trainable = False
 
     ensemble_visible = [model.input for model in neural_nets]
     ensemble_outputs = [model.layers[18].output for model in neural_nets]
@@ -116,27 +118,63 @@ if __name__ == "__main__":
 
     all_models = load_all_models(save_path, face_features)
 
-    train_images, train_labels, test_images, test_labels = make_training_sets(face_features, image_folder_sick, image_folder_healthy, image_folder_val_sick, image_folder_val_healthy, image_size)
+    train_images, train_labels, cross_val_images, cross_val_labels, test_images, test_labels = make_training_sets(
+        face_features, image_folder_sick, image_folder_healthy, image_folder_val_sick, image_folder_val_healthy, image_size)
 
-    stacked = define_stacked_model(all_models, face_features)
+    auc_sum = 0
+    cross_val_runs = 10
+
+    tprs = []
+    base_fpr = np.linspace(0, 1, 101)
     
-    monitor = "val_accuracy"
-    early_stopping = tf.keras.callbacks.EarlyStopping(monitor = monitor, mode = 'max', patience=10, verbose = 1)
-    model_check = tf.keras.callbacks.ModelCheckpoint(save_path + 'stacked/model.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
+    for i in range(cross_val_runs):
+        stacked = define_stacked_model(all_models, face_features)
+        
+        monitor = "val_accuracy"
+        early_stopping = tf.keras.callbacks.EarlyStopping(monitor = monitor, mode = 'max', patience=10, verbose = 1)
+        model_check = tf.keras.callbacks.ModelCheckpoint(save_path + 'stacked/model.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
+        
+        print("Starting training...")
+
+        history = stacked.fit(
+            train_images, train_labels, epochs=50, callbacks=[model_check, early_stopping],
+            validation_data=(cross_val_images, cross_val_labels), verbose = 1)
+
+        
+        save_history(save_path, history, "stacked", 4)
+
+        stacked = tf.keras.models.load_model(save_path + 'stacked/model.h5')
     
-    print("Starting training...")
-
-    history = stacked.fit(
-        train_images, train_labels, epochs=50, callbacks=[model_check, early_stopping],
-        validation_data=(test_images, test_labels), verbose = 1)
-
     
-    save_history(save_path, history, "stacked", 4)
-
-    stacked = tf.keras.models.load_model(save_path + 'stacked/model.h5')
-    
-    
-    #  load best model as stacked to plot AUC
+        #  load best model as stacked to plot AUC
 
 
-    plot_roc("stacked", stacked, test_images, test_labels)
+        pred = stacked.predict(test_images)
+        
+        fpr, tpr, _ = roc_curve(test_labels, pred)
+        auc_sum += auc(fpr, tpr)
+
+        plt.plot(fpr, tpr, 'b', alpha=0.15)
+        tpr = interp(base_fpr, fpr, tpr)
+        tpr[0] = 0.0
+        tprs.append(tpr)
+
+    tprs = np.array(tprs)
+    mean_tprs = tprs.mean(axis=0)
+    std = tprs.std(axis=0)
+
+    tprs_upper = np.minimum(mean_tprs + std, 1)
+    tprs_lower = mean_tprs - std
+
+
+    plt.plot(base_fpr, mean_tprs, 'b')
+    plt.fill_between(base_fpr, tprs_lower, tprs_upper, color='grey', alpha=0.3)
+
+    plt.plot([0, 1], [0, 1],'r--')
+    plt.xlim([-0.01, 1.01])
+    plt.ylim([-0.01, 1.01])
+    plt.title("ROC Curve averaged over {} runs (Avg. AUC = {:.3f}".format(cross_val_runs, auc_sum / cross_val_runs))
+    plt.ylabel('True Positive Rate')
+    plt.xlabel('False Positive Rate')
+    plt.axes().set_aspect('equal', 'datalim')
+    plt.savefig("data/plots/roc_stacked.png")

@@ -8,6 +8,11 @@ X try Marco's GAN
 V extract nose and replace face with it
 '''
 
+'''
+- bootstrapping: 1000x, choose different samples
+- GAN on cfd
+'''
+
 import os
 import sys
 import random
@@ -114,7 +119,7 @@ if __name__ == "__main__":
     plt.ylabel('True Positive Rate')
     plt.xlabel('False Positive Rate')
     plt.axes().set_aspect('equal', 'datalim')
-    plt.savefig("data/plots/roc.png")
+    plt.savefig("data/plots/roc_stacked.png")
 
     # print("Accuracy: ", get_accuracy(test_labels, pred))
     # plt.figure(figsize=(10, 10))
