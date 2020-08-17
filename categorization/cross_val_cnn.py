@@ -322,4 +322,4 @@ if __name__ == "__main__":
         plt.axes().set_aspect('equal', 'datalim')
         plt.savefig("data/plots/roc_" + str(feature)+".png")
 
-        print_confusion_matrix(predictions, val_labels, feature, folds)
+        print_confusion_matrix(predictions, val_labels, feature)
