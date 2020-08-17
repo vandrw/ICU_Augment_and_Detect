@@ -271,13 +271,14 @@ if __name__ == "__main__":
                 image_folder_sick, image_folder_healthy, image_size, feature)
 
         # cross-validate testing and validation
- 
+
+        
         for i in range(3):
             if i == 0:
                 test = (test_images[13:], test_labels[13:])
                 validation = (test_images[:13], test_labels[:13])
             if i == 1:
-                test = (np.concatenate((test_images[:13], test_images[26:]), axis = 0), np.concatenate((test_labels[:12], test_labels[26:]),axis = 0))
+                test = (np.concatenate((test_images[:13], test_images[26:]), axis = 0), np.concatenate((test_labels[:13], test_labels[26:]),axis = 0))
                 validation = (test_images[13:26], test_labels[13:26])
             if i == 2:
                 test = (test_images[0:26], test_labels[0:26])
