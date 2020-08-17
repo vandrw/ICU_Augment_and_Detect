@@ -126,7 +126,7 @@ def load_data_eyes(image_folder_sick, image_folder_healthy, image_size):
 
 
 def save_history(save_path, history, feature, i):
-    if i < 3: 
+    if i < 6: 
         with open(save_path + str(feature) + "/history_" + str(i) + ".pickle", 'wb') as file_pi:
             pickle.dump(history.history, file_pi)
     else:
@@ -270,7 +270,7 @@ if __name__ == "__main__":
             early_stopping = tf.keras.callbacks.EarlyStopping(
                 monitor=monitor, mode='max', patience=5, verbose=1)
             model_check = tf.keras.callbacks.ModelCheckpoint(
-                save_path + str(feature) + '/model_' + str(i) + '.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
+                save_path + str(feature) + '/model_' + str(foln_no) + '.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
 
             history = model.fit(images[train], labels[train], epochs=50,
                                 batch_size=1, callbacks=[early_stopping, model_check], validation_data=(images[test], labels[test]))
