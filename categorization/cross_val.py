@@ -94,6 +94,7 @@ if __name__ == "__main__":
     tprs = []
 
     fold_no = 1
+    base_fpr = np.linspace(0, 1, 101)
 
     plt.figure()
 
@@ -109,9 +110,6 @@ if __name__ == "__main__":
     test_labels = test_labels.reshape((38,))
 
     for train, test in kfold.split(images[0], labels):
-
-
-
         print("Creating empty models...")
         for feature in face_features:
             print(feature + "...")
