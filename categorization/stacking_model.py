@@ -91,7 +91,7 @@ def make_training_sets(face_features, image_folder_sick, image_folder_healthy, i
     train_images = [train_images_mouth[perm2], train_images_nose[perm2], train_images_skin[perm2], train_images_right_eye[perm2]]
     train_labels = train_labels[perm2]
 
-    return train_images, train_labels, test_images, test_labels
+    return np.asarray(train_images), np.asarray(train_labels), np.asarray(test_images), np.asarray(test_labels)
 
 
 #%%

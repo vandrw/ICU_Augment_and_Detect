@@ -103,8 +103,15 @@ if __name__ == "__main__":
     images, labels, test_images, test_labels = make_training_sets(
         face_features, image_folder_sick, image_folder_healthy, image_folder_val_sick, image_folder_val_healthy, image_size)
 
-    for train, test in kfold.split(np.asarray(images), labels):
-        
+    images = images.reshape((4, 104, 128, 128, 3))
+    labels = labels.reshape((104,))
+    test_images = test_images.reshape((4, 38, 128, 128, 3))
+    test_labels = test_labels.reshape((38,))
+
+    for train, test in kfold.split(images[0], labels):
+
+
+
         print("Creating empty models...")
         for feature in face_features:
             print(feature + "...")
@@ -127,8 +134,9 @@ if __name__ == "__main__":
         print("Starting training...")
 
         history = stacked.fit(
-            train_images, train_labels, epochs=50, batch_size=2, callbacks=[model_check, early_stopping],
-            validation_data=(cross_val_images, cross_val_labels), verbose = 1)
+            x=[images[0, train], images[1, train], images[2, train], images[3, train]], 
+            y= labels[train], epochs=50, batch_size=1, callbacks=[early_stopping, model_check], 
+            validation_data=([images[0, test], images[1, test], images[2, test], images[3, test]], labels[test]))
 
         
         # save_history(save_path, history, "stacked")
@@ -140,7 +148,7 @@ if __name__ == "__main__":
         #  load best model as stacked to plot predictions
 
 
-        pred = stacked.predict(test_images)
+        pred = stacked.predict([test_images[0], test_images[1], test_images[2], test_images[3]])
         
         fpr, tpr, _ = roc_curve(test_labels, pred)
         auc_sum += auc(fpr, tpr)
