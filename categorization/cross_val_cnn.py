@@ -316,10 +316,11 @@ if __name__ == "__main__":
         plt.plot([0, 1], [0, 1],'r--')
         plt.xlim([-0.01, 1.01])
         plt.ylim([-0.01, 1.01])
-        plt.title("ROC Curve")
+        plt.title("ROC Curve of the " + str(feature) + " CNN")
         plt.ylabel('True Positive Rate')
         plt.xlabel('False Positive Rate')
         plt.axes().set_aspect('equal', 'datalim')
         plt.savefig("data/plots/roc_" + str(feature)+".png")
+        plt.figure()
 
         print_confusion_matrix(predictions, val_labels, feature, folds)
