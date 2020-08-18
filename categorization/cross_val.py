@@ -146,7 +146,7 @@ if __name__ == "__main__":
         if fold_no == 1:
             predictions = to_labels(stacked.predict([test_images[0], test_images[1], test_images[2], test_images[3]]))
         else :
-            predictions = np.concatenate(predictions, to_labels(stacked.predict([test_images[0], test_images[1], test_images[2], test_images[3]])), axis = 0)
+            predictions = np.concatenate((predictions, to_labels(stacked.predict([test_images[0], test_images[1], test_images[2], test_images[3]]))), axis = 0)
 
         fold_no += 1
 
