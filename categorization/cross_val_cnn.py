@@ -200,13 +200,13 @@ def print_confusion_matrix(pred, true, feature, num_folds):
             if pred[i*j] == 0 and true[j] == 0:
                 matrix[1][1] += 1
     df_cm = pd.DataFrame(matrix, index = ["Positives", "Negative"], columns = ["Positives", "Negative"])
+    plt.figure()
     ax = plt.axes()
     sn.heatmap(df_cm, annot=True, ax=ax, fmt='g')
     ax.set_title('Confusion Matrix ' + str(feature))
     ax.set_xlabel("Actual Values")
     ax.set_ylabel("Predicted Values")
     plt.savefig("data/plots/confusion_matrix_" + str(feature) + ".png")
-    plt.figure()
 
 def compute_val_accuracy(pred, true):
     acc = 0.0
@@ -236,9 +236,6 @@ if __name__ == "__main__":
     image_size = 128
     face_features = ["mouth", "nose", "skin", "eyes"]
     
-    auc_sum = 0
-    cross_val_runs = 5
-    tprs = []
     base_fpr = np.linspace(0, 1, 101)
 
     for feature in face_features:
@@ -260,7 +257,12 @@ if __name__ == "__main__":
         folds = 5
         kfold = KFold(n_splits=folds, shuffle=True, random_state=1)
 
+        auc_sum = 0
+        tprs = []
+
         fold_no = 1
+
+        plt.figure()
 
         for train, test in kfold.split(images, labels):
 	       
@@ -316,11 +318,10 @@ if __name__ == "__main__":
         plt.plot([0, 1], [0, 1],'r--')
         plt.xlim([-0.01, 1.01])
         plt.ylim([-0.01, 1.01])
-        plt.title("ROC Curve of the " + str(feature) + " CNN")
+        plt.title("ROC Curve for " + str(feature) + " (AUC = {})".format(auc_sum / folds))
         plt.ylabel('True Positive Rate')
         plt.xlabel('False Positive Rate')
         plt.axes().set_aspect('equal', 'datalim')
         plt.savefig("data/plots/roc_" + str(feature)+".png")
-        plt.figure()
 
         print_confusion_matrix(predictions, val_labels, feature, folds)
