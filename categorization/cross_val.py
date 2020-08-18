@@ -18,6 +18,7 @@ import sys
 import random
 from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
+from sklearn.model_selection import KFold
 from numpy import interp
 
 sys.path.append(os.getcwd())
