@@ -109,6 +109,8 @@ if __name__ == "__main__":
     test_images = test_images.reshape((4, 38, 128, 128, 3))
     test_labels = test_labels.reshape((38,))
 
+    foln_no = 1
+
     for train, test in kfold.split(images[0], labels):
         print("Creating empty models...")
         for feature in face_features:
@@ -124,7 +126,7 @@ if __name__ == "__main__":
         
         monitor = "val_accuracy"
         early_stopping = tf.keras.callbacks.EarlyStopping(monitor = monitor, mode = 'max', patience=10, verbose = 1)
-        model_check = tf.keras.callbacks.ModelCheckpoint(save_path + 'stacked/model.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
+        model_check = tf.keras.callbacks.ModelCheckpoint(save_path + 'stacked/model_' + str(foln_no) + '.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
         
         print("Starting training...")
 
@@ -137,11 +139,16 @@ if __name__ == "__main__":
         # save_history(save_path, history, "stacked")
 
         print("Loading model and making predictions...")
-        stacked = tf.keras.models.load_model(save_path + 'stacked/model.h5')
+        stacked = tf.keras.models.load_model(save_path + 'stacked/model_' + str(foln_no) + '.h5)
             
             
         #  load best model as stacked to plot predictions
+        if fold_no == 1:
+            predictions = to_labels(stacked.predict([test_images[0], test_images[1], test_images[2], test_images[3]]))
+        else :
+            predictions = np.concatenate(predictions, to_labels(stacked.predict([test_images[0], test_images[1], test_images[2], test_images[3]])), axis = 0)
 
+        fold_no += 1
 
         pred = stacked.predict([test_images[0], test_images[1], test_images[2], test_images[3]])
         
@@ -173,4 +180,4 @@ if __name__ == "__main__":
     plt.axes().set_aspect('equal', 'datalim')
     plt.savefig("data/plots/roc_stacked.png")
 
-    print_confusion_matrix(pred, test_labels, "stacked", folds)
+    print_confusion_matrix(predictions, test_labels, "stacked", folds)
