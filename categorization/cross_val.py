@@ -55,6 +55,28 @@ def print_confusion_matrix(pred, true, feature, num_folds):
     ax.set_ylabel("Predicted Values")
     plt.savefig("data/plots/confusion_matrix_" + str(feature) + ".png")
 
+
+def define_stacked_model(neural_nets, features):
+    # for model in neural_nets:
+    #     for layer in model.layers:
+    #         layer.trainable = False
+
+    ensemble_visible = [model.input for model in neural_nets]
+    ensemble_outputs = [model.layers[18].output for model in neural_nets]
+
+    merge = tf.keras.layers.concatenate(ensemble_outputs)
+    hidden = tf.keras.layers.Dense(32, activation='relu')(merge)
+    hidden2 = tf.keras.layers.Dense(16, activation='relu')(hidden)
+    hidden3 = tf.keras.layers.Dense(4, activation='relu')(hidden2)
+    output = tf.keras.layers.Dense(1, activation='sigmoid')(hidden3)
+    model = tf.keras.Model(inputs=ensemble_visible, outputs=output)
+
+    # plot_model(model, show_shapes=True, to_file='data/plots/model_graph.png')
+    model.compile(loss='binary_crossentropy', optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+                  metrics=['accuracy', tf.keras.metrics.AUC()])
+
+    return model
+
 if __name__ == "__main__":
 
     image_folder_sick = 'data/parsed/brightened/sick'
@@ -81,7 +103,7 @@ if __name__ == "__main__":
     images, labels, test_images, test_labels = make_training_sets(
         face_features, image_folder_sick, image_folder_healthy, image_folder_val_sick, image_folder_val_healthy, image_size)
 
-    for train, test in kfold.split(images, labels):
+    for train, test in kfold.split(np.asarray(images), labels):
         
         print("Creating empty models...")
         for feature in face_features:
