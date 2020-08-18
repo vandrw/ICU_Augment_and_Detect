@@ -33,6 +33,27 @@ def get_accuracy(test_labels, prediction_labels):
     
     return sum_acc / len(test_labels)
 
+def print_confusion_matrix(pred, true, feature, num_folds):
+    matrix = np.zeros((2,2))
+    for i in range(num_folds):
+        for j in range(len(true)):
+            if pred[i*j] == 1 and true[j] == 1:
+                matrix[0][0] += 1
+            if pred[i*j] == 1 and true[j] == 0:
+                matrix[0][1] += 1
+            if pred[i*j] == 0 and true[j] == 1:
+                matrix[1][0] += 1
+            if pred[i*j] == 0 and true[j] == 0:
+                matrix[1][1] += 1
+    df_cm = pd.DataFrame(matrix, index = ["Positives", "Negative"], columns = ["Positives", "Negative"])
+    plt.figure()
+    ax = plt.axes()
+    sn.heatmap(df_cm, annot=True, ax=ax, fmt='g')
+    ax.set_title('Confusion Matrix ' + str(feature))
+    ax.set_xlabel("Actual Values")
+    ax.set_ylabel("Predicted Values")
+    plt.savefig("data/plots/confusion_matrix_" + str(feature) + ".png")
+
 if __name__ == "__main__":
 
     image_folder_sick = 'data/parsed/brightened/sick'
@@ -43,13 +64,24 @@ if __name__ == "__main__":
     image_size = 128
     face_features = ["mouth", "nose", "skin", "eyes"]
 
-    auc_sum = 0
-    cross_val_runs = 10
+    folds = 5
+    kfold = KFold(n_splits=folds, shuffle=True, random_state=1)
 
+    auc_sum = 0
     tprs = []
-    base_fpr = np.linspace(0, 1, 101)
-    
-    for i in range(cross_val_runs):
+
+    fold_no = 1
+
+    plt.figure()
+
+    test_faces, _ = load_data(
+        'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "face")
+
+    images, labels, test_images, test_labels = make_training_sets(
+        face_features, image_folder_sick, image_folder_healthy, image_folder_val_sick, image_folder_val_healthy, image_size)
+
+    for train, test in kfold.split(images, labels):
+        
         print("Creating empty models...")
         for feature in face_features:
             print(feature + "...")
@@ -59,12 +91,6 @@ if __name__ == "__main__":
         print("Loading the stacked model...")
 
         all_models = load_all_models(save_path, face_features)
-
-        test_faces, _ = load_data(
-        'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "face")
-
-        train_images, train_labels, cross_val_images, cross_val_labels, test_images, test_labels = make_training_sets(
-            face_features, image_folder_sick, image_folder_healthy, image_folder_val_sick, image_folder_val_healthy, image_size)
 
         # print(cross_val_labels)
 
@@ -113,24 +139,12 @@ if __name__ == "__main__":
     plt.fill_between(base_fpr, tprs_lower, tprs_upper, color='grey', alpha=0.3)
 
     plt.plot([0, 1], [0, 1],'r--')
-    plt.xlim([-0.01, 1.01])
-    plt.ylim([-0.01, 1.01])
-    plt.title("ROC Curve averaged over {} runs (Avg. AUC = {:.3f}".format(cross_val_runs, auc_sum / cross_val_runs))
+    plt.xlim([0, 1])
+    plt.ylim([0, 1])
+    plt.title("ROC Curve for " + str(feature) + " (AUC = {:.3f})".format(auc_sum / folds))
     plt.ylabel('True Positive Rate')
     plt.xlabel('False Positive Rate')
     plt.axes().set_aspect('equal', 'datalim')
     plt.savefig("data/plots/roc_stacked.png")
 
-    # print("Accuracy: ", get_accuracy(test_labels, pred))
-    # plt.figure(figsize=(10, 10))
-    # for i in range(30):
-    #     plt.subplot(6, 5, i+1)
-    #     plt.xticks([])
-    #     plt.yticks([])
-    #     plt.grid(False)
-    #     plt.imshow(test_images[1][i], cmap=plt.cm.binary)
-    #     result = pred[i]
-    #     real = test_labels[i]
-    #     plt.xlabel("%d, real: %d" % (result, real))
-    # plt.suptitle("Results " + feature + " model")
-    # plt.savefig("data/plots/predictions" + i + ".png")
+    print_confusion_matrix(predictions, val_labels, "stacked", folds)

@@ -316,9 +316,9 @@ if __name__ == "__main__":
         plt.fill_between(base_fpr, tprs_lower, tprs_upper, color='grey', alpha=0.3)
 
         plt.plot([0, 1], [0, 1],'r--')
-        plt.xlim([-0.01, 1.01])
-        plt.ylim([-0.01, 1.01])
-        plt.title("ROC Curve for " + str(feature) + " (AUC = {})".format(auc_sum / folds))
+         plt.xlim([0, 1])
+        plt.ylim([0, 1])
+        plt.title("ROC Curve for " + str(feature) + " (AUC = {:.3f})".format(auc_sum / folds))
         plt.ylabel('True Positive Rate')
         plt.xlabel('False Positive Rate')
         plt.axes().set_aspect('equal', 'datalim')

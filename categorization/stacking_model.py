@@ -85,24 +85,13 @@ def make_training_sets(face_features, image_folder_sick, image_folder_healthy, i
     test_images_skin, test_labels = load_data(image_folder_val_sick, image_folder_val_healthy, image_size, "skin")
     test_images_right_eye, test_labels = load_data(image_folder_val_sick, image_folder_val_healthy, image_size, "_right")
 
-    all_test_labels = copy.deepcopy(test_labels)
-
-    cross_val_images_mouth, test_images_mouth, cross_val_labels, test_labels = train_test_split(test_images_mouth, all_test_labels, test_size=0.5)
-    cross_val_images_nose, test_images_nose, cross_val_labels, test_labels = train_test_split(test_images_nose, all_test_labels, test_size=0.5)
-    cross_val_images_skin, test_images_skin, cross_val_labels, test_labels = train_test_split(test_images_skin, all_test_labels, test_size=0.5)
-    cross_val_images_right_eye, test_images_right_eye, cross_val_labels, test_labels = train_test_split(test_images_right_eye, all_test_labels, test_size=0.5)
-
-    perm1 = np.random.permutation(len(test_images_mouth))
-    cross_val_images = [cross_val_images_mouth[perm1], cross_val_images_nose[perm1], cross_val_images_skin[perm1], cross_val_images_right_eye[perm1]]
-    cross_val_labels = cross_val_labels[perm1]
-
     test_images = [test_images_mouth, test_images_nose, test_images_skin, test_images_right_eye]
 
     perm2 = np.random.permutation(len(train_images_mouth))
     train_images = [train_images_mouth[perm2], train_images_nose[perm2], train_images_skin[perm2], train_images_right_eye[perm2]]
     train_labels = train_labels[perm2]
 
-    return train_images, train_labels, cross_val_images, cross_val_labels, test_images, test_labels
+    return train_images, train_labels, test_images, test_labels
 
 
 #%%
