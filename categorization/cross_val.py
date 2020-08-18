@@ -120,9 +120,6 @@ if __name__ == "__main__":
 
         all_models = load_all_models(save_path, face_features)
 
-        # print(cross_val_labels)
-
-        # for i in range(3):
         stacked = define_stacked_model(all_models, face_features)
         
         monitor = "val_accuracy"
@@ -170,10 +167,10 @@ if __name__ == "__main__":
     plt.plot([0, 1], [0, 1],'r--')
     plt.xlim([0, 1])
     plt.ylim([0, 1])
-    plt.title("ROC Curve for " + str(feature) + " (AUC = {:.3f})".format(auc_sum / folds))
+    plt.title("ROC Curve for stacked model (AUC = {:.3f})".format(auc_sum / folds))
     plt.ylabel('True Positive Rate')
     plt.xlabel('False Positive Rate')
     plt.axes().set_aspect('equal', 'datalim')
     plt.savefig("data/plots/roc_stacked.png")
 
-    print_confusion_matrix(predictions, val_labels, "stacked", folds)
+    print_confusion_matrix(pred, test_labels, "stacked", folds)
