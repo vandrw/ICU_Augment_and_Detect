@@ -139,7 +139,7 @@ if __name__ == "__main__":
         # save_history(save_path, history, "stacked")
 
         print("Loading model and making predictions...")
-        stacked = tf.keras.models.load_model(save_path + 'stacked/model_' + str(foln_no) + '.h5')
+        stacked = tf.keras.models.load_model(save_path + 'stacked/model_' + str(fold_no) + '.h5')
             
             
         #  load best model as stacked to plot predictions
