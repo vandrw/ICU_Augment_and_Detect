@@ -110,14 +110,16 @@ if __name__ == "__main__":
     test_images = test_images.reshape((4, 38, 128, 128, 3))
     test_labels = test_labels.reshape((38,))
 
-    foln_no = 1
+  
 
+    print("Creating empty models...")
+    for feature in face_features:
+        print(feature + "...")
+        model = make_model(image_size, feature)
+        model.save(save_path + os.sep + feature + os.sep + "model.h5")
+
+    fold_no = 1
     for train, test in kfold.split(images[0], labels):
-        print("Creating empty models...")
-        for feature in face_features:
-            print(feature + "...")
-            model = make_model(image_size, feature)
-            model.save(save_path + os.sep + feature + os.sep + "model.h5")
 
         print("Loading the stacked model...")
 
@@ -126,8 +128,8 @@ if __name__ == "__main__":
         stacked = define_stacked_model(all_models, face_features)
         
         monitor = "val_accuracy"
-        early_stopping = tf.keras.callbacks.EarlyStopping(monitor = monitor, mode = 'max', patience=10, verbose = 1)
-        model_check = tf.keras.callbacks.ModelCheckpoint(save_path + 'stacked/model_' + str(foln_no) + '.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
+        early_stopping = tf.keras.callbacks.EarlyStopping(monitor = monitor, mode = 'max', patience=5, verbose = 1)
+        model_check = tf.keras.callbacks.ModelCheckpoint(save_path + 'stacked/model_' + str(fold_no) + '.h5', monitor=monitor, mode='max', verbose=1, save_best_only=True)
         
         print("Starting training...")
 
@@ -137,11 +139,10 @@ if __name__ == "__main__":
             validation_data=([images[0, test], images[1, test], images[2, test], images[3, test]], labels[test]))
 
         
-        # save_history(save_path, history, "stacked")
+        save_history(save_path, history, "stacked", fold_no)
 
         print("Loading model and making predictions...")
         stacked = tf.keras.models.load_model(save_path + 'stacked/model_' + str(fold_no) + '.h5')
-            
             
         #  load best model as stacked to plot predictions
         if fold_no == 1:
