@@ -66,7 +66,8 @@ def define_stacked_model(neural_nets, features):
 
     merge = tf.keras.layers.concatenate(ensemble_outputs)
     hidden = tf.keras.layers.Dense(32, activation='relu')(merge)
-    hidden2 = tf.keras.layers.Dense(16, activation='relu')(hidden)
+    hidden_drop = tf.keras.layers.Dropout(0.3)(hidden)
+    hidden2 = tf.keras.layers.Dense(16, activation='relu')(hidden_drop)
     hidden3 = tf.keras.layers.Dense(4, activation='relu')(hidden2)
     output = tf.keras.layers.Dense(1, activation='sigmoid')(hidden3)
     model = tf.keras.Model(inputs=ensemble_visible, outputs=output)
