@@ -16,6 +16,8 @@ Once the data is created, `make train-individual` or `make train-stacked` can be
 
 If one desires to remove the created data, `make clean-data` can be used. Furthermore, `make clean-results` will remove any saved models, histories and plots generated.
 
+For python environment details, please check __environment.py__.
+
 ### Project Structure
 * **augment**: folder containing the code of a neural style transfer network
 * **categorization**: folder containing a convolutional neural network that categorizes the images
