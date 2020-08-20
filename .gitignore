@@ -27,9 +27,9 @@ data/plots/*
 
 augment/output/checkpoints/*
 
-categorization/model_saves/*
-categorization/__pycache__/*
-augment/__pycache__/*
+categorization/model_saves/*/*.h5
+categorization/model_saves/*/*.pickle
+*/__pycache__/*
 
 .vscode
 
