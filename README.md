@@ -2,7 +2,7 @@
 ### Identifying whether a patient appears sick using Convolutional Neural Networks.
 
 <p align="center">
-  <img height="300" src="https://raw.githubusercontent.com/vandrw/icu_binary/master/documentation/sick_features.jpg?token=AIKQWP6WY5LI7XLSRICASDK7H3K62">
+  <img height="300" src="https://github.com/vandrw/icu_binary/blob/master/documentation/sick_features.jpg">
 </p>
 
 <p align="center">
