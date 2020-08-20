@@ -1,9 +1,13 @@
 # Facial Analysis and Binary Classification of Acutely Ill Patients
 ### Identifying whether a patient appears sick using Convolutional Neural Networks.
 
-![Features present in an acutely ill person](https://raw.githubusercontent.com/vandrw/icu_binary/master/documentation/sick_features.jpg?token=AIKQWP6WY5LI7XLSRICASDK7H3K62 "Features present in an acutely ill person")
+<p align="center">
+  <img height="300" src="https://raw.githubusercontent.com/vandrw/icu_binary/master/documentation/sick_features.jpg?token=AIKQWP6WY5LI7XLSRICASDK7H3K62">
+</p>
 
-__For in-depth information regarding the project, please refer to the [paper](https://github.com/vandrw/icu_binary/blob/master/documentation/Report.pdf).__
+<p align="center">
+  <b>For in-depth information regarding the project, please refer to the <a href="https://github.com/vandrw/icu_binary/blob/master/documentation/Report.pdf">paper</a></b>.
+</p>
 
 ## How to run?
 To extract the features, first place the images in their corresponding directories (e.g. _data/unparsed/sick_ for images representing sick individuals) and run the command `make create-data` in a terminal.
