@@ -80,7 +80,7 @@ if __name__ == "__main__":
 
         fold_no += 1
 
-        fpr, tpr,  = roc_curve(test_labels, pred)
+        fpr, tpr, _ = roc_curve(test_labels, pred)
         auc_sum += auc(fpr, tpr)
 
         plt.plot(fpr, tpr, 'b', alpha=0.15)
