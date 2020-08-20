@@ -31,9 +31,12 @@ categorization/model_saves/*/*.h5
 categorization/model_saves/*/*.pickle
 */__pycache__/*
 
+
 .vscode
 
 *.pub
 
 *.jpg
 *.png
+
+!documentation/*

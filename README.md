@@ -1,28 +1,31 @@
-# Detection of Sepsis in ICU patients using Neural Networks
-Augmentation using Neural Style Transfer and Detection using a Convolutional Neural Network. 
+# Facial Analysis and Binary Classification of Acutely Ill Patients
+### Identifying whether a patient appears sick using Convolutional Neural Networks.
+
+![Features present in an acutely ill person](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Features present in an acutely ill person")
+
+__For in-depth information regarding the project, please refer to the [paper](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png).__
+
+## How to run?
+To extract the features, first place the images in their corresponding directories (e.g. _data/unparsed/sick_ for images representing sick individuals) and run the command `make create-data` in a terminal.
+
+Once the data is created, `make train-individual` or `make train-stacked` can be used to train all the individual networks (i.e. eyes, nose, mouth and skin) or, respectively, a stacked ensemble that parses each feature at once.
+
+If one desires to remove the created data, `make clean-data` can be used. Furthermore, `make clean-results` will remove any saved models, histories and plots generated.
 
 ### Project Structure
 * **augment**: folder containing the code of a neural style transfer network
 * **categorization**: folder containing a convolutional neural network that categorizes the images
-* **data**: folder containing the data sets provided below
+* **data**: folder containing the collected data set
 
-## Data Sets Used
+## Potential Data Sets for Augmentation
 * [SoF Dataset](https://sites.google.com/view/sof-dataset)
 * [IST-EURECOM Light Field Face Database](http://www.img.lx.it.pt/LFFD/)
-* [CyberExtruder Ultimate Face Matching Data Set??](https://cyberextruder.com/face-matching-data-set-download/)
 * [CVL Face Database](http://www.lrv.fri.uni-lj.si/facedb.html)
 * [Chicago Faces Dataset](https://chicagofaces.org/default/download/)
+* [YMU and VMU](http://www.antitza.com/makeup-datasets.html)
 
-### Other
-https://adoberesearch.ctlprojects.com/wp-content/uploads/2018/04/CVPR2018_Paper3623_Chang.pdf
-https://arxiv.org/pdf/1907.01144.pdf
 
-https://github.com/Liusifei/Face_parsing_python
-https://github.com/Shuvrajit9904/PairedCycleGAN-tf/blob/master/parse_face.py
-
-https://docs.opencv.org/4.2.0/
-
-### References
+### References for previous datasets
 A. Sepas-Moghaddam, V. Chiesa, P.L. Correia, F. Pereira, J. Dugelay, “The IST-EURECOM Light Field Face Database”, International Workshop on Biometrics and Forensics, IWBF 2017, Coventry, UK, April 2017
 
 Mahmoud Afifi and Abdelrahman Abdelhamed, "AFIF4: Deep gender classification based on an AdaBoost-based fusion of isolated facial features and foggy faces". Journal of Visual Communication and Image Representation, 2019. 

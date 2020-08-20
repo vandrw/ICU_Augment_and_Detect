@@ -21,3 +21,11 @@ create-data:
 	@echo "Extracting data from images..."
 	@python augment/face_org.py
 	@python augment/alter_images.py
+
+train-stacked:
+	@echo "Training and cross-validating the stacking ensemble..."
+	@python categorization/cross_val_stacked.py
+
+train-individual:
+	@echo "Training and cross-validating individual models..."
+	@python categorization/cross_val_cnn.py
