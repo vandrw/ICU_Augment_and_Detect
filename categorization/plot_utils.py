@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from seaborn import heatmap
 from pandas import DataFrame
 
-def print_roc_curve(tprs, auc_sum, folds, base_fpr=np.linspace(0, 1, 101)):
+def print_roc_curve(tprs, auc_sum, feature, folds, base_fpr=np.linspace(0, 1, 101)):
     tprs = np.array(tprs)
     mean_tprs = tprs.mean(axis=0)
     std = tprs.std(axis=0)
@@ -17,11 +17,11 @@ def print_roc_curve(tprs, auc_sum, folds, base_fpr=np.linspace(0, 1, 101)):
     plt.plot([0, 1], [0, 1],'r--')
     plt.xlim([0, 1])
     plt.ylim([0, 1])
-    plt.title("ROC Curve for stacked model (AUC = {:.3f})".format(auc_sum / folds))
+    plt.title("ROC Curve for {} model (AUC = {:.3f})".format(str(feature), auc_sum / folds))
     plt.ylabel('True Positive Rate')
     plt.xlabel('False Positive Rate')
     plt.axes().set_aspect('equal', 'datalim')
-    plt.savefig("data/plots/roc_stacked.png")
+    plt.savefig("data/plots/roc_{}.png".format(feature))
 
 
 def print_confusion_matrix(pred, true, feature, num_folds):

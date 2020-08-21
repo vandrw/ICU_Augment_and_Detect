@@ -86,5 +86,5 @@ if __name__ == "__main__":
             tpr[0] = 0.0
             tprs.append(tpr)
 
-        print_roc_curve(tprs, auc_sum, folds)
+        print_roc_curve(tprs, auc_sum, feature, folds)
         print_confusion_matrix(predictions, val_labels, feature, folds)

@@ -88,5 +88,5 @@ if __name__ == "__main__":
         tpr[0] = 0.0
         tprs.append(tpr)
 
-    print_roc_curve(tprs, auc_sum, folds)
+    print_roc_curve(tprs, auc_sum, "stacked", folds)
     print_confusion_matrix(predictions, test_labels, "stacked", folds)
