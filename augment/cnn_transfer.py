@@ -214,7 +214,7 @@ def exportImage(path, img):
     plt.axis("off")
 
     imgplot = plt.imshow(img)
-    plt.savefig(path_to_exp, bbox_inches='tight',
+    plt.savefig(path, bbox_inches='tight',
                 transparent=True, pad_inches=0)
     plt.close(fig)
 
