@@ -59,8 +59,12 @@ def getDominantColor(img):
 
 def readAndResize(image_path, target_size=512):
     img = cv2.imread(image_path)
-    if (img.size == 0):
-        print("The image could not be loaded!")
+    try:
+        if (img.size == 0):
+            print("The image could not be loaded!")
+            return
+    except:
+        print("Image at " + image_path + " could not be loaded.")
         return
 
     if (img.shape[1] < img.shape[0]):
