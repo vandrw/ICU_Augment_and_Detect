@@ -249,6 +249,6 @@ if __name__ == "__main__":
 
                 output = run_style_transfer(cnn, cnn_normalization_mean, cnn_normalization_std,
                                             content_img, style_img, input_img)
-                exportImage("data/generated/" + g + "/" + i + ".png", output)
+                exportImage("data/generated/" + g + "/" + i + ".png", output.detach().numpy()[0,:,:,:].transpose(1,2,0))
                 i+=1
 
