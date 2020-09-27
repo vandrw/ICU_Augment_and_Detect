@@ -133,19 +133,26 @@ def flip_all(source_path):
 if __name__ == "__main__":
 
     source_path = "data/parsed/"
-    target_path = "data/parsed/brightened/"
+    # target_path = "data/parsed/brightened/"
+    # folders = ["testing_healthy", "testing_sick"]
+
     folders = ["healthy", "sick"]
+    
     for folder in folders:
-        print("Brightening ", folder, "images...")
-        for f in os.listdir(source_path + folder):
-            if f.startswith('.'):
-                continue
-            full_path = os.path.join(source_path + folder, f)
-            if os.path.isfile(full_path):
-                img = cv2.imread(full_path)
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                brightened = adjust_gamma(img, 1.3)
-                exportImage("brightened/" + folder,
-                            f[:-4], "brightened.png", brightened)
-        flip_all(target_path + folder)
+        # print("Brightening ", folder, "images...")
+        # for f in os.listdir(source_path + folder):
+        #     if f.startswith('.'):
+        #         continue
+        #     full_path = os.path.join(source_path + folder, f)
+        #     if os.path.isfile(full_path):
+        #         img = cv2.imread(full_path)
+        #         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        #         brightened = adjust_gamma(img, 1.3)
+        #         exportImage("brightened/" + folder,
+        #                     f[:-4], "brightened.png", brightened)
+        # flip_all(target_path + folder)
+
+        print("Flipping ", folder, "images...")
+        flip_all(source_path + folder)
+        
     print("Finished!\n")

@@ -27,8 +27,8 @@ data/plots/*
 
 augment/output/checkpoints/*
 
-categorization/model_saves/*/*.h5
-categorization/model_saves/*/*.pickle
+categorization/model_saves/*
+categorization/model_saves/*
 */__pycache__/*
 
 

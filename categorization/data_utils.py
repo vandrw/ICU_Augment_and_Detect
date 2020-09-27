@@ -31,7 +31,7 @@ def load_data(folder_sick, folder_healthy, image_size, ftype):
     return np.asarray(data, dtype=np.float64) / 255, np.asarray(labels, dtype=np.int32)
 
 
-def make_training_sets(face_features, image_folder_sick, image_folder_healthy, image_folder_val_sick, image_folder_val_healthy, image_size):
+def make_stacked_sets(image_folder_sick, image_folder_healthy, image_size):
 
     train_images_mouth, train_labels = load_data(
         image_folder_sick, image_folder_healthy, image_size, "mouth")
@@ -42,24 +42,12 @@ def make_training_sets(face_features, image_folder_sick, image_folder_healthy, i
     train_images_right_eye, train_labels = load_data(
         image_folder_sick, image_folder_healthy, image_size, "_right")
 
-    test_images_mouth, test_labels = load_data(
-        image_folder_val_sick, image_folder_val_healthy, image_size, "mouth")
-    test_images_nose, test_labels = load_data(
-        image_folder_val_sick, image_folder_val_healthy, image_size, "nose")
-    test_images_skin, test_labels = load_data(
-        image_folder_val_sick, image_folder_val_healthy, image_size, "skin")
-    test_images_right_eye, test_labels = load_data(
-        image_folder_val_sick, image_folder_val_healthy, image_size, "_right")
-
-    test_images = [test_images_mouth, test_images_nose,
-                   test_images_skin, test_images_right_eye]
-
     perm = np.random.permutation(len(train_images_mouth))
     train_images = [train_images_mouth[perm], train_images_nose[perm],
                     train_images_skin[perm], train_images_right_eye[perm]]
     train_labels = train_labels[perm]
 
-    return np.asarray(train_images), np.asarray(train_labels), np.asarray(test_images), np.asarray(test_labels)
+    return np.asarray(train_images), np.asarray(train_labels)
 
 
 def load_shuffled_data(folder_sick, folder_healthy, image_size, ftype):
