@@ -7,6 +7,7 @@ from sklearn.metrics import auc
 from sklearn.metrics import roc_curve
 from sklearn.model_selection import KFold
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+import tensorflow as tf
 
 sys.path.append(os.getcwd())
 from categorization.models import make_model
@@ -15,8 +16,8 @@ from categorization.data_utils import *
 
 if __name__ == "__main__":
 
-    image_folder_testing_sick = 'data/parsed/brightened/sick'
-    image_folder_testing_healthy = 'data/parsed/brightened/healthy'
+    image_folder_testing_sick = 'data/parsed/brightened/testing_sick'
+    image_folder_testing_healthy = 'data/parsed/brightened/testing_healthy'
     image_folder_training_sick = 'data/parsed/sick'
     image_folder_training_healthy = 'data/parsed/healthy'
     image_folder_val_sick = 'data/parsed/validation_sick'
@@ -71,10 +72,11 @@ if __name__ == "__main__":
 
         all_saves = os.listdir(save_path + str(feature))
         for save in all_saves:
-            if "model_" + str(fold_no) + '.h5' in save:
+            print(save)
+            if '.h5' in save:
                 best_model_path = save_path + str(feature) + "/" + save
 
-            saved_model = tf.keras.models.load_model(best_model_path)
+        saved_model = tf.keras.models.load_model(best_model_path)
 
         if fold_no == 1:
             predictions = to_labels(saved_model.predict(val_images))
