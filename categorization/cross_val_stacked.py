@@ -44,7 +44,7 @@ if __name__ == "__main__":
         model = make_model(image_size, feature)
         model.save(save_path + os.sep + feature + os.sep + "model.h5")
 
-    # fold_no = 1
+    fold_no = 1
     # for train, test in kfold.split(images[0], labels):
 
     print("Loading the stacked model...")
@@ -93,5 +93,5 @@ if __name__ == "__main__":
     tpr[0] = 0.0
     tprs.append(tpr)
 
-    print_roc_curve(tprs, auc_sum, "stacked", folds)
-    print_confusion_matrix(predictions, val_labels, "stacked", folds)
+    print_roc_curve(tprs, auc_sum, "stacked", fold_no)
+    print_confusion_matrix(predictions, val_labels, "stacked", fold_no)
