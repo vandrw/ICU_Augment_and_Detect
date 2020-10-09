@@ -5,6 +5,7 @@ from sklearn.metrics import auc
 from sklearn.metrics import roc_curve
 from sklearn.model_selection import KFold
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from trsorflow.keras.backend import clear_session
 
 sys.path.append(os.getcwd())
 from categorization.models import *
@@ -20,7 +21,7 @@ if __name__ == "__main__":
     image_folder_val_sick = 'data/parsed/validation_sick'
     image_folder_val_healthy = 'data/parsed/validation_healthy'
     save_path = 'categorization/model_saves/'
-    face_features = ["mouth", "nose", "skin", "eyes"]
+    face_features = ["mouth", "nose", "skin", "eye"]
     base_fpr = np.linspace(0, 1, 101)
     image_size = 128
     folds = 5

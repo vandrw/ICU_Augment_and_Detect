@@ -119,40 +119,42 @@ def flip_all(source_path):
             continue
 
         full_path = os.path.join(source_path, f)
-        if "_left" in f:
-            renamed = f.split("_")[0] + "_right_brightened_flipped.png"
-            os.rename(full_path, os.path.join(source_path, renamed))
+        # if "_left" in f:
+        #     renamed = f.split("_")[0] + "_right_brightened_flipped.png"
+        #     os.rename(full_path, os.path.join(source_path, renamed))
         if os.path.isfile(full_path) and "_right" not in f and "_left" not in f:
             img = cv2.imread(full_path)
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             flipped = cv2.flip(img, 1)
+            noisy = gaussian_blur(flipped, 5)
             target = '/'.join(source_path.split("/")[2:])
-            exportImage(target, f[:-4], "flipped" + ".png", flipped)
+            exportImage(target, f[:-4], "flipped" + ".png", noisy)
 
 
 if __name__ == "__main__":
 
     source_path = "data/parsed/"
-    # target_path = "data/parsed/brightened/"
-    # folders = ["testing_healthy", "testing_sick"]
+    source_folders = ["rug_healthy", "rug_sick"]
+    teraget_folders = ["training_healthy", "training_sick"]
 
-    folders = ["healthy", "sick"]
+    # folders = ["healthy", "sick"]
     
-    for folder in folders:
-        # print("Brightening ", folder, "images...")
-        # for f in os.listdir(source_path + folder):
-        #     if f.startswith('.'):
-        #         continue
-        #     full_path = os.path.join(source_path + folder, f)
-        #     if os.path.isfile(full_path):
-        #         img = cv2.imread(full_path)
-        #         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        #         brightened = adjust_gamma(img, 1.3)
-        #         exportImage("brightened/" + folder,
-        #                     f[:-4], "brightened.png", brightened)
-        # flip_all(target_path + folder)
+    for s_folder,t_folder in zip(source_folders, teraget_folders):
+        print("Augmenting ", s_folder, "images...")
+        for f in os.listdir(source_path + s_folder):
+            if f.startswith('.'):
+                continue
+            full_path = os.path.join(source_path + s_folder, f)
+            if os.path.isfile(full_path):
+                img = cv2.imread(full_path)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                brightened = adjust_gamma(img, 1.3)
+                exportImage("" + t_folder,
+                            f[:-4], ".png", brightened)
+                if "eye" not in f:
+                    noisy = gaussian_blur(brightened, 5)
+                    flipped = cv2.flip(noisy, 1)
+                    exportImage("" + t_folder,
+                                f[:-4], "augmented.png", flipped)
 
-        print("Flipping ", folder, "images...")
-        flip_all(source_path + folder)
-        
     print("Finished!\n")
