@@ -29,19 +29,19 @@ def print_confusion_matrix(pred, true, feature, num_folds):
     for i in range(num_folds):
         for j in range(len(true)):
             if pred[i*j] == 1 and true[j] == 1:
-                matrix[0][0] += 1
-            if pred[i*j] == 1 and true[j] == 0:
                 matrix[0][1] += 1
-            if pred[i*j] == 0 and true[j] == 1:
-                matrix[1][0] += 1
-            if pred[i*j] == 0 and true[j] == 0:
+            if pred[i*j] == 1 and true[j] == 0:
                 matrix[1][1] += 1
+            if pred[i*j] == 0 and true[j] == 1:
+                matrix[0][0] += 1
+            if pred[i*j] == 0 and true[j] == 0:
+                matrix[1][0] += 1
     df_cm = DataFrame(matrix, index=["Positives", "Negative"], columns=[
                          "Positives", "Negative"])
     plt.figure()
     ax = plt.axes()
-    heatmap(df_cm, annot=True, ax=ax, fmt='g')
+    heatmap(df_cm, annot=True, ax=ax, fmt='g', vmin = 0.0, vmax = 57.0)
     ax.set_title('Confusion Matrix ' + str(feature))
-    ax.set_xlabel("Actual Values")
-    ax.set_ylabel("Predicted Values")
+    ax.set_ylabel("Actual Values")
+    ax.set_xlabel("Predicted Values")
     plt.savefig("data/plots/confusion_matrix_" + str(feature) + ".png")

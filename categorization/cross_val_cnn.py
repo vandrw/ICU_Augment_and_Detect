@@ -14,12 +14,12 @@ from categorization.models import make_model
 from categorization.plot_utils import *
 from categorization.data_utils import *
 
+
+
 if __name__ == "__main__":
 
-    image_folder_testing_sick = 'data/parsed/brightened/testing_sick'
-    image_folder_testing_healthy = 'data/parsed/brightened/testing_healthy'
-    image_folder_training_sick = 'data/parsed/sick'
-    image_folder_training_healthy = 'data/parsed/healthy'
+    image_folder_training_sick = 'data/parsed/training_sick'
+    image_folder_training_healthy = 'data/parsed/training_healthy'
     image_folder_val_sick = 'data/parsed/validation_sick'
     image_folder_val_healthy = 'data/parsed/validation_healthy'
 
@@ -43,13 +43,12 @@ if __name__ == "__main__":
             image_folder_val_sick, image_folder_val_healthy, image_size, feature)
         images, labels = load_shuffled_data(
             image_folder_training_sick, image_folder_training_healthy, image_size, feature)
-        test_images, test_labels = load_shuffled_data(
-            image_folder_testing_sick, image_folder_testing_healthy, image_size, feature)
 
         plt.figure()
 
         for train, test in kfold.split(images, labels):
 
+            tf.keras.backend.clear_session()
             model = make_model(image_size, feature)
 
             early_stopping = EarlyStopping(
@@ -57,7 +56,7 @@ if __name__ == "__main__":
             model_check = ModelCheckpoint(
                     save_path + str(feature) + '/model_' + str(fold_no) + '.h5', monitor="val_accuracy", mode='max', verbose=1, save_best_only=True)
 
-            history = model.fit(images[train], labels[train], epochs=50, batch_size=1, callbacks=[early_stopping, model_check], validation_data=(images[test], labels[test]))
+            history = model.fit(images[train], labels[train], epochs=50, batch_size=, callbacks=[early_stopping, model_check], validation_data=(images[test], labels[test]))
             
             save_history(save_path, history, feature, fold_no)
 
@@ -68,6 +67,7 @@ if __name__ == "__main__":
                     best_model_path = save_path + str(feature) + "/" + save
 
             saved_model = tf.keras.models.load_model(best_model_path)
+            del model
 
             if fold_no == 1:
                 predictions = to_labels(saved_model.predict(val_images))
@@ -80,6 +80,7 @@ if __name__ == "__main__":
             pred = (saved_model.predict(val_images))
             fpr, tpr, _ = roc_curve(val_labels, pred)
             auc_sum += auc(fpr, tpr)
+            del saved_model
 
         plt.plot(fpr, tpr, 'b', alpha=0.15)
         tpr = interp(base_fpr, fpr, tpr)
