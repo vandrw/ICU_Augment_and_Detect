@@ -56,7 +56,7 @@ if __name__ == "__main__":
             model_check = ModelCheckpoint(
                     save_path + str(feature) + '/model_' + str(fold_no) + '.h5', monitor="val_accuracy", mode='max', verbose=1, save_best_only=True)
 
-            history = model.fit(images[train], labels[train], epochs=50, batch_size=, callbacks=[early_stopping, model_check], validation_data=(images[test], labels[test]))
+            history = model.fit(images[train], labels[train], epochs=50, batch_size=4, callbacks=[early_stopping, model_check], validation_data=(images[test], labels[test]))
             
             save_history(save_path, history, feature, fold_no)
 

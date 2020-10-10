@@ -17,7 +17,7 @@ def print_roc_curve(tprs, auc_sum, feature, folds, base_fpr=np.linspace(0, 1, 10
     plt.plot([0, 1], [0, 1],'r--')
     plt.xlim([0, 1])
     plt.ylim([0, 1])
-    plt.title("ROC Curve for {} model (AUC = {:.3f})".format(str(feature), auc_sum / folds))
+    plt.title("ROC Curve for {} model (AUC = {:.3f})".format(capitalize(str(feature)), auc_sum / folds))
     plt.ylabel('True Positive Rate')
     plt.xlabel('False Positive Rate')
     plt.axes().set_aspect('equal', 'datalim')
@@ -37,11 +37,11 @@ def print_confusion_matrix(pred, true, feature, num_folds):
             if pred[i*j] == 0 and true[j] == 0:
                 matrix[1][0] += 1
     df_cm = DataFrame(matrix, index=["Positives", "Negative"], columns=[
-                         "Positives", "Negative"])
+                         "Negative", "Positives"])
     plt.figure()
     ax = plt.axes()
-    heatmap(df_cm, annot=True, ax=ax, fmt='g', vmin = 0.0, vmax = 57.0)
-    ax.set_title('Confusion Matrix ' + str(feature))
+    heatmap(df_cm, annot=True, ax=ax, fmt='g', vmin = 0.0, vmax = 380.0)
+    ax.set_title('Confusion Matrix ' + capitalize(str(feature)))
     ax.set_ylabel("Actual Values")
     ax.set_xlabel("Predicted Values")
     plt.savefig("data/plots/confusion_matrix_" + str(feature) + ".png")
