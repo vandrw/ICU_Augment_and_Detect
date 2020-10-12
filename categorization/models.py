@@ -1,7 +1,22 @@
 from tensorflow.keras import layers, models, Model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.metrics import AUC, FalseNegatives, FalsePositives, TruePositives, TrueNegatives
+import tensorflow as tf
 
+def sensitivity(y_true, y_pred):
+    true_positives = tf.keras.backend.sum(tf.keras.backend.round(tf.keras.backend.clip(y_true * y_pred, 0, 1)))
+    possible_positives = tf.keras.backend.sum(tf.keras.backend.round(tf.keras.backend.clip(y_true, 0, 1)))
+    return true_positives / (possible_positives + tf.keras.backend.epsilon())
+
+def specificity(y_true, y_pred):
+    true_negatives = tf.keras.backend.sum(tf.keras.backend.round(tf.keras.backend.clip((1-y_true) * (1-y_pred), 0, 1)))
+    possible_negatives = tf.keras.backend.sum(tf.keras.backend.round(tf.keras.backend.clip(1-y_true, 0, 1)))
+    return true_negatives / (possible_negatives + tf.keras.backend.epsilon())
+
+def f1_metric(y_true, y_pred):
+    sens = sensitivity(y_true, y_pred)
+    spec = specificity(y_true, y_pred)
+    return 2 * ((spec*sens)/(spec+sens + tf.keras.backend.epsilon()))
 
 def make_model(image_size, feature):
     model = models.Sequential()
@@ -16,10 +31,10 @@ def make_model(image_size, feature):
     model.add(layers.BatchNormalization(name="batch2_" + str(feature)))
     model.add(layers.MaxPooling2D((2, 2), name="max1_" + str(feature)))
 
-    model.add(layers.Conv2D(int(image_size/4), (3, 3),
-                            activation='relu', name="conv2_" + str(feature)))
-    model.add(layers.BatchNormalization(name="batch3_" + str(feature)))
-    model.add(layers.MaxPooling2D((2, 2), name="max2_" + str(feature)))
+    # model.add(layers.Conv2D(int(image_size/4), (3, 3),
+    #                         activation='relu', name="conv2_" + str(feature)))
+    # model.add(layers.BatchNormalization(name="batch3_" + str(feature)))
+    # model.add(layers.MaxPooling2D((2, 2), name="max2_" + str(feature)))
 
     model.add(layers.Conv2D(int(image_size/8), (3, 3),
                             activation='relu', name="conv5_" + str(feature)))
@@ -45,8 +60,7 @@ def make_model(image_size, feature):
 
     model.compile(optimizer=Adam(learning_rate=0.001),
                   loss="binary_crossentropy",
-                  metrics=['accuracy', AUC(), FalseNegatives(),
-                           FalsePositives(), TruePositives(), TrueNegatives()])
+                  metrics=['accuracy', AUC(), specificity, sensitivity, f1_metric])
 
     return model
 
@@ -69,7 +83,7 @@ def define_stacked_model(neural_nets, features, trainable=True):
     model = Model(inputs=ensemble_visible, outputs=output)
 
     model.compile(loss='binary_crossentropy', optimizer=Adam(learning_rate=0.001),
-                  metrics=['accuracy', AUC()])
+                  metrics=['accuracy', AUC(), specificity, sensitivity, f1_metric])
 
     return model
 

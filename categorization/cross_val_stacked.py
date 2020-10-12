@@ -3,7 +3,7 @@ import sys
 from numpy import interp
 from sklearn.metrics import auc
 from sklearn.metrics import roc_curve
-from sklearn.model_selection import KFold
+from sklearn.model_selection import StratifiedKFold
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import tensorflow as tf
 
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     auc_sum = 0
     tprs = []
 
-    kfold = KFold(n_splits=folds, shuffle=True, random_state=1)
+    skfold =  StratifiedKFold(n_splits=folds, shuffle=False, random_state=1)
 
     plt.figure()
 
@@ -40,7 +40,7 @@ if __name__ == "__main__":
         model.save(save_path + os.sep + feature + os.sep + "model.h5")
 
     fold_no = 1
-    for train, test in kfold.split(images[0], labels):
+    for train, test in skfold.split(images[0], labels):
 
         print("Loading the stacked model...")
 
@@ -65,7 +65,7 @@ if __name__ == "__main__":
         print("Loading model and making predictions...")
         #  load best model as stacked to plot predictions
         stacked = tf.keras.models.load_model(
-            save_path + 'stacked/model_' + str(fold_no) + '.h5')
+            save_path + 'stacked/model_' + str(fold_no) + '.h5', compile=False)
 
         pred = stacked.predict(
             [val_images[0], val_images[1], val_images[2], val_images[3]])

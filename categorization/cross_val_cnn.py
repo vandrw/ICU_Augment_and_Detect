@@ -5,12 +5,12 @@ from numpy import interp
 import matplotlib.pyplot as plt
 from sklearn.metrics import auc
 from sklearn.metrics import roc_curve
-from sklearn.model_selection import KFold
+from sklearn.model_selection import StratifiedKFold
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import tensorflow as tf
 
 sys.path.append(os.getcwd())
-from categorization.models import make_model
+from categorization.models import make_model, specificity, sensitivity, f1_metric
 from categorization.plot_utils import *
 from categorization.data_utils import *
 
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     image_size = 128
     folds = 10
 
-    kfold = KFold(n_splits=folds, shuffle=True, random_state=1)
+    skfold =  StratifiedKFold(n_splits=folds, shuffle=False, random_state=1)
 
     for feature in face_features:
         auc_sum = 0
@@ -46,15 +46,15 @@ if __name__ == "__main__":
 
         plt.figure()
 
-        for train, test in kfold.split(images, labels):
+        for train, test in skfold.split(images, labels):
 
             tf.keras.backend.clear_session()
             model = make_model(image_size, feature)
 
             early_stopping = EarlyStopping(
-                    monitor="val_accuracy", mode='max', patience=10, verbose=1)
+                    monitor='val_f1_metric', mode='max', patience=10, verbose=1)
             model_check = ModelCheckpoint(
-                    save_path + str(feature) + '/model_' + str(fold_no) + '.h5', monitor="val_accuracy", mode='max', verbose=1, save_best_only=True)
+                    save_path + str(feature) + '/model_' + str(fold_no) + '.h5', monitor='val_f1_metric', mode='max', verbose=1, save_best_only=True)
 
             history = model.fit(images[train], labels[train], epochs=50, batch_size=4, callbacks=[early_stopping, model_check], validation_data=(images[test], labels[test]))
             
@@ -66,7 +66,7 @@ if __name__ == "__main__":
                 if str(fold_no) + '.h5' in save:
                     best_model_path = save_path + str(feature) + "/" + save
 
-            saved_model = tf.keras.models.load_model(best_model_path)
+            saved_model = tf.keras.models.load_model(best_model_path, compile=False)
             del model
 
             if fold_no == 1:

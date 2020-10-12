@@ -85,7 +85,7 @@ def plot_all(img):
         plotimage(blurred, "bilateral" + str(size), r, c, i)
     plt.tight_layout()
     plt.savefig("data/plots/altered_images_plot.png")
-    plt.show()
+    # plt.show()
 
 
 def alter_and_save(img, filename):
@@ -134,10 +134,22 @@ def flip_all(source_path):
 if __name__ == "__main__":
 
     source_path = "data/parsed/"
+    training_sick_folder = "data/parsed/training_sick/"
     source_folders = ["rug_healthy", "rug_sick"]
     teraget_folders = ["training_healthy", "training_sick"]
 
-    # folders = ["healthy", "sick"]
+    # flip and add noise to sick images
+    for f in os.listdir(training_sick_folder):
+        if f.startswith('.'):
+            continue
+        full_path = os.path.join(training_sick_folder, f)
+        if os.path.isfile(full_path):
+            img = cv2.imread(full_path)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            if "eye" not in f:
+                noisy = noise(img, 'gaussian')
+                flipped = cv2.flip(noisy, 1)
+                exportImage("" + "training_sick", f[:-4], "augmented.png", flipped)
     
     for s_folder,t_folder in zip(source_folders, teraget_folders):
         print("Augmenting ", s_folder, "images...")
@@ -150,9 +162,9 @@ if __name__ == "__main__":
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 brightened = adjust_gamma(img, 1.3)
                 exportImage("" + t_folder,
-                            f[:-4], ".png", brightened)
-                if "eye" not in f:
-                    noisy = gaussian_blur(brightened, 5)
+                            f[:-4], "brightened.png", brightened)
+                if "eye" not in f and "healthy" not in full_path:
+                    noisy = noise(brightened, 'gaussian')
                     flipped = cv2.flip(noisy, 1)
                     exportImage("" + t_folder,
                                 f[:-4], "augmented.png", flipped)

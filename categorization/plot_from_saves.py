@@ -10,7 +10,7 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import tensorflow as tf
 
 sys.path.append(os.getcwd())
-from categorization.models import make_model
+from categorization.models import *
 from categorization.plot_utils import *
 from categorization.data_utils import *
 
@@ -36,11 +36,15 @@ if __name__ == "__main__":
         val_images, val_labels = load_shuffled_data(
             image_folder_val_sick, image_folder_val_healthy, image_size, feature)
 
+        plt.figure()
         for fold_no in range(1,folds+1):
 
             tf.keras.backend.clear_session()
             best_model_path = save_path + str(feature) + "/model_" + str(fold_no) + '.h5'
-            saved_model = tf.keras.models.load_model(best_model_path)
+            saved_model = tf.keras.models.load_model(best_model_path, compile=False )
+            saved_model.compile(optimizer=Adam(learning_rate=0.001),
+                  loss="binary_crossentropy",
+                  metrics=['accuracy', AUC(), specificity, sensitivity, f1_metric])
 
             if fold_no == 1:
                 predictions = to_labels(saved_model.predict(val_images))
@@ -57,6 +61,5 @@ if __name__ == "__main__":
             tpr[0] = 0.0
             tprs.append(tpr)
         
-        plt.figure()
         print_roc_curve(tprs, auc_sum, feature, folds)
         print_confusion_matrix(predictions, val_labels, feature, folds)
