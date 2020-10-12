@@ -28,13 +28,13 @@ def print_confusion_matrix(pred, true, feature, num_folds):
     matrix = np.zeros((2, 2))
     for i in range(num_folds):
         for j in range(len(true)):
-            if pred[i*j] == 1 and true[j] == 1:
+            if pred[i*10+j] == 1 and true[j] == 1:
                 matrix[0][1] += 1
-            if pred[i*j] == 1 and true[j] == 0:
+            if pred[i*10+j] == 1 and true[j] == 0:
                 matrix[1][1] += 1
-            if pred[i*j] == 0 and true[j] == 1:
+            if pred[i*10+j] == 0 and true[j] == 1:
                 matrix[0][0] += 1
-            if pred[i*j] == 0 and true[j] == 0:
+            if pred[i*10+j] == 0 and true[j] == 0:
                 matrix[1][0] += 1
     df_cm = DataFrame(matrix, index=["Positives", "Negative"], columns=[
                          "Negative", "Positives"])

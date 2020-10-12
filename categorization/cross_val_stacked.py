@@ -5,7 +5,7 @@ from sklearn.metrics import auc
 from sklearn.metrics import roc_curve
 from sklearn.model_selection import KFold
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-from trsorflow.keras.backend import clear_session
+import tensorflow as tf
 
 sys.path.append(os.getcwd())
 from categorization.models import *
@@ -29,9 +29,6 @@ if __name__ == "__main__":
     kfold = KFold(n_splits=folds, shuffle=True, random_state=1)
 
     plt.figure()
-
-    #test_faces, _ = load_data(
-    #    'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "face")
 
     images, labels = make_stacked_sets(image_folder_training_sick, image_folder_training_healthy, image_size)
     val_images, val_labels = make_stacked_sets(image_folder_val_sick, image_folder_val_healthy, image_size)
