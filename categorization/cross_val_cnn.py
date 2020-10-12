@@ -82,10 +82,10 @@ if __name__ == "__main__":
             auc_sum += auc(fpr, tpr)
             del saved_model
 
-        plt.plot(fpr, tpr, 'b', alpha=0.15)
-        tpr = interp(base_fpr, fpr, tpr)
-        tpr[0] = 0.0
-        tprs.append(tpr)
+            plt.plot(fpr, tpr, 'b', alpha=0.15)
+            tpr = interp(base_fpr, fpr, tpr)
+            tpr[0] = 0.0
+            tprs.append(tpr)
 
         print_roc_curve(tprs, auc_sum, feature, folds)
         print_confusion_matrix(predictions, val_labels, feature, folds)
