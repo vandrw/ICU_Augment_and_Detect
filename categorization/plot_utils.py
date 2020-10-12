@@ -45,3 +45,33 @@ def print_confusion_matrix(pred, true, feature, num_folds):
     ax.set_ylabel("Actual Values")
     ax.set_xlabel("Predicted Values")
     plt.savefig("data/plots/confusion_matrix_" + str(feature) + ".png")
+
+
+def plot_per_participant(per_participant, face_features):
+    ind = np.arange(len(per_participant[0]))
+    width = 0.35     
+
+    bot = np.zeros(len(ind))
+    plots = []
+
+    plt.figure(figsize=(10, 7))
+    for feature in face_features:
+        p = plt.bar(ind, per_participant[face_features.index(feature)], width, bottom = bot)
+        bot += per_participant[face_features.index(feature)]
+        plots.append(p[0])
+
+    plt.ylabel('Accuracy per Model')
+    plt.title('Accuracy per Participant per Model')
+
+    # xticks = []
+    # for i in range(len(ind)):
+    #     xticks.append("P " + str(i+1))
+
+    plt.xticks(ind, tuple([str(i+1) for i in ind]))
+    plt.yticks(np.arange(0, len(face_features), 0.5))
+    plt.legend(plots, face_features)
+    
+    if len(face_features) == 1:
+        plt.savefig("data/plots/acc_per_participant_stacked.png")
+    else:
+        plt.savefig("data/plots/acc_per_participant.png")

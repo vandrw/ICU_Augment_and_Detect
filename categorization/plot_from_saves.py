@@ -18,25 +18,42 @@ from categorization.data_utils import *
 
 if __name__ == "__main__":
 
+    if sys.argv[1] == 'stacked':
+        face_features = ['stacked']
+    elif sys.argv[1] == 'all':
+        face_features = ['mouth', 'nose', 'skin', 'eye', 'stacked']
+    else:
+        face_features = ['mouth', 'nose', 'skin', 'eye']
+    
     image_folder_val_sick = 'data/parsed/validation_sick'
     image_folder_val_healthy = 'data/parsed/validation_healthy'
     save_path = 'categorization/model_saves/'
-    face_features = ["mouth", "nose", "skin", "eye"]
-    
+
     base_fpr = np.linspace(0, 1, 101)
     image_size = 128
-    folds = 10
+    # folds = 10
+    folds = 2
+
+    per_participant = np.zeros((len(face_features),38))
 
     for feature in face_features:
         auc_sum = 0
         tprs = []
 
+        if feature == 'stacked':
+            stacked = 1
+        else:
+            stacked = 0
+
         print("[INFO] Making plots for %s" % (feature))
 
-        val_images, val_labels = load_shuffled_data(
-            image_folder_val_sick, image_folder_val_healthy, image_size, feature)
+        if stacked == 0:
+            val_images, val_labels = load_data(image_folder_val_sick, image_folder_val_healthy, image_size, feature)
+        else:
+            val_images, val_labels = make_stacked_sets_unshuffled(image_folder_val_sick, image_folder_val_healthy, image_size)
 
         plt.figure()
+        
         for fold_no in range(1,folds+1):
 
             tf.keras.backend.clear_session()
@@ -46,12 +63,16 @@ if __name__ == "__main__":
                   loss="binary_crossentropy",
                   metrics=['accuracy', AUC(), specificity, sensitivity, f1_metric])
 
-            if fold_no == 1:
-                predictions = to_labels(saved_model.predict(val_images))
+            if stacked == 0: 
+                pred = (saved_model.predict(val_images))
             else:
-                predictions = np.concatenate((predictions, to_labels(saved_model.predict(val_images))), axis=0)
+                pred = saved_model.predict([val_images[0], val_images[1], val_images[2], val_images[3]])
+        
+            if fold_no == 1:
+                predictions = to_labels(pred)
+            else:
+                predictions = np.concatenate((predictions, to_labels(pred)), axis=0)
 
-            pred = (saved_model.predict(val_images))
             fpr, tpr, _ = roc_curve(val_labels, pred)
             auc_sum += auc(fpr, tpr)
             del saved_model
@@ -60,6 +81,10 @@ if __name__ == "__main__":
             tpr = interp(base_fpr, fpr, tpr)
             tpr[0] = 0.0
             tprs.append(tpr)
-        
+
+
+        per_participant[face_features.index(feature)]= compute_per_participant(predictions, val_labels, folds, feature)
         print_roc_curve(tprs, auc_sum, feature, folds)
         print_confusion_matrix(predictions, val_labels, feature, folds)
+    plt.figure()
+    plot_per_participant(per_participant, face_features)
