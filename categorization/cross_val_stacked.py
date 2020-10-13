@@ -10,7 +10,7 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import tensorflow as tf
 
 sys.path.append(os.getcwd())
-from categorization.models import make_model, specificity, sensitivity, f1_metric
+from categorization.models import *
 from categorization.plot_utils import *
 from categorization.data_utils import *
 
