@@ -3,22 +3,22 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.metrics import AUC, FalseNegatives, FalsePositives, TruePositives, TrueNegatives
 import tensorflow as tf
 
-def sensitivity(y_true, y_pred):
+def Sensitivity(y_true, y_pred):
     true_positives = tf.keras.backend.sum(tf.keras.backend.round(tf.keras.backend.clip(y_true * y_pred, 0, 1)))
     possible_positives = tf.keras.backend.sum(tf.keras.backend.round(tf.keras.backend.clip(y_true, 0, 1)))
     return true_positives / (possible_positives + tf.keras.backend.epsilon())
 
-def specificity(y_true, y_pred):
+def Specificity(y_true, y_pred):
     true_negatives = tf.keras.backend.sum(tf.keras.backend.round(tf.keras.backend.clip((1-y_true) * (1-y_pred), 0, 1)))
     possible_negatives = tf.keras.backend.sum(tf.keras.backend.round(tf.keras.backend.clip(1-y_true, 0, 1)))
     return true_negatives / (possible_negatives + tf.keras.backend.epsilon())
 
-def f1_metric(y_true, y_pred):
-    sens = sensitivity(y_true, y_pred)
-    spec = specificity(y_true, y_pred)
+def F1_metric(y_true, y_pred):
+    sens = Sensitivity(y_true, y_pred)
+    spec = Specificity(y_true, y_pred)
     return 2 * ((spec*sens)/(spec+sens + tf.keras.backend.epsilon()))
 
-def make_model(image_size, feature):
+def make_model(image_size, feature, mcompile=True):
     model = models.Sequential()
 
     model.add(layers.Conv2D(image_size, (3, 3), padding="same", activation='relu',
@@ -58,9 +58,10 @@ def make_model(image_size, feature):
     model.add(layers.Dense(1, activation='sigmoid',
                            name="dense3_" + str(feature)))
 
-    model.compile(optimizer=Adam(learning_rate=0.001),
-                  loss="binary_crossentropy",
-                  metrics=['accuracy', AUC(), specificity, sensitivity, f1_metric])
+    if mcompile:
+        model.compile(optimizer=Adam(learning_rate=0.001),
+                    loss="binary_crossentropy",
+                    metrics=['accuracy', AUC(), Specificity, Sensitivity, F1_metric])
 
     return model
 
@@ -83,7 +84,7 @@ def define_stacked_model(neural_nets, features, trainable=True):
     model = Model(inputs=ensemble_visible, outputs=output)
 
     model.compile(loss='binary_crossentropy', optimizer=Adam(learning_rate=0.001),
-                  metrics=['accuracy', AUC(), specificity, sensitivity, f1_metric])
+                  metrics=['accuracy', AUC(), Specificity, Sensitivity, F1_metric])
 
     return model
 
@@ -93,7 +94,12 @@ def load_all_models(save_path, features):
     for feature in features:
         # filename = save_path + str(feature) + '/save.h5'
         filename = save_path + str(feature) + '/model.h5'
-        model = models.load_model(filename)
+
+        model = models.load_weights(filename)
+        model.compile(optimizer=Adam(learning_rate=0.001),
+                  loss="binary_crossentropy",
+                  metrics=['accuracy', AUC(), Specificity, Sensitivity, F1_metric])
+
         all_models.append(model)
         print('loaded model of ' + str(feature))
     return all_models

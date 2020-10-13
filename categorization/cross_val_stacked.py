@@ -41,7 +41,7 @@ if __name__ == "__main__":
     print("Creating empty models...")
     for feature in face_features:
         print(feature + "...")
-        model = make_model(image_size, feature)
+        model = make_model(image_size, feature, mcompile=False)
         model.save(save_path + os.sep + feature + os.sep + "model.h5")
 
     fold_no = 1
