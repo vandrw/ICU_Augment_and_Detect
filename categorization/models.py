@@ -73,7 +73,7 @@ def define_stacked_model(neural_nets, features, trainable=True):
                 layer.trainable = False
 
     ensemble_visible = [model.input for model in neural_nets]
-    ensemble_outputs = [model.layers[16].output for model in neural_nets]
+    ensemble_outputs = [model.layers[14].output for model in neural_nets]
 
     merge = layers.concatenate(ensemble_outputs)
     hidden = layers.Dense(32, activation='relu')(merge)
