@@ -52,9 +52,9 @@ if __name__ == "__main__":
             model = make_model(image_size, feature)
 
             early_stopping = EarlyStopping(
-                    monitor='val_f1_metric', mode='max', patience=10, verbose=1)
+                    monitor='val_F1_metric', mode='max', patience=10, verbose=1)
             model_check = ModelCheckpoint(
-                    save_path + str(feature) + '/model_' + str(fold_no) + '.h5', monitor='val_f1_metric', mode='max', verbose=1, save_best_only=True)
+                    save_path + str(feature) + '/model_' + str(fold_no) + '.h5', monitor='val_F1_metric', mode='max', verbose=1, save_best_only=True)
 
             history = model.fit(images[train], labels[train], epochs=50, batch_size=4, callbacks=[early_stopping, model_check], validation_data=(images[test], labels[test]))
             

@@ -54,9 +54,9 @@ if __name__ == "__main__":
         stacked = define_stacked_model(all_models, face_features)
 
         early_stopping = EarlyStopping(
-            monitor="val_f1_metric", mode='max', patience=10, verbose=1)
+            monitor="val_F1_metric", mode='max', patience=10, verbose=1)
         model_check = ModelCheckpoint(save_path + 'stacked/model_' + str(
-            fold_no) + '.h5', monitor="val_f1_metric", mode='max', verbose=1, save_best_only=True)
+            fold_no) + '.h5', monitor="val_F1_metric", mode='max', verbose=1, save_best_only=True)
 
         print("Starting training...")
 
