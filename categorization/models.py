@@ -95,7 +95,7 @@ def load_all_models(save_path, features):
         # filename = save_path + str(feature) + '/save.h5'
         filename = save_path + str(feature) + '/model.h5'
 
-        model = models.load_weights(filename)
+        model = models.load_model(filename)
         model.compile(optimizer=Adam(learning_rate=0.001),
                   loss="binary_crossentropy",
                   metrics=['accuracy', AUC(), Specificity, Sensitivity, F1_metric])
