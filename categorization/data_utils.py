@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import pickle
 
-def load_data(folder_sick, folder_healthy, image_size, ftype):
+def load_data(folder_sick, folder_healthy, image_size, ftype, extra_healthy=None, extra_sick=None):
     files_healthy = os.listdir(folder_healthy)
     files_sick = os.listdir(folder_sick)
     data = []
@@ -11,7 +11,8 @@ def load_data(folder_sick, folder_healthy, image_size, ftype):
     for filename in files_healthy:
         sick = np.array([0])
         full_path = folder_healthy + "/" + str(filename)
-        if ftype in filename and os.path.isfile(full_path) and "n2" not in filename:
+        if ((ftype in filename) or (extra_healthy in filename)) \
+            and os.path.isfile(full_path):
             image = cv2.imread(full_path)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             image = cv2.resize(image, dsize=(
@@ -21,7 +22,8 @@ def load_data(folder_sick, folder_healthy, image_size, ftype):
     for filename in files_sick:
         sick = np.array([1])
         full_path = folder_sick + "/" + str(filename)
-        if ftype in filename and os.path.isfile(full_path):
+        if ((ftype in filename) or (extra_sick in filename)) \
+            and os.path.isfile(full_path):
             image = cv2.imread(full_path)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             image = cv2.resize(image, dsize=(
@@ -39,7 +41,7 @@ def make_stacked_sets(image_folder_sick, image_folder_healthy, image_size):
     train_images_skin, train_labels = load_data(
         image_folder_sick, image_folder_healthy, image_size, "skin")
     train_images_right_eye, train_labels = load_data(
-        image_folder_sick, image_folder_healthy, image_size, "_right")
+        image_folder_sick, image_folder_healthy, image_size, "_right", extra_sick="eye")
 
     perm = np.random.permutation(len(train_images_mouth))
     train_images = [train_images_mouth[perm], train_images_nose[perm],
