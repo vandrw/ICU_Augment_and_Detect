@@ -1,6 +1,8 @@
 import os
 import sys
+import numpy as np
 from numpy import interp
+import matplotlib.pyplot as plt
 from sklearn.metrics import auc
 from sklearn.metrics import roc_curve
 from sklearn.model_selection import StratifiedKFold
@@ -8,7 +10,7 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import tensorflow as tf
 
 sys.path.append(os.getcwd())
-from categorization.models import *
+from categorization.models import make_model, specificity, sensitivity, f1_metric
 from categorization.plot_utils import *
 from categorization.data_utils import *
 
