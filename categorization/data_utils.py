@@ -8,6 +8,12 @@ def load_data(folder_sick, folder_healthy, image_size, ftype, extra_healthy=None
     files_sick = os.listdir(folder_sick)
     data = []
     labels = []
+
+    if extra_healthy is None:
+        extra_healthy = ftype
+    if extra_sick is None:
+        extra_sick = ftype
+
     for filename in files_healthy:
         sick = np.array([0])
         full_path = folder_healthy + "/" + str(filename)
@@ -58,7 +64,7 @@ def make_stacked_sets_unshuffled(image_folder_sick, image_folder_healthy, image_
     train_images_skin, train_labels = load_data(
         image_folder_sick, image_folder_healthy, image_size, "skin")
     train_images_right_eye, train_labels = load_data(
-        image_folder_sick, image_folder_healthy, image_size, "_right")
+        image_folder_sick, image_folder_healthy, image_size, "_right", extra_sick="eye")
 
     train_images = [train_images_mouth, train_images_nose,
                     train_images_skin, train_images_right_eye]
