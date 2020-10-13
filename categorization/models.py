@@ -49,11 +49,11 @@ def make_model(image_size, feature, mcompile=True):
     model.add(layers.Flatten(name="flatten_" + str(feature)))
     model.add(layers.Dense(48, activation='relu',
                            name="dense1_" + str(feature)))
-    model.add(layers.Dropout(0.3, name="dropout1_" + str(feature)))
+    model.add(layers.Dropout(0.2, name="dropout1_" + str(feature)))
 
     model.add(layers.Dense(16, activation='relu',
                            name="dense2_" + str(feature)))
-    model.add(layers.Dropout(0.5, name="dropout2_" + str(feature)))
+    model.add(layers.Dropout(0.1, name="dropout2_" + str(feature)))
 
     model.add(layers.Dense(1, activation='sigmoid',
                            name="dense3_" + str(feature)))
@@ -73,11 +73,11 @@ def define_stacked_model(neural_nets, features, trainable=True):
                 layer.trainable = False
 
     ensemble_visible = [model.input for model in neural_nets]
-    ensemble_outputs = [model.layers[18].output for model in neural_nets]
+    ensemble_outputs = [model.layers[16].output for model in neural_nets]
 
     merge = layers.concatenate(ensemble_outputs)
     hidden = layers.Dense(32, activation='relu')(merge)
-    hidden_drop = layers.Dropout(0.3)(hidden)
+    hidden_drop = layers.Dropout(0.2)(hidden)
     hidden2 = layers.Dense(16, activation='relu')(hidden_drop)
     hidden3 = layers.Dense(4, activation='relu')(hidden2)
     output = layers.Dense(1, activation='sigmoid')(hidden3)
