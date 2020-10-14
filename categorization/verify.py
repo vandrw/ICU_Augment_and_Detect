@@ -19,7 +19,7 @@ def get_accuracy(test_labels, prediction_labels, thresh=0.5):
 print("Loading data...")
 
 image_size = 128
-threshold = 0.5
+threshold = 0.6
 folds = 10
 
 test_faces, _ = load_data(
@@ -37,11 +37,12 @@ test_images = [test_images_mouth, test_images_face, test_images_skin, test_image
 
 print("Loading model and making predictions...")
 
-for feature in ["mouth", "nose", "skin", "eyes", "stacked"]:
+for feature in ["mouth", "nose", "skin", "eye", "stacked"]:
     print("Predicting for " + feature + "...")
+    total_acc = 0
     for fold_no in range(1,folds+1):
         model = tf.keras.models.load_model(
-            "categorization/model_saves/" + feature + "/model_" + str(fold_no) + '.h5')
+            "categorization/model_saves/" + feature + "/model_" + str(fold_no) + '.h5', compile=False)
 
         # if feature == "stacked":
         #     pred = model.predict(test_images)
@@ -72,10 +73,11 @@ for feature in ["mouth", "nose", "skin", "eyes", "stacked"]:
 
         pred = model.predict(imgs)
 
-        acc += get_accuracy(test_labels, pred, threshold)
-        print("Accuracy fold {}: {}".format(fold_no, acc))
+        acc = get_accuracy(test_labels, pred, threshold)
+        total_acc += acc
+        # print("Accuracy fold {}: {}".format(fold_no, acc))
 
-    print("[{}] Mean accuracy on {} folds: {}".format(feature.upper(), folds, acc/folds))
+    print("[{}] Mean accuracy on {} folds (threshold={:.2f}): {}".format(feature.upper(), folds, threshold, total_acc/folds))
         # plt.figure(figsize=(10, 10))
         # plt.title("Results " + feature + " model")
         # for i in range(30):
