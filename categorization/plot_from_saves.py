@@ -31,8 +31,7 @@ if __name__ == "__main__":
 
     base_fpr = np.linspace(0, 1, 101)
     image_size = 128
-    # folds = 10
-    folds = 2
+    folds = 10
 
     per_participant = np.zeros((len(face_features),38))
 
@@ -61,7 +60,7 @@ if __name__ == "__main__":
             saved_model = tf.keras.models.load_model(best_model_path, compile=False )
             saved_model.compile(optimizer=Adam(learning_rate=0.001),
                   loss="binary_crossentropy",
-                  metrics=['accuracy', AUC(), specificity, sensitivity, f1_metric])
+                  metrics=['accuracy', AUC(), Specificity, Sensitivity, F1_metric])
 
             if stacked == 0: 
                 pred = (saved_model.predict(val_images))

@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 sys.path.append(os.getcwd())
 from categorization.cnn import load_data
 
-def get_accuracy(test_labels, prediction_labels):
+def get_accuracy(test_labels, prediction_labels, thresh=0.5):
     sum_acc = 0.0
     for i in range(len(test_labels)):
-        if (test_labels[i] == (prediction_labels[i] >= 0.5)):
+        if (test_labels[i] == (prediction_labels[i] >= thresh)):
             sum_acc += 1
     
     return sum_acc / len(test_labels)
@@ -18,6 +18,8 @@ def get_accuracy(test_labels, prediction_labels):
 print("Loading data...")
 
 image_size = 128
+threshold = 0.5
+
 test_faces, _ = load_data(
     'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "face")
 test_images_mouth, test_labels = load_data(
@@ -40,7 +42,7 @@ for feature in ["mouth", "nose", "skin", "eyes", "stacked"]:
 
     if feature == "stacked":
         pred = model.predict(test_images)
-        print("Accuracy: ", get_accuracy(test_labels, pred))
+        print("Accuracy: ", get_accuracy(test_labels, pred, threshold))
         plt.figure(figsize=(10, 10))
         for i in range(30):
             plt.subplot(6, 5, i+1)
@@ -50,7 +52,7 @@ for feature in ["mouth", "nose", "skin", "eyes", "stacked"]:
             plt.imshow(test_faces[i], cmap=plt.cm.binary)
             result = pred[i]
             real = test_labels[i]
-            plt.xlabel("%d (%.2f), real: %.2f" % ((result >= 0.5), result, real))
+            plt.xlabel("%d (%.2f), real: %.2f" % ((result >= threshold), result, real))
         plt.suptitle("Results " + feature + " model")
         plt.savefig("data/plots/predictions.png")
         continue
@@ -77,6 +79,6 @@ for feature in ["mouth", "nose", "skin", "eyes", "stacked"]:
         plt.imshow(imgs[i], cmap=plt.cm.binary)
         result = pred[i]
         real = test_labels[i]
-        plt.xlabel("%d (%.2f), real: %.2f" % ((result >= 0.5), result, real))
+        plt.xlabel("%d (%.2f), real: %.2f" % ((result >= threshold), result, real))
     plt.suptitle("Results " + feature + " model")
     plt.savefig("data/plots/predictions_" + feature + ".png")

@@ -64,7 +64,7 @@ def make_stacked_sets_unshuffled(image_folder_sick, image_folder_healthy, image_
     train_images_skin, train_labels = load_data(
         image_folder_sick, image_folder_healthy, image_size, "skin")
     train_images_right_eye, train_labels = load_data(
-        image_folder_sick, image_folder_healthy, image_size, "_right", extra_sick="eye")
+        image_folder_sick, image_folder_healthy, image_size, "_right")
 
     train_images = [train_images_mouth, train_images_nose,
                     train_images_skin, train_images_right_eye]
