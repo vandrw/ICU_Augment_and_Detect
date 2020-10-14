@@ -38,7 +38,7 @@ test_images = [test_images_mouth, test_images_face, test_images_skin, test_image
 print("Loading model and making predictions...")
 
 for feature in ["mouth", "nose", "skin", "eye", "stacked"]:
-    print("Predicting for " + feature + "...")
+    # print("Predicting for " + feature + "...")
     total_acc = 0
     for fold_no in range(1,folds+1):
         model = tf.keras.models.load_model(
@@ -77,7 +77,7 @@ for feature in ["mouth", "nose", "skin", "eye", "stacked"]:
         total_acc += acc
         # print("Accuracy fold {}: {}".format(fold_no, acc))
 
-    print("[{}] Mean accuracy on {} folds (threshold={:.2f}): {}".format(feature.upper(), folds, threshold, total_acc/folds))
+    print("[{}]\tMean accuracy on {} folds (threshold={:.2f}): {:.4f}".format(feature.upper(), folds, threshold, total_acc/folds))
         # plt.figure(figsize=(10, 10))
         # plt.title("Results " + feature + " model")
         # for i in range(30):
