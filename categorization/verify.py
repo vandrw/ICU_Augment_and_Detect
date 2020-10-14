@@ -74,7 +74,7 @@ for feature in ["mouth", "nose", "skin", "eyes", "stacked"]:
         acc += get_accuracy(test_labels, pred, threshold)
         print("Accuracy fold {}: {}".format(fold_no, acc))
 
-    print("[{}] Mean accuracy on {} folds: {}".format{feature.upper(), folds, acc/folds})
+    print("[{}] Mean accuracy on {} folds: {}".format(feature.upper(), folds, acc/folds))
         # plt.figure(figsize=(10, 10))
         # plt.title("Results " + feature + " model")
         # for i in range(30):
