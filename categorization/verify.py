@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 sys.path.append(os.getcwd())
-from categorization.cnn import load_data
+from categorization.data_utils import load_data
 
 def get_accuracy(test_labels, prediction_labels, thresh=0.5):
     sum_acc = 0.0
