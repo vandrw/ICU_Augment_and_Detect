@@ -58,7 +58,8 @@ for feature in ["mouth", "nose", "skin", "eyes", "stacked"]:
         #     plt.suptitle("Results " + feature + " model")
         #     plt.savefig("data/plots/predictions.png")
         #     continue
-
+        if feature == "stacked":
+            imgs = test_images
         else if feature == "mouth":
             imgs = test_images[0]
         else if feature == "nose":
