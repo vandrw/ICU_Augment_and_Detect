@@ -59,13 +59,13 @@ for feature in ["mouth", "nose", "skin", "eyes", "stacked"]:
         #     plt.savefig("data/plots/predictions.png")
         #     continue
 
-        elif feature == "mouth":
+        else if feature == "mouth":
             imgs = test_images[0]
-        elif feature == "nose":
+        else if feature == "nose":
             imgs = test_images[1]
-        elif feature == "skin":
+        else if feature == "skin":
             imgs = test_images[2]
-        elif feature == "eyes":
+        else if feature == "eyes":
             imgs = test_images[3]
 
         pred = model.predict(imgs)
