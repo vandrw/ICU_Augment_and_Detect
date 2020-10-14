@@ -60,13 +60,13 @@ for feature in ["mouth", "nose", "skin", "eyes", "stacked"]:
         #     continue
         if feature == "stacked":
             imgs = test_images
-        else if feature == "mouth":
+        elif feature == "mouth":
             imgs = test_images[0]
-        else if feature == "nose":
+        elif feature == "nose":
             imgs = test_images[1]
-        else if feature == "skin":
+        elif feature == "skin":
             imgs = test_images[2]
-        else if feature == "eyes":
+        elif feature == "eyes":
             imgs = test_images[3]
 
         pred = model.predict(imgs)
