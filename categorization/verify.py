@@ -71,5 +71,5 @@ for feature in ["mouth", "nose", "skin", "eye", "stacked"]:
     #     print("[{}] Mean accuracy on {} folds (threshold={:.2f}): {:.4f}".format(feature.upper(), folds, thresh, accs[thresh]/folds))
     for thresh in thresholds:
         max_idx = np.argmax(np.asarray(accs[thresh]))
-        print(thresh, "max value at ", max_idx, ": ", acc[thresh][idx])))
+        print(thresh, "max value at ", max_idx, ": ", acc[thresh][idx])
     print("---------------------------------------------------\n")
