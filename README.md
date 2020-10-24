@@ -30,6 +30,36 @@ For python environment details, please check __environment.py__.
 * [Chicago Faces Dataset](https://chicagofaces.org/default/download/)
 * [YMU and VMU](http://www.antitza.com/makeup-datasets.html)
 
+### Results
+[MOUTH]  	Mean accuracy on 10 folds (threshold=0.40): 0.5921
+[NOSE]  	Mean accuracy on 10 folds (threshold=0.40): 0.5105
+[SKIN]  	Mean accuracy on 10 folds (threshold=0.40): 0.4842
+[EYE]  	  Mean accuracy on 10 folds (threshold=0.40): 0.5316
+[STACKED] Mean accuracy on 10 folds (threshold=0.40): 0.5658
+
+[MOUTH]  	Mean accuracy on 10 folds (threshold=0.50): 0.5947
+[NOSE]  	Mean accuracy on 10 folds (threshold=0.50): 0.5132
+[SKIN]  	Mean accuracy on 10 folds (threshold=0.50): 0.4789
+[EYE]  	  Mean accuracy on 10 folds (threshold=0.50): 0.5263
+[STACKED] Mean accuracy on 10 folds (threshold=0.50): 0.5605
+
+[MOUTH]   Mean accuracy on 10 folds (threshold=0.60): 0.5947
+[NOSE]    Mean accuracy on 10 folds (threshold=0.60): 0.5132
+[SKIN]    Mean accuracy on 10 folds (threshold=0.60): 0.4974
+[EYE]  	  Mean accuracy on 10 folds (threshold=0.60): 0.5158
+[STACKED] Mean accuracy on 10 folds (threshold=0.60): 0.5711
+
+[MOUTH]  	Mean accuracy on 10 folds (threshold=0.70): 0.6132
+[NOSE]  	Mean accuracy on 10 folds (threshold=0.70): 0.5211
+[SKIN]  	Mean accuracy on 10 folds (threshold=0.70): 0.4921
+[EYE]  	  Mean accuracy on 10 folds (threshold=0.70): 0.4974
+[STACKED] Mean accuracy on 10 folds (threshold=0.70): 0.5763
+
+[MOUTH]  	Mean accuracy on 10 folds (threshold=0.80): 0.6211
+[NOSE]  	Mean accuracy on 10 folds (threshold=0.80): 0.5184
+[SKIN]  	Mean accuracy on 10 folds (threshold=0.80): 0.4895
+[EYE]  	  Mean accuracy on 10 folds (threshold=0.80): 0.5079
+[STACKED] Mean accuracy on 10 folds (threshold=0.80): 0.5658
 
 ### References for previous datasets
 A. Sepas-Moghaddam, V. Chiesa, P.L. Correia, F. Pereira, J. Dugelay, “The IST-EURECOM Light Field Face Database”, International Workshop on Biometrics and Forensics, IWBF 2017, Coventry, UK, April 2017

@@ -19,8 +19,15 @@ def get_accuracy(test_labels, prediction_labels, thresh=0.5):
 print("Loading data...")
 
 image_size = 128
-threshold = 0.6
+thresholds = [0.5, 0.6, 0.7, 0.8]
 folds = 10
+
+accs = {
+    0.5: 0,
+    0.6: 0,
+    0.7: 0,
+    0.8: 0
+    }
 
 test_faces, _ = load_data(
     'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "face")
@@ -38,28 +45,12 @@ test_images = [test_images_mouth, test_images_face, test_images_skin, test_image
 print("Loading model and making predictions...")
 
 for feature in ["mouth", "nose", "skin", "eye", "stacked"]:
-    # print("Predicting for " + feature + "...")
+    print("Predicting for " + feature + "...")
     total_acc = 0
     for fold_no in range(1,folds+1):
         model = tf.keras.models.load_model(
             "categorization/model_saves/" + feature + "/model_" + str(fold_no) + '.h5', compile=False)
 
-        # if feature == "stacked":
-        #     pred = model.predict(test_images)
-        #     print("Accuracy: ", get_accuracy(test_labels, pred, threshold))
-        #     plt.figure(figsize=(10, 10))
-        #     for i in range(30):
-        #         plt.subplot(6, 5, i+1)
-        #         plt.xticks([])
-        #         plt.yticks([])
-        #         plt.grid(False)
-        #         plt.imshow(test_faces[i], cmap=plt.cm.binary)
-        #         result = pred[i]
-        #         real = test_labels[i]
-        #         plt.xlabel("%d (%.2f), real: %.2f" % ((result >= threshold), result, real))
-        #     plt.suptitle("Results " + feature + " model")
-        #     plt.savefig("data/plots/predictions.png")
-        #     continue
         if feature == "stacked":
             imgs = test_images
         elif feature == "mouth":
@@ -73,21 +64,10 @@ for feature in ["mouth", "nose", "skin", "eye", "stacked"]:
 
         pred = model.predict(imgs)
 
-        acc = get_accuracy(test_labels, pred, threshold)
-        total_acc += acc
-        # print("Accuracy fold {}: {}".format(fold_no, acc))
+        for thresh in thresholds:
+            acc = get_accuracy(test_labels, pred, thresh)
+            print("[Threshold {:.2f}] Accuracy fold {:d}: {:.4f}".format(thresh, fold_no, acc))
+            accs[thresh] += acc
 
-    print("[{}]\tMean accuracy on {} folds (threshold={:.2f}): {:.4f}".format(feature.upper(), folds, threshold, total_acc/folds))
-        # plt.figure(figsize=(10, 10))
-        # plt.title("Results " + feature + " model")
-        # for i in range(30):
-        #     plt.subplot(6, 5, i+1)
-        #     plt.xticks([])
-        #     plt.yticks([])
-        #     plt.grid(False)
-        #     plt.imshow(imgs[i], cmap=plt.cm.binary)
-        #     result = pred[i]
-        #     real = test_labels[i]
-        #     plt.xlabel("%d (%.2f), real: %.2f" % ((result >= threshold), result, real))
-        # plt.suptitle("Results " + feature + " model")
-        # plt.savefig("data/plots/predictions_" + feature + ".png")
+    for thresh in thresholds:
+        print("[{}]  \tMean accuracy on {} folds (threshold={:.2f}): {:.4f}".format(feature.upper(), folds, thresh, accs[thresh]/folds))
