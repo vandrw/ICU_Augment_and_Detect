@@ -71,3 +71,4 @@ for feature in ["mouth", "nose", "skin", "eye", "stacked"]:
 
     for thresh in thresholds:
         print("[{}]  \tMean accuracy on {} folds (threshold={:.2f}): {:.4f}".format(feature.upper(), folds, thresh, accs[thresh]/folds))
+    print("---------------------------------------------------\n")
