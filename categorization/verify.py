@@ -22,13 +22,6 @@ image_size = 128
 thresholds = [0.5, 0.6, 0.7, 0.8]
 folds = 10
 
-accs = {
-    0.5: 0,
-    0.6: 0,
-    0.7: 0,
-    0.8: 0
-    }
-
 test_faces, _ = load_data(
     'data/parsed/validation_sick', 'data/parsed/validation_healthy', image_size, "face")
 test_images_mouth, test_labels = load_data(
@@ -46,7 +39,12 @@ print("Loading model and making predictions...")
 
 for feature in ["mouth", "nose", "skin", "eye", "stacked"]:
     print("Predicting for " + feature + "...")
-    total_acc = 0
+    accs = {
+        0.5: 0,
+        0.6: 0,
+        0.7: 0,
+        0.8: 0
+        }
     for fold_no in range(1,folds+1):
         model = tf.keras.models.load_model(
             "categorization/model_saves/" + feature + "/model_" + str(fold_no) + '.h5', compile=False)
@@ -70,5 +68,5 @@ for feature in ["mouth", "nose", "skin", "eye", "stacked"]:
             accs[thresh] += acc
 
     for thresh in thresholds:
-        print("[{}]  \tMean accuracy on {} folds (threshold={:.2f}): {:.4f}".format(feature.upper(), folds, thresh, accs[thresh]/folds))
+        print("[{}] Mean accuracy on {} folds (threshold={:.2f}): {:.4f}".format(feature.upper(), folds, thresh, accs[thresh]/folds))
     print("---------------------------------------------------\n")
