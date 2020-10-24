@@ -40,10 +40,10 @@ print("Loading model and making predictions...")
 for feature in ["mouth", "nose", "skin", "eye", "stacked"]:
     print("Predicting for " + feature + "...")
     accs = {
-        0.5: 0,
-        0.6: 0,
-        0.7: 0,
-        0.8: 0
+        0.5: [],
+        0.6: [],
+        0.7: [],
+        0.8: []
         }
     for fold_no in range(1,folds+1):
         model = tf.keras.models.load_model(
@@ -64,9 +64,11 @@ for feature in ["mouth", "nose", "skin", "eye", "stacked"]:
 
         for thresh in thresholds:
             acc = get_accuracy(test_labels, pred, thresh)
-            print("[Threshold {:.2f}] Accuracy fold {:d}: {:.4f}".format(thresh, fold_no, acc))
-            accs[thresh] += acc
+            # print("[Threshold {:.2f}] Accuracy fold {:d}: {:.4f}".format(thresh, fold_no, acc))
+            accs[thresh].append(acc)
 
-    for thresh in thresholds:
-        print("[{}] Mean accuracy on {} folds (threshold={:.2f}): {:.4f}".format(feature.upper(), folds, thresh, accs[thresh]/folds))
+    # for thresh in thresholds:
+    #     print("[{}] Mean accuracy on {} folds (threshold={:.2f}): {:.4f}".format(feature.upper(), folds, thresh, accs[thresh]/folds))
+    for key, values in accs:
+        print(key, values)
     print("---------------------------------------------------\n")
