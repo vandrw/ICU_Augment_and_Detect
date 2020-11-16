@@ -23,7 +23,7 @@ def print_roc_curve(tprs, auc_sum, feature, folds, base_fpr=np.linspace(0, 1, 10
     plt.ylabel('True Positive Rate')
     plt.xlabel('False Positive Rate')
     plt.axes().set_aspect('equal', 'datalim')
-    plt.savefig("data/plots/roc_{}.png".format(feature))
+    plt.savefig("data/plots/roc_{}.png".format(feature), dpi=300)
 
 def compute_confidence_int(values):
     return st.t.interval(0.95, len(values)-1, loc=np.mean(values), scale=st.sem(values))
@@ -75,7 +75,7 @@ def print_confusion_matrix(pred, true, feature, num_folds):
     ax.set_title('Confusion Matrix ' + str(feature).capitalize())
     ax.set_ylabel("Actual Values")
     ax.set_xlabel("Predicted Values")
-    plt.savefig("data/plots/confusion_matrix_" + str(feature) + ".png")
+    plt.savefig("data/plots/confusion_matrix_" + str(feature) + ".png", dpi=300)
 
 
 def plot_per_participant(per_participant, face_features):
@@ -106,6 +106,6 @@ def plot_per_participant(per_participant, face_features):
     plt.legend(plots, [feature.capitalize() for feature in face_features])
     
     if len(face_features) == 1:
-        plt.savefig("data/plots/acc_per_participant_stacked.png")
+        plt.savefig("data/plots/acc_per_participant_stacked.png", dpi=300)
     else:
-        plt.savefig("data/plots/acc_per_participant.png")
+        plt.savefig("data/plots/acc_per_participant.png", dpi=300)

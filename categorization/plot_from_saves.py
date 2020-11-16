@@ -13,6 +13,7 @@ sys.path.append(os.getcwd())
 from categorization.models import *
 from categorization.plot_utils import *
 from categorization.data_utils import *
+plt.rcParams.update({'font.size': 14})
 
 
 

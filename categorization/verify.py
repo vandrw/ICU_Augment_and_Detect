@@ -11,6 +11,7 @@ from seaborn import heatmap
 sys.path.append(os.getcwd())
 from categorization.data_utils import load_data
 from categorization.models import *
+plt.rcParams.update({'font.size': 14})
 
 def get_accuracy(test_labels, prediction_labels, thresh=0.5):
     sum_acc = 0.0
@@ -114,9 +115,9 @@ print("Loading model and making predictions...")
 # 0.8 max value at  0 :  0.7105263157894737
 # ---------------------------------------------------
 
-feature = "stacked" # "mouth", "nose", "skin", "eye", "stacked"
-fold = 1 # 5, 2, 8, 1, 1
-thresh = 0.8 # 0.7, 0.8, 0.6, 0.5, 0.8
+feature = "skin" # "mouth", "nose", "skin", "eye", "stacked"
+fold = 6 # 5, 3, 6, 1, 1
+thresh = 0.3 # 0.7, 0.8, 0.3, 0.5, 0.8
 
 if feature == "stacked":
     imgs = test_images
@@ -145,7 +146,7 @@ plt.title("ROC Curve for {} model (AUC = {:.3f})".format(str(feature).capitalize
 plt.ylabel('True Positive Rate')
 plt.xlabel('False Positive Rate')
 plt.axes().set_aspect('equal', 'datalim')
-plt.savefig("data/plots/roc_" + str(feature) + "_max.png")
+plt.savefig("data/plots/roc_" + str(feature) + "_max.png", dpi=300)
 
 pred = np.int64(pred > thresh)
 true = test_labels
@@ -173,4 +174,4 @@ ax.set_title('Confusion Matrix ' + str(feature).capitalize())
 ax.set_ylabel("Actual Values")
 ax.set_xlabel("Predicted Values")
 plt.axes().set_aspect('equal', 'datalim')
-plt.savefig("data/plots/confusion_matrix_" + str(feature) + "_max.png")
+plt.savefig("data/plots/confusion_matrix_" + str(feature) + "_max.png", dpi=300)
