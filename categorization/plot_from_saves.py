@@ -18,11 +18,14 @@ from categorization.data_utils import *
 
 if __name__ == "__main__":
 
+    # use argument stacked if you only plot the stacked graphs
+    # use "all" to plot the graphs for all models
+    # use "features" to only plot the graphs for the individual models (without stacked)
     if sys.argv[1] == 'stacked':
         face_features = ['stacked']
     elif sys.argv[1] == 'all':
         face_features = ['mouth', 'nose', 'skin', 'eye', 'stacked']
-    else:
+    elif sys.argv[1] == 'features':
         face_features = ['mouth', 'nose', 'skin', 'eye']
     
     image_folder_val_sick = 'data/parsed/validation_sick'
@@ -36,7 +39,8 @@ if __name__ == "__main__":
     per_participant = np.zeros((len(face_features),38))
 
     for feature in face_features:
-        auc_sum = 0
+        
+        auc_values = np.zeros(folds)
         tprs = []
 
         if feature == 'stacked':
@@ -73,7 +77,7 @@ if __name__ == "__main__":
                 predictions = np.concatenate((predictions, to_labels(pred)), axis=0)
 
             fpr, tpr, _ = roc_curve(val_labels, pred)
-            auc_sum += auc(fpr, tpr)
+            auc_values[fold_no-1] = auc(fpr, tpr)
             del saved_model
 
             plt.plot(fpr, tpr, 'b', alpha=0.15)
@@ -83,7 +87,8 @@ if __name__ == "__main__":
 
 
         per_participant[face_features.index(feature)]= compute_per_participant(predictions, val_labels, folds, feature)
-        print_roc_curve(tprs, auc_sum, feature, folds)
+        print_roc_curve(tprs, np.sum(auc_values), feature, folds)
         print_confusion_matrix(predictions, val_labels, feature, folds)
+        print_confidence_intervals(predictions, val_labels, auc_values, feature, folds)
     plt.figure()
     plot_per_participant(per_participant, face_features)
